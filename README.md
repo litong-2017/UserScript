@@ -26,3 +26,4 @@ https://github.com/dlzmoe/UserScript
 | 导出微信公众号文章为 PDF                       | 在微信公众号文章页面中添加按钮，点击后导出文章为 PDF 格式，并显示标题、作者和时间等元信息。 | [Greasyfork](https://greasyfork.org/scripts/510683)                                                                |
 | 抖音视频下载 - 需进入详情页                    | 在浏览器中打开抖音，实现快速下载视频。                                                      | [Greasyfork](https://raw.githubusercontent.com/dlzmoe/scripts/refs/heads/main/douyin-download/greasyfork.user.js)  |
 | Product Hunt 汉化                              | 由于官方不支持中文，汉化大部分的翻译。                                                      | [Greasyfork](https://raw.githubusercontent.com/dlzmoe/scripts/refs/heads/main/producthunt-zhcn/greasyfork.user.js) |
+| icomoon.io 一键删除所有集合                    | 添加一个按钮，点击时触发所有ng-click="removeSet($index)"按钮                                | [Greasyfork](https://greasyfork.org/scripts/529673)                                                                |
