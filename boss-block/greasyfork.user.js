@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Boss直聘拉黑公司列表
 // @namespace    https://github.com/dlzmoe/scripts
-// @version      1.0
+// @version      1.0.1
 // @description  过滤职位列表中的黑名单公司，支持导入导出，一键拉黑功能。
 // @author       dlzmoe
 // @match        *://*.zhipin.com/*
@@ -26,7 +26,8 @@
         .blacklisted .job-info,
         .blacklisted .company-location,
         .blacklisted .boss-logo,
-        .blacklisted .job-tag-icon  {
+        .blacklisted .job-tag-icon,
+        .blacklisted .block-btn  {
             display: none !important;
         }
         .blacklisted .boss-name {
