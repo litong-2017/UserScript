@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name        Product Hunt 汉化
-// @namespace   https://github.com/dlzmoe/scripts
+// @namespace   https://github.com/ezyshu/scripts
 // @description 由于官方不支持中文，汉化大部分的翻译
 // @match       *://*.producthunt.com/*
 // @grant       none
 // @license     Apache-2.0 license
 // @icon        https://app.netlify.com/favicon-48x48.png
 // @version     1.0
-// @author      dlzmoe
+// @author      ezyshu
 // ==/UserScript==
 
 const zh_Hans = [

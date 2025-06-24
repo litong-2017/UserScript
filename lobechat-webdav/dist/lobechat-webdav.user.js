@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Lobechat Webdav 同步功能
-// @namespace    https://github.com/dlzmoe/UserScript
+// @namespace    https://github.com/ezyshu/UserScript
 // @version      0.0.9
-// @author       dlzmoe
+// @author       ezyshu
 // @description  给 lobechat 程序添加 webdav 同步的功能。
 // @license      Apache-2.0
 // @icon         https://chat.oaipro.com/favicon-32x32.ico
@@ -21,7 +21,7 @@
 
   const name = "lobechat-webdav";
   const version = "0.0.9";
-  const author = "dlzmoe";
+  const author = "ezyshu";
   const description = "Add webdav synchronization function to lobechat program.";
   const type = "module";
   const license = "Apache-2.0";

@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        Netlify 汉化脚本
-// @namespace   https://github.com/dlzmoe/scripts
+// @namespace   https://github.com/ezyshu/scripts
 // @version     0.0.1
-// @author      dlzmoe
+// @author      ezyshu
 // @description 由于官方不支持中文，汉化 Netlify 大部分的翻译
 // @include     *://*.netlify.com/*
 // @license     Apache-2.0 license

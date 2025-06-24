@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         导出微信公众号文章为 PDF
-// @namespace    https://github.com/dlzmoe/scripts
+// @namespace    https://github.com/ezyshu/scripts
 // @version      0.5
-// @author       dlzmoe
+// @author       ezyshu
 // @description  在微信公众号文章页面中添加按钮，点击后导出文章为 PDF 格式，并显示标题、作者和时间等元信息。
 // @match        https://mp.weixin.qq.com/s/*
 // @grant        none
