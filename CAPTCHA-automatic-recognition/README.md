@@ -1,0 +1,1 @@
+## CAPTCHA automatic recognition（验证码自动识别）
