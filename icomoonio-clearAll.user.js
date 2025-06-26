@@ -6,7 +6,7 @@
 // @author       ezyshu
 // @match        *://icomoon.io/*
 // @grant        none
-// @license      MIT
+// @license      Apache-2.0
 // ==/UserScript==
 
 (function() {

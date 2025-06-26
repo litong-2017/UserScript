@@ -2,7 +2,7 @@
   "name": "CAPTCHA-automatic-recognition",
   "version": "0.0.1",
   "author": "ezyshu",
-  "description": "a sample script.",
+  "description": "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。",
   "type": "module",
   "license": "Apache-2.0",
   "scripts": {
@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "vue": "^3.4.27",
-    "webdav": "^5.7.1"
+    "webdav": "^5.7.1",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

@@ -19,6 +19,7 @@
 
 | 脚本名称                                       | 脚本说明                                                                                    | 安装链接                                                                                                           |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| AI验证码自动识别填充                           | 自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。                              | [Greasyfork](https://greasyfork.org/scripts/540822)                                                                |
 | [Lobechat Webdav 同步功能](./lobechat-webdav/) | 给 lobechat 程序添加 webdav 同步的功能。                                                    | [Greasyfork](https://greasyfork.org/scripts/516358)                                                                |
 | Trucksbook 欧元换算人民币单位                  | trucksbook.eu 欧元换算人民币单位插件，安装即可使用生效。                                    | [Greasyfork](https://greasyfork.org/scripts/515007)                                                                |
 | [nextchat-themes](./nextchat-themes/)          | NextChat 插件，修改 UI 主题                                                                 | [Greasyfork](https://greasyfork.org/scripts/513677)                                                                |
@@ -47,4 +48,4 @@
 
 ## 许可证
 
-本项目采用 MIT 许可证，详情请参阅 [LICENSE](./LICENSE) 文件。
+本项目采用 Apache-2.0 许可证，详情请参阅 [LICENSE](./LICENSE) 文件。

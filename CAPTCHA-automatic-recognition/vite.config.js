@@ -11,11 +11,18 @@ export default defineConfig({
       entry: 'src/main.js',
       userscript: {
         icon: 'https://raw.githubusercontent.com/ezyshu/UserScript/refs/heads/main/assets/g.png',
-        name: "example-scripts",
+        name: "AI验证码自动识别填充",
         namespace: 'https://github.com/ezyshu/UserScript',
-        description: "a sample script.",
+        description: "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。",
         version: pkg.version,
-        match: ['*://*/*'],
+        match: ['*://*/*'], // 可以根据需要限制匹配的网站
+        grant: [
+          'GM_xmlhttpRequest',
+          'GM_addStyle',
+          'GM_setValue',
+          'GM_getValue',
+          'GM_registerMenuCommand'
+        ],
       },
       build: {
         externalGlobals: {
