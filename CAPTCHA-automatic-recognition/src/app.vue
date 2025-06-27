@@ -109,7 +109,7 @@ export default {
             this.settings = JSON.parse(savedSettings);
           }
         } else {
-          console.log('未检测到油猴环境，无法加载设置');
+          // console.log('未检测到油猴环境，无法加载设置');
           // 尝试从localStorage加载设置（开发环境使用）
           const localSettings = localStorage.getItem("captchaSettings");
           if (localSettings) {
@@ -150,7 +150,7 @@ export default {
         if (typeof GM_setValue !== 'undefined') {
           GM_setValue("captchaSettings", JSON.stringify(this.settings));
         } else {
-          console.log('未检测到油猴环境，将设置保存到localStorage');
+          // console.log('未检测到油猴环境，将设置保存到localStorage');
           // 保存到localStorage（开发环境使用）
           localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
         }
@@ -338,7 +338,7 @@ export default {
     findCaptchaElements() {
       const captchaImages = document.querySelectorAll(this.config.captchaSelector);
       if (captchaImages.length === 0) {
-        console.log('未找到验证码图片');
+        // console.log('未找到验证码图片');
         return [];
       }
 
@@ -528,7 +528,7 @@ export default {
           this.openSettings();
         });
       } else {
-        console.log('未检测到油猴环境，跳过菜单注册');
+        // console.log('未检测到油猴环境，跳过菜单注册');
       }
     },
 
@@ -660,13 +660,6 @@ export default {
         }, 300); // 300ms是动画持续时间
       }, 3000);
     },
-  },
-  created() {
-    console.log(
-      `%c ${packageJson.name} %c 已开启 `,
-      "padding: 2px 1px; color: #fff; background: #606060;",
-      "padding: 2px 1px; color: #fff; background: #42c02e;"
-    );
   },
   mounted() {
     this.init();

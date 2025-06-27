@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.1
+// @version      0.0.2
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -20,41 +20,6 @@
 (function (vue) {
   'use strict';
 
-  const name = "CAPTCHA-automatic-recognition";
-  const version = "0.0.1";
-  const author = "ezyshu";
-  const description = "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。";
-  const type = "module";
-  const license = "Apache-2.0";
-  const scripts = {
-    dev: "vite --mode development",
-    build: "vite build",
-    preview: "vite preview"
-  };
-  const dependencies = {
-    vue: "^3.4.27",
-    webdav: "^5.7.1",
-    axios: "^1.6.2"
-  };
-  const devDependencies = {
-    "@vitejs/plugin-vue": "^5.0.4",
-    less: "^4.1.0",
-    "less-loader": "^8.0.0",
-    "style-loader": "^2.0.0",
-    vite: "^5.2.12",
-    "vite-plugin-monkey": "^4.0.0"
-  };
-  const packageJson = {
-    name,
-    version,
-    author,
-    description,
-    type,
-    license,
-    scripts,
-    dependencies,
-    devDependencies
-  };
   function bind(fn, thisArg) {
     return function wrap() {
       return fn.apply(thisArg, arguments);
@@ -67,11 +32,11 @@
     const str = toString.call(thing);
     return cache[str] || (cache[str] = str.slice(8, -1).toLowerCase());
   })(/* @__PURE__ */ Object.create(null));
-  const kindOfTest = (type2) => {
-    type2 = type2.toLowerCase();
-    return (thing) => kindOf(thing) === type2;
+  const kindOfTest = (type) => {
+    type = type.toLowerCase();
+    return (thing) => kindOf(thing) === type;
   };
-  const typeOfTest = (type2) => (thing) => typeof thing === type2;
+  const typeOfTest = (type) => (thing) => typeof thing === type;
   const { isArray } = Array;
   const isUndefined = typeOfTest("undefined");
   function isBuffer(val) {
@@ -274,20 +239,20 @@
   const reduceDescriptors = (obj, reducer) => {
     const descriptors2 = Object.getOwnPropertyDescriptors(obj);
     const reducedDescriptors = {};
-    forEach(descriptors2, (descriptor, name2) => {
+    forEach(descriptors2, (descriptor, name) => {
       let ret;
-      if ((ret = reducer(descriptor, name2, obj)) !== false) {
-        reducedDescriptors[name2] = ret || descriptor;
+      if ((ret = reducer(descriptor, name, obj)) !== false) {
+        reducedDescriptors[name] = ret || descriptor;
       }
     });
     Object.defineProperties(obj, reducedDescriptors);
   };
   const freezeMethods = (obj) => {
-    reduceDescriptors(obj, (descriptor, name2) => {
-      if (isFunction(obj) && ["arguments", "caller", "callee"].indexOf(name2) !== -1) {
+    reduceDescriptors(obj, (descriptor, name) => {
+      if (isFunction(obj) && ["arguments", "caller", "callee"].indexOf(name) !== -1) {
         return false;
       }
-      const value = obj[name2];
+      const value = obj[name];
       if (!isFunction(value)) return;
       descriptor.enumerable = false;
       if ("writable" in descriptor) {
@@ -296,7 +261,7 @@
       }
       if (!descriptor.set) {
         descriptor.set = () => {
-          throw Error("Can not rewrite read-only method '" + name2 + "'");
+          throw Error("Can not rewrite read-only method '" + name + "'");
         };
       }
     });
@@ -627,8 +592,8 @@
     params && toFormData(params, this, options);
   }
   const prototype = AxiosURLSearchParams.prototype;
-  prototype.append = function append(name2, value) {
-    this._pairs.push([name2, value]);
+  prototype.append = function append(name, value) {
+    this._pairs.push([name, value]);
   };
   prototype.toString = function toString2(encoder) {
     const _encode = encoder ? function(value) {
@@ -776,8 +741,8 @@
       }
     }, options));
   }
-  function parsePropPath(name2) {
-    return utils$1.matchAll(/\w+|\[(\w*)]/g, name2).map((match) => {
+  function parsePropPath(name) {
+    return utils$1.matchAll(/\w+|\[(\w*)]/g, name).map((match) => {
       return match[0] === "[]" ? "" : match[1] || match[0];
     });
   }
@@ -795,32 +760,32 @@
   }
   function formDataToJSON(formData) {
     function buildPath(path, value, target, index) {
-      let name2 = path[index++];
-      if (name2 === "__proto__") return true;
-      const isNumericKey = Number.isFinite(+name2);
+      let name = path[index++];
+      if (name === "__proto__") return true;
+      const isNumericKey = Number.isFinite(+name);
       const isLast = index >= path.length;
-      name2 = !name2 && utils$1.isArray(target) ? target.length : name2;
+      name = !name && utils$1.isArray(target) ? target.length : name;
       if (isLast) {
-        if (utils$1.hasOwnProp(target, name2)) {
-          target[name2] = [target[name2], value];
+        if (utils$1.hasOwnProp(target, name)) {
+          target[name] = [target[name], value];
         } else {
-          target[name2] = value;
+          target[name] = value;
         }
         return !isNumericKey;
       }
-      if (!target[name2] || !utils$1.isObject(target[name2])) {
-        target[name2] = [];
+      if (!target[name] || !utils$1.isObject(target[name])) {
+        target[name] = [];
       }
-      const result = buildPath(path, value, target[name2], index);
-      if (result && utils$1.isArray(target[name2])) {
-        target[name2] = arrayToObject(target[name2]);
+      const result = buildPath(path, value, target[name], index);
+      if (result && utils$1.isArray(target[name])) {
+        target[name] = arrayToObject(target[name]);
       }
       return !isNumericKey;
     }
     if (utils$1.isFormData(formData) && utils$1.isFunction(formData.entries)) {
       const obj = {};
-      utils$1.forEachEntry(formData, (name2, value) => {
-        buildPath(parsePropPath(name2), value, obj, 0);
+      utils$1.forEachEntry(formData, (name, value) => {
+        buildPath(parsePropPath(name), value, obj, 0);
       });
       return obj;
     }
@@ -1348,20 +1313,20 @@
   const cookies = platform.hasStandardBrowserEnv ? (
     // Standard browser envs support document.cookie
     {
-      write(name2, value, expires, path, domain, secure) {
-        const cookie = [name2 + "=" + encodeURIComponent(value)];
+      write(name, value, expires, path, domain, secure) {
+        const cookie = [name + "=" + encodeURIComponent(value)];
         utils$1.isNumber(expires) && cookie.push("expires=" + new Date(expires).toGMTString());
         utils$1.isString(path) && cookie.push("path=" + path);
         utils$1.isString(domain) && cookie.push("domain=" + domain);
         secure === true && cookie.push("secure");
         document.cookie = cookie.join("; ");
       },
-      read(name2) {
-        const match = document.cookie.match(new RegExp("(^|;\\s*)(" + name2 + ")=([^;]*)"));
+      read(name) {
+        const match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
         return match ? decodeURIComponent(match[3]) : null;
       },
-      remove(name2) {
-        this.write(name2, "", Date.now() - 864e5);
+      remove(name) {
+        this.write(name, "", Date.now() - 864e5);
       }
     }
   ) : (
@@ -1483,8 +1448,8 @@
       if (platform.hasStandardBrowserEnv || platform.hasStandardBrowserWebWorkerEnv) {
         headers.setContentType(void 0);
       } else if ((contentType = headers.getContentType()) !== false) {
-        const [type2, ...tokens] = contentType ? contentType.split(";").map((token) => token.trim()).filter(Boolean) : [];
-        headers.setContentType([type2 || "multipart/form-data", ...tokens].join("; "));
+        const [type, ...tokens] = contentType ? contentType.split(";").map((token) => token.trim()).filter(Boolean) : [];
+        headers.setContentType([type || "multipart/form-data", ...tokens].join("; "));
       }
     }
     if (platform.hasStandardBrowserEnv) {
@@ -1759,9 +1724,9 @@
     stream: supportsResponseStream && ((res) => res.body)
   };
   isFetchSupported && ((res) => {
-    ["text", "arrayBuffer", "blob", "formData", "stream"].forEach((type2) => {
-      !resolvers[type2] && (resolvers[type2] = utils$1.isFunction(res[type2]) ? (res2) => res2[type2]() : (_, config) => {
-        throw new AxiosError(`Response type '${type2}' is not supported`, AxiosError.ERR_NOT_SUPPORT, config);
+    ["text", "arrayBuffer", "blob", "formData", "stream"].forEach((type) => {
+      !resolvers[type] && (resolvers[type] = utils$1.isFunction(res[type]) ? (res2) => res2[type]() : (_, config) => {
+        throw new AxiosError(`Response type '${type}' is not supported`, AxiosError.ERR_NOT_SUPPORT, config);
       });
     });
   })(new Response());
@@ -1990,29 +1955,29 @@
   }
   const VERSION = "1.10.0";
   const validators$1 = {};
-  ["object", "boolean", "number", "function", "string", "symbol"].forEach((type2, i) => {
-    validators$1[type2] = function validator2(thing) {
-      return typeof thing === type2 || "a" + (i < 1 ? "n " : " ") + type2;
+  ["object", "boolean", "number", "function", "string", "symbol"].forEach((type, i) => {
+    validators$1[type] = function validator2(thing) {
+      return typeof thing === type || "a" + (i < 1 ? "n " : " ") + type;
     };
   });
   const deprecatedWarnings = {};
-  validators$1.transitional = function transitional(validator2, version2, message) {
+  validators$1.transitional = function transitional(validator2, version, message) {
     function formatMessage(opt, desc) {
       return "[Axios v" + VERSION + "] Transitional option '" + opt + "'" + desc + (message ? ". " + message : "");
     }
     return (value, opt, opts) => {
       if (validator2 === false) {
         throw new AxiosError(
-          formatMessage(opt, " has been removed" + (version2 ? " in " + version2 : "")),
+          formatMessage(opt, " has been removed" + (version ? " in " + version : "")),
           AxiosError.ERR_DEPRECATED
         );
       }
-      if (version2 && !deprecatedWarnings[opt]) {
+      if (version && !deprecatedWarnings[opt]) {
         deprecatedWarnings[opt] = true;
         console.warn(
           formatMessage(
             opt,
-            " has been deprecated since v" + version2 + " and will be removed in the near future"
+            " has been deprecated since v" + version + " and will be removed in the near future"
           )
         );
       }
@@ -2474,7 +2439,6 @@
               this.settings = JSON.parse(savedSettings);
             }
           } else {
-            console.log("未检测到油猴环境，无法加载设置");
             const localSettings = localStorage.getItem("captchaSettings");
             if (localSettings) {
               this.settings = JSON.parse(localSettings);
@@ -2506,7 +2470,6 @@
           if (typeof GM_setValue !== "undefined") {
             GM_setValue("captchaSettings", JSON.stringify(this.settings));
           } else {
-            console.log("未检测到油猴环境，将设置保存到localStorage");
             localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
           }
           this.closeSettings();
@@ -2662,7 +2625,6 @@
       findCaptchaElements() {
         const captchaImages = document.querySelectorAll(this.config.captchaSelector);
         if (captchaImages.length === 0) {
-          console.log("未找到验证码图片");
           return [];
         }
         const elements = [];
@@ -2805,8 +2767,6 @@
           GM_registerMenuCommand("验证码识别设置", () => {
             this.openSettings();
           });
-        } else {
-          console.log("未检测到油猴环境，跳过菜单注册");
         }
       },
       /**
@@ -2879,7 +2839,7 @@
        * @param {string} message - 提示信息
        * @param {string} type - 提示类型 (success, error, info)
        */
-      showToast(message, type2 = "info") {
+      showToast(message, type = "info") {
         let toastContainer = document.getElementById("captcha-toast-container");
         if (!toastContainer) {
           toastContainer = document.createElement("div");
@@ -2887,7 +2847,7 @@
           document.body.appendChild(toastContainer);
         }
         const toast = document.createElement("div");
-        toast.className = `captcha-toast captcha-toast-${type2}`;
+        toast.className = `captcha-toast captcha-toast-${type}`;
         toast.textContent = message;
         if (toastContainer.firstChild) {
           toastContainer.insertBefore(toast, toastContainer.firstChild);
@@ -2907,13 +2867,6 @@
           }, 300);
         }, 3e3);
       }
-    },
-    created() {
-      console.log(
-        `%c ${packageJson.name} %c 已开启 `,
-        "padding: 2px 1px; color: #fff; background: #606060;",
-        "padding: 2px 1px; color: #fff; background: #42c02e;"
-      );
     },
     mounted() {
       this.init();
