@@ -2,6 +2,8 @@
 
 自动识别网页验证码并填充输入框，支持 OpenAI 和 Google Gemini。
 
+![image](https://github.com/user-attachments/assets/a2987157-e6cd-47cb-92d4-0a060b5b37c8)
+
 ### 功能
 - 自动检测验证码图片
 - 验证码图片后出现识别按钮，点击即可识别并填充
