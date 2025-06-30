@@ -10,7 +10,7 @@ export default defineConfig({
     monkey({
       entry: 'src/main.js',
       userscript: {
-        icon: 'https://raw.githubusercontent.com/ezyshu/UserScript/refs/heads/main/assets/g.png',
+        icon: 'https://raw.githubusercontent.com/ezyshu/UserScript/refs/heads/main/CAPTCHA-automatic-recognition/src/assets/logo.png',
         name: "AI验证码自动识别填充",
         namespace: 'https://github.com/ezyshu/UserScript',
         description: "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。",

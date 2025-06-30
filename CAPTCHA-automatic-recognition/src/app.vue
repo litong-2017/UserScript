@@ -1,10 +1,14 @@
 <template>
   <div class="captcha-recognition-container">
     <!-- 开发环境设置按钮 -->
-    <div v-if="process.env.NODE_ENV === 'development' && !showSettings" class="dev-settings-button" @click="openSettings">
+    <div
+      v-if="process.env.NODE_ENV === 'development' && !showSettings"
+      class="dev-settings-button"
+      @click="openSettings"
+    >
       打开设置
     </div>
-    
+
     <!-- 设置弹窗 -->
     <div v-if="showSettings" class="captcha-settings-modal">
       <div class="captcha-settings-content">
@@ -16,41 +20,95 @@
             <option value="gemini">Google Gemini</option>
           </select>
         </div>
-        
+
         <div v-if="settings.apiType === 'openai'">
           <div class="captcha-settings-item">
             <label>OpenAI API Key:</label>
-            <input type="text" v-model="settings.openaiKey" placeholder="sk-..." />
+            <input
+              type="text"
+              v-model="settings.openaiKey"
+              placeholder="sk-..."
+            />
           </div>
           <div class="captcha-settings-item">
             <label>自定义API地址 (可选):</label>
-            <input type="text" v-model="settings.openaiApiUrl" placeholder="https://api.openai.com/v1/chat/completions" />
+            <input
+              type="text"
+              v-model="settings.openaiApiUrl"
+              placeholder="https://api.openai.com/v1/chat/completions"
+            />
             <small>留空使用默认地址</small>
           </div>
           <div class="captcha-settings-item">
             <label>模型 (可选):</label>
-            <input type="text" v-model="settings.openaiModel" placeholder="gpt-4.1-mini" />
+            <input
+              type="text"
+              v-model="settings.openaiModel"
+              placeholder="gpt-4.1-mini"
+            />
             <small>留空使用默认模型</small>
           </div>
         </div>
-        
+
         <div v-if="settings.apiType === 'gemini'">
           <div class="captcha-settings-item">
             <label>Google Gemini API Key:</label>
-            <input type="text" v-model="settings.geminiKey" placeholder="输入Gemini API Key" />
+            <input
+              type="text"
+              v-model="settings.geminiKey"
+              placeholder="输入Gemini API Key"
+            />
           </div>
           <div class="captcha-settings-item">
             <label>自定义API地址 (可选):</label>
-            <input type="text" v-model="settings.geminiApiUrl" placeholder="https://generativelanguage.googleapis.com/v1beta/models" />
+            <input
+              type="text"
+              v-model="settings.geminiApiUrl"
+              placeholder="https://generativelanguage.googleapis.com/v1beta/models"
+            />
             <small>留空使用默认地址</small>
           </div>
           <div class="captcha-settings-item">
             <label>模型 (可选):</label>
-            <input type="text" v-model="settings.geminiModel" placeholder="gemini-2.5-flash-lite" />
+            <input
+              type="text"
+              v-model="settings.geminiModel"
+              placeholder="gemini-2.5-flash-lite"
+            />
             <small>留空使用默认模型</small>
           </div>
         </div>
-        
+
+        <div class="captcha-settings-item">
+          <label>自动识别:</label>
+          <div style="display: flex; align-items: center">
+            <input
+              type="checkbox"
+              v-model="settings.autoRecognize"
+              id="autoRecognize"
+              style="width: auto; margin-right: 8px"
+            />
+            <label for="autoRecognize" style="margin-bottom: 0"
+              >验证码图片变化时自动识别</label
+            >
+          </div>
+        </div>
+
+        <div class="captcha-settings-item">
+          <label>自动复制到剪贴板:</label>
+          <div style="display: flex; align-items: center">
+            <input
+              type="checkbox"
+              v-model="settings.copyToClipboard"
+              id="copyToClipboard"
+              style="width: auto; margin-right: 8px"
+            />
+            <label for="copyToClipboard" style="margin-bottom: 0"
+              >自动复制到剪贴板</label
+            >
+          </div>
+        </div>
+
         <div class="captcha-settings-buttons">
           <button @click="saveSettings">保存设置</button>
           <button @click="closeSettings">取消</button>
@@ -78,22 +136,28 @@ export default {
         geminiKey: "",
         geminiApiUrl: "",
         geminiModel: "",
+        // 自动识别设置
+        autoRecognize: false, // 是否启用自动识别
+        // 剪贴板设置
+        copyToClipboard: true, // 是否自动复制到剪贴板
       },
       // 是否显示设置面板
       showSettings: false,
       // 配置选项
       config: {
         // 验证码图片选择器
-        captchaSelector: 'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[alt*="captcha"], img[id="captchaPic"]',
+        captchaSelector:
+          'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[title*="点击刷新验证码"], img[alt*="captcha"], img[id="captchaPic"], .validate-code img',
         // 相关输入框选择器 (通常在验证码图片附近的输入框)
-        inputSelector: 'input[name*="captcha"], input[name*="verify"], input[placeholder*="验证码"], input[placeholder*="captcha"]',
+        inputSelector:
+          'input[name*="captcha"], input[name*="verify"], input[placeholder*="验证码"], input[placeholder*="captcha"]',
       },
       // 用于在模板中访问环境变量
       process: {
         env: {
-          NODE_ENV: process.env.NODE_ENV || 'development'
-        }
-      }
+          NODE_ENV: process.env.NODE_ENV || "development",
+        },
+      },
     };
   },
   methods: {
@@ -103,7 +167,7 @@ export default {
     loadSettings() {
       try {
         // 从油猴脚本存储中加载设置
-        if (typeof GM_getValue !== 'undefined') {
+        if (typeof GM_getValue !== "undefined") {
           const savedSettings = GM_getValue("captchaSettings");
           if (savedSettings) {
             this.settings = JSON.parse(savedSettings);
@@ -126,7 +190,7 @@ export default {
      */
     openSettings() {
       // 先添加类阻止body滚动
-      document.body.classList.add('captcha-settings-open');
+      document.body.classList.add("captcha-settings-open");
       // 显示设置面板
       this.showSettings = true;
     },
@@ -136,7 +200,7 @@ export default {
      */
     closeSettings() {
       // 移除阻止body滚动的类
-      document.body.classList.remove('captcha-settings-open');
+      document.body.classList.remove("captcha-settings-open");
       // 关闭设置面板
       this.showSettings = false;
     },
@@ -147,12 +211,15 @@ export default {
     saveSettings() {
       try {
         // 保存设置到油猴脚本存储
-        if (typeof GM_setValue !== 'undefined') {
+        if (typeof GM_setValue !== "undefined") {
           GM_setValue("captchaSettings", JSON.stringify(this.settings));
         } else {
           // console.log('未检测到油猴环境，将设置保存到localStorage');
           // 保存到localStorage（开发环境使用）
-          localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
+          localStorage.setItem(
+            "captchaSettings",
+            JSON.stringify(this.settings)
+          );
         }
         this.closeSettings();
         this.showToast("设置已保存！", "success");
@@ -177,12 +244,12 @@ export default {
 
       // 将图片转换为base64
       const base64Image = this.imageToBase64(captchaImg);
-      
+
       // 根据API类型调用不同的识别方法
       let result = "";
       try {
         this.showToast("正在识别验证码...", "info");
-        
+
         switch (this.settings.apiType) {
           case "openai":
             result = await this.recognizeWithOpenAI(base64Image);
@@ -191,13 +258,13 @@ export default {
             result = await this.recognizeWithGemini(base64Image);
             break;
         }
-        
+
         if (result) {
           this.showToast(`识别成功: ${result}`, "success");
         } else {
           this.showToast("识别结果为空", "error");
         }
-        
+
         return result;
       } catch (error) {
         console.error("验证码识别失败:", error);
@@ -228,11 +295,11 @@ export default {
       const canvas = document.createElement("canvas");
       canvas.width = imgElement.naturalWidth || imgElement.width;
       canvas.height = imgElement.naturalHeight || imgElement.height;
-      
+
       // 在canvas上绘制图片
       const ctx = canvas.getContext("2d");
       ctx.drawImage(imgElement, 0, 0);
-      
+
       // 转换为base64
       return canvas.toDataURL("image/png").split(",")[1];
     },
@@ -242,12 +309,14 @@ export default {
      */
     async recognizeWithOpenAI(base64Image) {
       // 使用自定义API地址或默认地址
-      const apiUrl = this.settings.openaiApiUrl || "https://api.openai.com/v1/chat/completions";
+      const apiUrl =
+        this.settings.openaiApiUrl ||
+        "https://api.openai.com/v1/chat/completions";
       // 使用自定义模型或默认模型
       const model = this.settings.openaiModel || "gpt-4.1-mini";
-      
+
       const response = await this.request({
-        method: 'POST',
+        method: "POST",
         url: apiUrl,
         data: {
           model: model,
@@ -257,25 +326,25 @@ export default {
               content: [
                 {
                   type: "text",
-                  text: "这是一个验证码图片，请识别图片中的文字，只返回识别结果，不要有任何其他文字或解释"
+                  text: "这是一个验证码图片，请识别图片中的文字，只返回识别结果，不要有任何其他文字或解释",
                 },
                 {
                   type: "image_url",
                   image_url: {
-                    url: `data:image/png;base64,${base64Image}`
-                  }
-                }
-              ]
-            }
+                    url: `data:image/png;base64,${base64Image}`,
+                  },
+                },
+              ],
+            },
           ],
-          max_tokens: 300
+          max_tokens: 300,
         },
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.settings.openaiKey}`
-        }
+          Authorization: `Bearer ${this.settings.openaiKey}`,
+        },
       });
-      
+
       // 提取结果
       return response.data.choices[0].message.content.trim();
     },
@@ -287,48 +356,54 @@ export default {
       // 使用自定义模型或默认模型
       const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
       // 使用自定义API地址或默认地址
-      const baseApiUrl = this.settings.geminiApiUrl || "https://generativelanguage.googleapis.com/v1beta/models";
+      const baseApiUrl =
+        this.settings.geminiApiUrl ||
+        "https://generativelanguage.googleapis.com/v1beta/models";
       const apiUrl = `${baseApiUrl}/${model}:generateContent`;
-      
+
       const response = await this.request({
-        method: 'POST',
+        method: "POST",
         url: `${apiUrl}?key=${this.settings.geminiKey}`,
         data: {
           contents: [
             {
               parts: [
                 {
-                  text: "这是一个验证码图片，请识别图片中的文字，只返回识别结果，不要有任何其他文字或解释"
+                  text: "这是一个验证码图片，请识别图片中的文字，只返回识别结果，不要有任何其他文字或解释",
                 },
                 {
                   inline_data: {
                     mime_type: "image/png",
-                    data: base64Image
-                  }
-                }
-              ]
-            }
+                    data: base64Image,
+                  },
+                },
+              ],
+            },
           ],
           generationConfig: {
             temperature: 0,
-            maxOutputTokens: 100
-          }
+            maxOutputTokens: 100,
+          },
         },
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       });
-      
+
       // 提取结果
       if (response.data.candidates && response.data.candidates.length > 0) {
         const candidate = response.data.candidates[0];
-        if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+        if (
+          candidate.content &&
+          candidate.content.parts &&
+          candidate.content.parts.length > 0
+        ) {
           const text = candidate.content.parts[0].text || "";
           // 只保留数字和字母
           return text.replace(/[^a-zA-Z0-9]/g, "").trim();
         }
       }
-      
+
       return "";
     },
 
@@ -336,38 +411,40 @@ export default {
      * 查找页面上的验证码图片和相关输入框
      */
     findCaptchaElements() {
-      const captchaImages = document.querySelectorAll(this.config.captchaSelector);
+      const captchaImages = document.querySelectorAll(
+        this.config.captchaSelector
+      );
       if (captchaImages.length === 0) {
         // console.log('未找到验证码图片');
         return [];
       }
 
       const elements = [];
-      captchaImages.forEach(img => {
+      captchaImages.forEach((img) => {
         // 查找最近的输入框
         let inputField = null;
-        
+
         // 方法1：尝试通过选择器查找相关输入框
         const inputs = document.querySelectorAll(this.config.inputSelector);
         if (inputs.length > 0) {
           // 找到距离验证码图片最近的输入框
           let minDistance = Infinity;
           let closestInput = null;
-          
-          inputs.forEach(input => {
+
+          inputs.forEach((input) => {
             const distance = this.getDistance(img, input);
             if (distance < minDistance) {
               minDistance = distance;
               closestInput = input;
             }
           });
-          
+
           // 如果找到的输入框距离验证码图片不太远，则认为它是相关的
           if (minDistance < 300) {
             inputField = closestInput;
           }
         }
-        
+
         // 方法2：如果方法1未找到，尝试检查验证码图片附近的输入框
         if (!inputField) {
           // 向上查找
@@ -398,12 +475,12 @@ export default {
     getDistance(el1, el2) {
       const rect1 = el1.getBoundingClientRect();
       const rect2 = el2.getBoundingClientRect();
-      
+
       const x1 = rect1.left + rect1.width / 2;
       const y1 = rect1.top + rect1.height / 2;
       const x2 = rect2.left + rect2.width / 2;
       const y2 = rect2.top + rect2.height / 2;
-      
+
       return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     },
 
@@ -412,28 +489,31 @@ export default {
      */
     addIconsToCaptchas() {
       const elements = this.findCaptchaElements();
-      
+
       elements.forEach(({ captchaImg, inputField }) => {
         // 检查是否已经添加过图标
         const existingIcon = captchaImg.nextElementSibling;
-        if (existingIcon && existingIcon.classList.contains('captcha-recognition-icon')) {
+        if (
+          existingIcon &&
+          existingIcon.classList.contains("captcha-recognition-icon")
+        ) {
           return;
         }
-        
+
         // 创建识别图标
-        const icon = document.createElement('div');
-        icon.classList.add('captcha-recognition-icon');
-        icon.title = '点击识别验证码';
-        
+        const icon = document.createElement("div");
+        icon.classList.add("captcha-recognition-icon");
+        icon.title = "点击识别验证码";
+
         // 将图标放在验证码图片后面（紧邻其后）
         if (captchaImg.nextSibling) {
           captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
         } else {
           captchaImg.parentNode.appendChild(icon);
         }
-        
+
         // 添加点击事件
-        icon.addEventListener('click', async () => {
+        icon.addEventListener("click", async () => {
           this.processCaptcha(captchaImg, inputField, icon);
         });
       });
@@ -445,45 +525,66 @@ export default {
     async processCaptcha(captchaImg, inputField, icon) {
       try {
         // 更新图标状态为加载中
-        icon.classList.add('captcha-recognition-loading');
-        
+        icon.classList.add("captcha-recognition-loading");
+
         // 识别验证码
         const text = await this.recognizeCaptcha(captchaImg);
-        
+
         // 如果识别结果为空，显示错误
         if (!text) {
-          icon.classList.remove('captcha-recognition-loading');
-          icon.classList.add('captcha-recognition-error');
+          icon.classList.remove("captcha-recognition-loading");
+          icon.classList.add("captcha-recognition-error");
           setTimeout(() => {
-            icon.classList.remove('captcha-recognition-error');
+            icon.classList.remove("captcha-recognition-error");
           }, 2000);
           return;
         }
-        
+
         // 填充结果到输入框
         inputField.value = text;
         // 触发输入事件，以便触发表单验证
-        inputField.dispatchEvent(new Event('input', { bubbles: true }));
-        inputField.dispatchEvent(new Event('change', { bubbles: true }));
-        
+        inputField.dispatchEvent(new Event("input", { bubbles: true }));
+        inputField.dispatchEvent(new Event("change", { bubbles: true }));
+
+        // 将识别结果复制到剪贴板
+        if (this.settings.copyToClipboard) {
+          try {
+            await navigator.clipboard.writeText(text);
+            this.showToast(`验证码已识别: ${text} (已复制到剪贴板)`, "success");
+          } catch (clipboardError) {
+            // 如果剪贴板API不可用，使用传统方法
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            this.showToast(`验证码已识别: ${text} (已复制到剪贴板)`, "success");
+          }
+        } else {
+          this.showToast(`验证码已识别: ${text}`, "success");
+        }
+
         // 更新图标状态为成功
-        icon.classList.remove('captcha-recognition-loading');
-        icon.classList.add('captcha-recognition-success');
+        icon.classList.remove("captcha-recognition-loading");
+        icon.classList.add("captcha-recognition-success");
         setTimeout(() => {
-          icon.classList.remove('captcha-recognition-success');
+          icon.classList.remove("captcha-recognition-success");
         }, 2000);
-        
-        // this.showToast(`已填充验证码: ${text}`, "success");
-        
       } catch (error) {
-        console.error('验证码识别失败:', error);
-        icon.classList.remove('captcha-recognition-loading');
-        icon.classList.add('captcha-recognition-error');
+        console.error("验证码识别失败:", error);
+        icon.classList.remove("captcha-recognition-loading");
+        icon.classList.add("captcha-recognition-error");
         setTimeout(() => {
-          icon.classList.remove('captcha-recognition-error');
+          icon.classList.remove("captcha-recognition-error");
         }, 2000);
-        
-        this.showToast("处理验证码失败: " + (error.message || "未知错误"), "error");
+
+        this.showToast(
+          "处理验证码失败: " + (error.message || "未知错误"),
+          "error"
+        );
       }
     },
 
@@ -493,28 +594,85 @@ export default {
     setupMutationObserver() {
       const observer = new MutationObserver((mutations) => {
         let hasNewCaptcha = false;
-        
-        mutations.forEach(mutation => {
-          if (mutation.type === 'childList' && mutation.addedNodes.length) {
-            mutation.addedNodes.forEach(node => {
+        let newCaptchaElements = [];
+
+        mutations.forEach((mutation) => {
+          // 检查新增节点
+          if (mutation.type === "childList" && mutation.addedNodes.length) {
+            mutation.addedNodes.forEach((node) => {
               if (node.nodeType === Node.ELEMENT_NODE) {
-                const captchas = node.querySelectorAll(this.config.captchaSelector);
+                const captchas = node.querySelectorAll(
+                  this.config.captchaSelector
+                );
                 if (captchas.length > 0) {
                   hasNewCaptcha = true;
+                  captchas.forEach((captcha) => {
+                    newCaptchaElements.push(captcha);
+                  });
                 }
               }
             });
           }
+
+          // 检查属性变化 - 特别是src属性变化的验证码图片
+          if (
+            mutation.type === "attributes" &&
+            mutation.attributeName === "src" &&
+            mutation.target.matches &&
+            mutation.target.matches(this.config.captchaSelector)
+          ) {
+            hasNewCaptcha = true;
+            newCaptchaElements.push(mutation.target);
+          }
         });
-        
+
         if (hasNewCaptcha) {
           this.addIconsToCaptchas();
+
+          // 对新检测到的验证码元素进行自动识别处理
+          // 只有当启用了自动识别功能时才执行
+          if (this.settings.autoRecognize) {
+            setTimeout(() => {
+              const elements = this.findCaptchaElements();
+              elements.forEach(({ captchaImg, inputField }) => {
+                // 检查这个验证码图片是否是新添加或变化的
+                if (newCaptchaElements.includes(captchaImg)) {
+                  // 查找或创建识别图标
+                  let icon;
+                  const existingIcon = captchaImg.nextElementSibling;
+                  if (
+                    existingIcon &&
+                    existingIcon.classList.contains("captcha-recognition-icon")
+                  ) {
+                    icon = existingIcon;
+                  } else {
+                    icon = document.createElement("div");
+                    icon.classList.add("captcha-recognition-icon");
+                    if (captchaImg.nextSibling) {
+                      captchaImg.parentNode.insertBefore(
+                        icon,
+                        captchaImg.nextSibling
+                      );
+                    } else {
+                      captchaImg.parentNode.appendChild(icon);
+                    }
+                  }
+
+                  // 自动进行识别
+                  this.processCaptcha(captchaImg, inputField, icon);
+                }
+              });
+            }, 500); // 延迟500ms，确保图片已经加载完成
+          }
         }
       });
-      
+
+      // 监听整个文档的变化，包括子树和属性变化
       observer.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["src"], // 只监听src属性变化
       });
     },
 
@@ -523,7 +681,7 @@ export default {
      */
     registerMenuCommands() {
       // 检查是否在油猴环境中
-      if (typeof GM_registerMenuCommand !== 'undefined') {
+      if (typeof GM_registerMenuCommand !== "undefined") {
         GM_registerMenuCommand("验证码识别设置", () => {
           this.openSettings();
         });
@@ -538,22 +696,25 @@ export default {
     init() {
       // 注册油猴菜单
       this.registerMenuCommands();
-      
+
       // 加载设置
       this.loadSettings();
-      
+
       // 显示初始化提示
       // this.showToast("验证码自动识别已启动", "info");
-      
+
       // 延迟执行，确保页面已完全加载
       setTimeout(() => {
         this.addIconsToCaptchas();
         this.setupMutationObserver();
-        
+
         // 检测到验证码时显示提示
         const elements = this.findCaptchaElements();
         if (elements.length > 0) {
-          this.showToast(`检测到 ${elements.length} 个验证码，点击识别图标开始识别`, "info");
+          this.showToast(
+            `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
+            "info"
+          );
         }
       }, 1000);
     },
@@ -565,21 +726,27 @@ export default {
      */
     request(config) {
       // 检查是否在油猴环境中
-      if (typeof GM_xmlhttpRequest !== 'undefined') {
+      if (typeof GM_xmlhttpRequest !== "undefined") {
         return new Promise((resolve, reject) => {
           GM_xmlhttpRequest({
-            method: config.method || 'GET',
+            method: config.method || "GET",
             url: config.url,
-            data: config.data ? (typeof config.data === 'string' ? config.data : JSON.stringify(config.data)) : undefined,
+            data: config.data
+              ? typeof config.data === "string"
+                ? config.data
+                : JSON.stringify(config.data)
+              : undefined,
             headers: config.headers || {},
-            responseType: config.responseType || 'json',
+            responseType: config.responseType || "json",
             onload: (response) => {
               if (response.status >= 200 && response.status < 300) {
                 let responseData;
                 try {
-                  responseData = config.responseType === 'json' && typeof response.response === 'string' 
-                    ? JSON.parse(response.response || response.responseText) 
-                    : (response.response || response.responseText);
+                  responseData =
+                    config.responseType === "json" &&
+                    typeof response.response === "string"
+                      ? JSON.parse(response.response || response.responseText)
+                      : response.response || response.responseText;
                 } catch (e) {
                   responseData = response.response || response.responseText;
                 }
@@ -590,28 +757,28 @@ export default {
             },
             onerror: (error) => {
               reject(error);
-            }
+            },
           });
         });
       } else {
         // 在非油猴环境中，移除可能导致问题的头部
         const safeHeaders = { ...config.headers };
-        const unsafeHeaders = ['Host', 'Origin', 'Referer', 'Cookie'];
-        
-        unsafeHeaders.forEach(header => {
+        const unsafeHeaders = ["Host", "Origin", "Referer", "Cookie"];
+
+        unsafeHeaders.forEach((header) => {
           if (safeHeaders[header]) {
             delete safeHeaders[header];
           }
         });
-        
+
         // 使用axios
         return axios({
-          method: config.method || 'GET',
+          method: config.method || "GET",
           url: config.url,
           data: config.data,
           params: config.params,
           headers: safeHeaders,
-          responseType: config.responseType
+          responseType: config.responseType,
         });
       }
     },
@@ -621,37 +788,37 @@ export default {
      * @param {string} message - 提示信息
      * @param {string} type - 提示类型 (success, error, info)
      */
-    showToast(message, type = 'info') {
+    showToast(message, type = "info") {
       // 创建toast容器（如果不存在）
-      let toastContainer = document.getElementById('captcha-toast-container');
+      let toastContainer = document.getElementById("captcha-toast-container");
       if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.id = 'captcha-toast-container';
+        toastContainer = document.createElement("div");
+        toastContainer.id = "captcha-toast-container";
         document.body.appendChild(toastContainer);
       }
-      
+
       // 创建新的toast元素
-      const toast = document.createElement('div');
+      const toast = document.createElement("div");
       toast.className = `captcha-toast captcha-toast-${type}`;
       toast.textContent = message;
-      
+
       // 将新toast插入到容器的最前面
       if (toastContainer.firstChild) {
         toastContainer.insertBefore(toast, toastContainer.firstChild);
       } else {
         toastContainer.appendChild(toast);
       }
-      
+
       // 添加显示动画
       setTimeout(() => {
-        toast.classList.add('captcha-toast-show');
+        toast.classList.add("captcha-toast-show");
       }, 10);
-      
+
       // 3秒后移除
       setTimeout(() => {
-        toast.classList.remove('captcha-toast-show');
-        toast.classList.add('captcha-toast-hide');
-        
+        toast.classList.remove("captcha-toast-show");
+        toast.classList.add("captcha-toast-hide");
+
         // 动画结束后移除元素
         setTimeout(() => {
           if (toast.parentNode) {
@@ -663,6 +830,6 @@ export default {
   },
   mounted() {
     this.init();
-  }
+  },
 };
 </script>
