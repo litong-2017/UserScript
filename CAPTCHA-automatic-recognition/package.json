@@ -1,6 +1,6 @@
 {
   "name": "CAPTCHA-automatic-recognition",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "ezyshu",
   "description": "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。",
   "type": "module",

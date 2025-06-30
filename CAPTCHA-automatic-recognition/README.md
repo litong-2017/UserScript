@@ -1,6 +1,6 @@
 ## CAPTCHA-automatic-recognition（AI验证码自动识别填充）
 
-自动识别网页验证码并填充输入框，支持 OpenAI 和 Google Gemini。
+自动识别网页验证码并填充输入框，支持 OpenAI 和 Google Gemini，需要模型支持视觉。（推荐gpt-4.1-mini 和 gemini-2.5-flash-lite，速度较快）
 
 ![image](https://github.com/user-attachments/assets/a2987157-e6cd-47cb-92d4-0a060b5b37c8)
 
