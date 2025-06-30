@@ -2579,7 +2579,7 @@
        * 使用Google Gemini API识别验证码
        */
       async recognizeWithGemini(base64Image) {
-        const model = this.settings.geminiModel || "gemini-2.5-flash";
+        const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
         const baseApiUrl = this.settings.geminiApiUrl || "https://generativelanguage.googleapis.com/v1beta/models";
         const apiUrl = `${baseApiUrl}/${model}:generateContent`;
         const response = await this.request({
@@ -2985,7 +2985,7 @@
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
                 "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $data.settings.geminiModel = $event),
-                placeholder: "gemini-2.5-flash"
+                placeholder: "gemini-2.5-flash-lite"
               }, null, 512), [
                 [vue.vModelText, $data.settings.geminiModel]
               ]),

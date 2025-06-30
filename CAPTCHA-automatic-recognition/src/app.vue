@@ -46,7 +46,7 @@
           </div>
           <div class="captcha-settings-item">
             <label>模型 (可选):</label>
-            <input type="text" v-model="settings.geminiModel" placeholder="gemini-2.5-flash" />
+            <input type="text" v-model="settings.geminiModel" placeholder="gemini-2.5-flash-lite" />
             <small>留空使用默认模型</small>
           </div>
         </div>
@@ -285,7 +285,7 @@ export default {
      */
     async recognizeWithGemini(base64Image) {
       // 使用自定义模型或默认模型
-      const model = this.settings.geminiModel || "gemini-2.5-flash";
+      const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
       // 使用自定义API地址或默认地址
       const baseApiUrl = this.settings.geminiApiUrl || "https://generativelanguage.googleapis.com/v1beta/models";
       const apiUrl = `${baseApiUrl}/${model}:generateContent`;
