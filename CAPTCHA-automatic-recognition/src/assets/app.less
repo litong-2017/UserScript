@@ -100,13 +100,19 @@ body.captcha-settings-open {
 }
 
 .captcha-settings-item input,
-.captcha-settings-item select {
+.captcha-settings-item select,
+.captcha-settings-item textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
+}
+
+.captcha-settings-item textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .captcha-settings-buttons {

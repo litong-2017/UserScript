@@ -48,6 +48,16 @@
             />
             <small>留空使用默认模型</small>
           </div>
+          <div class="captcha-settings-item">
+            <label>自定义提示词 (可选):</label>
+            <textarea
+              v-model="settings.openaiPrompt"
+              placeholder="1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
+2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；"
+              rows="3"
+            ></textarea>
+            <small>留空使用默认提示词</small>
+          </div>
         </div>
 
         <div v-if="settings.apiType === 'gemini'">
@@ -76,6 +86,16 @@
               placeholder="gemini-2.5-flash-lite"
             />
             <small>留空使用默认模型</small>
+          </div>
+          <div class="captcha-settings-item">
+            <label>自定义提示词 (可选):</label>
+            <textarea
+              v-model="settings.geminiPrompt"
+              placeholder="1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
+2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；"
+              rows="3"
+            ></textarea>
+            <small>留空使用默认提示词</small>
           </div>
         </div>
 
@@ -132,10 +152,12 @@ export default {
         openaiKey: "",
         openaiApiUrl: "",
         openaiModel: "",
+        openaiPrompt: "", // 自定义提示词
         // Gemini设置
         geminiKey: "",
         geminiApiUrl: "",
         geminiModel: "",
+        geminiPrompt: "", // 自定义提示词
         // 自动识别设置
         autoRecognize: false, // 是否启用自动识别
         // 剪贴板设置
@@ -314,6 +336,9 @@ export default {
         "https://api.openai.com/v1/chat/completions";
       // 使用自定义模型或默认模型
       const model = this.settings.openaiModel || "gpt-4.1-mini";
+      // 使用自定义提示词或默认提示词
+      const prompt = this.settings.openaiPrompt || `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
+2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；`;
 
       const response = await this.request({
         method: "POST",
@@ -326,7 +351,7 @@ export default {
               content: [
                 {
                   type: "text",
-                  text: "这是一个验证码图片，请识别图片中的文字，只返回识别结果，不要有任何其他文字或解释",
+                  text: prompt,
                 },
                 {
                   type: "image_url",
@@ -360,6 +385,9 @@ export default {
         this.settings.geminiApiUrl ||
         "https://generativelanguage.googleapis.com/v1beta/models";
       const apiUrl = `${baseApiUrl}/${model}:generateContent`;
+      // 使用自定义提示词或默认提示词
+      const prompt = this.settings.geminiPrompt || `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
+2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；`;
 
       const response = await this.request({
         method: "POST",
@@ -369,7 +397,7 @@ export default {
             {
               parts: [
                 {
-                  text: "这是一个验证码图片，请识别图片中的文字，只返回识别结果，不要有任何其他文字或解释",
+                  text: prompt,
                 },
                 {
                   inline_data: {

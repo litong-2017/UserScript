@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.5
+// @version      0.0.6
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -15,7 +15,7 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-left:5px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');background-size:contain;cursor:pointer;z-index:999;opacity:.7;transition:opacity .2s}.captcha-recognition-icon:hover{opacity:1}.input-group-append{position:relative}.input-group-append .captcha-recognition-icon{position:absolute;left:100%}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>');animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')}body.captcha-settings-open{overflow:hidden}.captcha-settings-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#00000080;display:flex;justify-content:center;align-items:center;z-index:2147483647;text-align:left}.captcha-settings-content{background-color:#fff;padding:20px;border-radius:8px;width:400px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 4px 12px #00000026}.captcha-settings-content h3{margin-top:0;color:#333;font-size:18px;margin-bottom:16px;text-align:center}.captcha-settings-item{margin-bottom:12px}.captcha-settings-item label{display:block;margin-bottom:4px;color:#555;font-size:14px}.captcha-settings-item input,.captcha-settings-item select{width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box}.captcha-settings-buttons{display:flex;justify-content:flex-end;margin-top:20px;gap:10px}.captcha-settings-buttons button{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .2s}.captcha-settings-buttons button:first-child{background-color:#1a73e8;color:#fff}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0}.captcha-settings-buttons button:last-child{background-color:#f1f1f1;color:#333}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4}.dev-settings-button{position:fixed;bottom:20px;right:20px;padding:10px 15px;background-color:#1a73e8;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;font-size:14px;box-shadow:0 2px 5px #0003;transition:background-color .2s}.dev-settings-button:hover{background-color:#1557b0}#captcha-toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}.captcha-toast{min-width:250px;max-width:350px;padding:12px 16px;border-radius:4px;box-shadow:0 4px 12px #00000026;color:#fff;font-size:14px;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:auto;word-break:break-word}.captcha-toast-show{opacity:1;transform:translateY(0)}.captcha-toast-hide{opacity:0;transform:translateY(-20px)}.captcha-toast-info{background-color:#1a73e8}.captcha-toast-success{background-color:#4caf50}.captcha-toast-error{background-color:#f44336} `);
+(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-left:5px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');background-size:contain;cursor:pointer;z-index:999;opacity:.7;transition:opacity .2s}.captcha-recognition-icon:hover{opacity:1}.input-group-append{position:relative}.input-group-append .captcha-recognition-icon{position:absolute;left:100%}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>');animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')}body.captcha-settings-open{overflow:hidden}.captcha-settings-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#00000080;display:flex;justify-content:center;align-items:center;z-index:2147483647;text-align:left}.captcha-settings-content{background-color:#fff;padding:20px;border-radius:8px;width:400px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 4px 12px #00000026}.captcha-settings-content h3{margin-top:0;color:#333;font-size:18px;margin-bottom:16px;text-align:center}.captcha-settings-item{margin-bottom:12px}.captcha-settings-item label{display:block;margin-bottom:4px;color:#555;font-size:14px}.captcha-settings-item input,.captcha-settings-item select,.captcha-settings-item textarea{width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box}.captcha-settings-item textarea{resize:vertical;min-height:80px}.captcha-settings-buttons{display:flex;justify-content:flex-end;margin-top:20px;gap:10px}.captcha-settings-buttons button{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .2s}.captcha-settings-buttons button:first-child{background-color:#1a73e8;color:#fff}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0}.captcha-settings-buttons button:last-child{background-color:#f1f1f1;color:#333}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4}.dev-settings-button{position:fixed;bottom:20px;right:20px;padding:10px 15px;background-color:#1a73e8;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;font-size:14px;box-shadow:0 2px 5px #0003;transition:background-color .2s}.dev-settings-button:hover{background-color:#1557b0}#captcha-toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}.captcha-toast{min-width:250px;max-width:350px;padding:12px 16px;border-radius:4px;box-shadow:0 4px 12px #00000026;color:#fff;font-size:14px;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:auto;word-break:break-word}.captcha-toast-show{opacity:1;transform:translateY(0)}.captcha-toast-hide{opacity:0;transform:translateY(-20px)}.captcha-toast-info{background-color:#1a73e8}.captcha-toast-success{background-color:#4caf50}.captcha-toast-error{background-color:#f44336} `);
 
 (function (vue) {
   'use strict';
@@ -2405,10 +2405,14 @@
           openaiKey: "",
           openaiApiUrl: "",
           openaiModel: "",
+          openaiPrompt: "",
+          // 自定义提示词
           // Gemini设置
           geminiKey: "",
           geminiApiUrl: "",
           geminiModel: "",
+          geminiPrompt: "",
+          // 自定义提示词
           // 自动识别设置
           autoRecognize: false,
           // 是否启用自动识别
@@ -2553,6 +2557,8 @@
       async recognizeWithOpenAI(base64Image) {
         const apiUrl = this.settings.openaiApiUrl || "https://api.openai.com/v1/chat/completions";
         const model = this.settings.openaiModel || "gpt-4.1-mini";
+        const prompt = this.settings.openaiPrompt || `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
+2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；`;
         const response = await this.request({
           method: "POST",
           url: apiUrl,
@@ -2564,7 +2570,7 @@
                 content: [
                   {
                     type: "text",
-                    text: "这是一个验证码图片，请识别图片中的文字，只返回识别结果，不要有任何其他文字或解释"
+                    text: prompt
                   },
                   {
                     type: "image_url",
@@ -2591,6 +2597,8 @@
         const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
         const baseApiUrl = this.settings.geminiApiUrl || "https://generativelanguage.googleapis.com/v1beta/models";
         const apiUrl = `${baseApiUrl}/${model}:generateContent`;
+        const prompt = this.settings.geminiPrompt || `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
+2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；`;
         const response = await this.request({
           method: "POST",
           url: `${apiUrl}?key=${this.settings.geminiKey}`,
@@ -2599,7 +2607,7 @@
               {
                 parts: [
                   {
-                    text: "这是一个验证码图片，请识别图片中的文字，只返回识别结果，不要有任何其他文字或解释"
+                    text: prompt
                   },
                   {
                     inline_data: {
@@ -2970,30 +2978,36 @@
   const _hoisted_16 = { class: "captcha-settings-item" };
   const _hoisted_17 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
   const _hoisted_18 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认模型", -1);
-  const _hoisted_19 = { key: 1 };
-  const _hoisted_20 = { class: "captcha-settings-item" };
-  const _hoisted_21 = /* @__PURE__ */ vue.createElementVNode("label", null, "Google Gemini API Key:", -1);
-  const _hoisted_22 = { class: "captcha-settings-item" };
-  const _hoisted_23 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义API地址 (可选):", -1);
-  const _hoisted_24 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认地址", -1);
+  const _hoisted_19 = { class: "captcha-settings-item" };
+  const _hoisted_20 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义提示词 (可选):", -1);
+  const _hoisted_21 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认提示词", -1);
+  const _hoisted_22 = { key: 1 };
+  const _hoisted_23 = { class: "captcha-settings-item" };
+  const _hoisted_24 = /* @__PURE__ */ vue.createElementVNode("label", null, "Google Gemini API Key:", -1);
   const _hoisted_25 = { class: "captcha-settings-item" };
-  const _hoisted_26 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
-  const _hoisted_27 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认模型", -1);
+  const _hoisted_26 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义API地址 (可选):", -1);
+  const _hoisted_27 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认地址", -1);
   const _hoisted_28 = { class: "captcha-settings-item" };
-  const _hoisted_29 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动识别:", -1);
-  const _hoisted_30 = { style: { "display": "flex", "align-items": "center" } };
-  const _hoisted_31 = /* @__PURE__ */ vue.createElementVNode("label", {
+  const _hoisted_29 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
+  const _hoisted_30 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认模型", -1);
+  const _hoisted_31 = { class: "captcha-settings-item" };
+  const _hoisted_32 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义提示词 (可选):", -1);
+  const _hoisted_33 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认提示词", -1);
+  const _hoisted_34 = { class: "captcha-settings-item" };
+  const _hoisted_35 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动识别:", -1);
+  const _hoisted_36 = { style: { "display": "flex", "align-items": "center" } };
+  const _hoisted_37 = /* @__PURE__ */ vue.createElementVNode("label", {
     for: "autoRecognize",
     style: { "margin-bottom": "0" }
   }, "验证码图片变化时自动识别", -1);
-  const _hoisted_32 = { class: "captcha-settings-item" };
-  const _hoisted_33 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动复制到剪贴板:", -1);
-  const _hoisted_34 = { style: { "display": "flex", "align-items": "center" } };
-  const _hoisted_35 = /* @__PURE__ */ vue.createElementVNode("label", {
+  const _hoisted_38 = { class: "captcha-settings-item" };
+  const _hoisted_39 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动复制到剪贴板:", -1);
+  const _hoisted_40 = { style: { "display": "flex", "align-items": "center" } };
+  const _hoisted_41 = /* @__PURE__ */ vue.createElementVNode("label", {
     for: "copyToClipboard",
     style: { "margin-bottom": "0" }
   }, "自动复制到剪贴板", -1);
-  const _hoisted_36 = { class: "captcha-settings-buttons" };
+  const _hoisted_42 = { class: "captcha-settings-buttons" };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", _hoisted_1, [
       $data.process.env.NODE_ENV === "development" && !$data.showSettings ? (vue.openBlock(), vue.createElementBlock("div", {
@@ -3044,76 +3058,98 @@
                 [vue.vModelText, $data.settings.openaiModel]
               ]),
               _hoisted_18
+            ]),
+            vue.createElementVNode("div", _hoisted_19, [
+              _hoisted_20,
+              vue.withDirectives(vue.createElementVNode("textarea", {
+                "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $data.settings.openaiPrompt = $event),
+                placeholder: "1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；\n2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；",
+                rows: "3"
+              }, null, 512), [
+                [vue.vModelText, $data.settings.openaiPrompt]
+              ]),
+              _hoisted_21
             ])
           ])) : vue.createCommentVNode("", true),
-          $data.settings.apiType === "gemini" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_19, [
-            vue.createElementVNode("div", _hoisted_20, [
-              _hoisted_21,
+          $data.settings.apiType === "gemini" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_22, [
+            vue.createElementVNode("div", _hoisted_23, [
+              _hoisted_24,
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
-                "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $data.settings.geminiKey = $event),
+                "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $data.settings.geminiKey = $event),
                 placeholder: "输入Gemini API Key"
               }, null, 512), [
                 [vue.vModelText, $data.settings.geminiKey]
               ])
             ]),
-            vue.createElementVNode("div", _hoisted_22, [
-              _hoisted_23,
-              vue.withDirectives(vue.createElementVNode("input", {
-                type: "text",
-                "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $data.settings.geminiApiUrl = $event),
-                placeholder: "https://generativelanguage.googleapis.com/v1beta/models"
-              }, null, 512), [
-                [vue.vModelText, $data.settings.geminiApiUrl]
-              ]),
-              _hoisted_24
-            ]),
             vue.createElementVNode("div", _hoisted_25, [
               _hoisted_26,
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
-                "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $data.settings.geminiModel = $event),
+                "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $data.settings.geminiApiUrl = $event),
+                placeholder: "https://generativelanguage.googleapis.com/v1beta/models"
+              }, null, 512), [
+                [vue.vModelText, $data.settings.geminiApiUrl]
+              ]),
+              _hoisted_27
+            ]),
+            vue.createElementVNode("div", _hoisted_28, [
+              _hoisted_29,
+              vue.withDirectives(vue.createElementVNode("input", {
+                type: "text",
+                "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $data.settings.geminiModel = $event),
                 placeholder: "gemini-2.5-flash-lite"
               }, null, 512), [
                 [vue.vModelText, $data.settings.geminiModel]
               ]),
-              _hoisted_27
+              _hoisted_30
+            ]),
+            vue.createElementVNode("div", _hoisted_31, [
+              _hoisted_32,
+              vue.withDirectives(vue.createElementVNode("textarea", {
+                "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $data.settings.geminiPrompt = $event),
+                placeholder: "1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；\n2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；",
+                rows: "3"
+              }, null, 512), [
+                [vue.vModelText, $data.settings.geminiPrompt]
+              ]),
+              _hoisted_33
             ])
           ])) : vue.createCommentVNode("", true),
-          vue.createElementVNode("div", _hoisted_28, [
-            _hoisted_29,
-            vue.createElementVNode("div", _hoisted_30, [
+          vue.createElementVNode("div", _hoisted_34, [
+            _hoisted_35,
+            vue.createElementVNode("div", _hoisted_36, [
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "checkbox",
-                "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $data.settings.autoRecognize = $event),
+                "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.settings.autoRecognize = $event),
                 id: "autoRecognize",
                 style: { "width": "auto", "margin-right": "8px" }
               }, null, 512), [
                 [vue.vModelCheckbox, $data.settings.autoRecognize]
               ]),
-              _hoisted_31
+              _hoisted_37
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_32, [
-            _hoisted_33,
-            vue.createElementVNode("div", _hoisted_34, [
+          vue.createElementVNode("div", _hoisted_38, [
+            _hoisted_39,
+            vue.createElementVNode("div", _hoisted_40, [
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "checkbox",
-                "onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => $data.settings.copyToClipboard = $event),
+                "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => $data.settings.copyToClipboard = $event),
                 id: "copyToClipboard",
                 style: { "width": "auto", "margin-right": "8px" }
               }, null, 512), [
                 [vue.vModelCheckbox, $data.settings.copyToClipboard]
               ]),
-              _hoisted_35
+              _hoisted_41
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_36, [
+          vue.createElementVNode("div", _hoisted_42, [
             vue.createElementVNode("button", {
-              onClick: _cache[10] || (_cache[10] = (...args) => $options.saveSettings && $options.saveSettings(...args))
+              onClick: _cache[12] || (_cache[12] = (...args) => $options.saveSettings && $options.saveSettings(...args))
             }, "保存设置"),
             vue.createElementVNode("button", {
-              onClick: _cache[11] || (_cache[11] = (...args) => $options.closeSettings && $options.closeSettings(...args))
+              onClick: _cache[13] || (_cache[13] = (...args) => $options.closeSettings && $options.closeSettings(...args))
             }, "取消")
           ])
         ])
