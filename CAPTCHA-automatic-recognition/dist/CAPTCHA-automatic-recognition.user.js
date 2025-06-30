@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.6
+// @version      0.0.7
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -2859,10 +2859,23 @@
           this.setupMutationObserver();
           const elements = this.findCaptchaElements();
           if (elements.length > 0) {
-            this.showToast(
-              `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
-              "info"
-            );
+            if (this.settings.autoRecognize) {
+              this.showToast(
+                `检测到 ${elements.length} 个验证码，正在自动识别...`,
+                "info"
+              );
+              elements.forEach(({ captchaImg, inputField }) => {
+                const icon = captchaImg.nextElementSibling;
+                if (icon && icon.classList.contains("captcha-recognition-icon")) {
+                  this.processCaptcha(captchaImg, inputField, icon);
+                }
+              });
+            } else {
+              this.showToast(
+                `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
+                "info"
+              );
+            }
           }
         }, 1e3);
       },

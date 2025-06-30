@@ -337,7 +337,9 @@ export default {
       // 使用自定义模型或默认模型
       const model = this.settings.openaiModel || "gpt-4.1-mini";
       // 使用自定义提示词或默认提示词
-      const prompt = this.settings.openaiPrompt || `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
+      const prompt =
+        this.settings.openaiPrompt ||
+        `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
 2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；`;
 
       const response = await this.request({
@@ -386,7 +388,9 @@ export default {
         "https://generativelanguage.googleapis.com/v1beta/models";
       const apiUrl = `${baseApiUrl}/${model}:generateContent`;
       // 使用自定义提示词或默认提示词
-      const prompt = this.settings.geminiPrompt || `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
+      const prompt =
+        this.settings.geminiPrompt ||
+        `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
 2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；`;
 
       const response = await this.request({
@@ -722,29 +726,38 @@ export default {
      * 初始化插件
      */
     init() {
-      // 注册油猴菜单
       this.registerMenuCommands();
-
-      // 加载设置
       this.loadSettings();
-
-      // 显示初始化提示
-      // this.showToast("验证码自动识别已启动", "info");
-
-      // 延迟执行，确保页面已完全加载
       setTimeout(() => {
-        this.addIconsToCaptchas();
+        this.addIconsToCaptchas(); // 步骤1: 确保所有图标都已创建
         this.setupMutationObserver();
-
-        // 检测到验证码时显示提示
         const elements = this.findCaptchaElements();
+
         if (elements.length > 0) {
-          this.showToast(
-            `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
-            "info"
-          );
+          // 新增逻辑: 检查初始加载时的自动识别设置
+          if (this.settings.autoRecognize) {
+            this.showToast(
+              `检测到 ${elements.length} 个验证码，正在自动识别...`,
+              "info"
+            );
+            // 遍历所有找到的验证码并处理
+            elements.forEach(({ captchaImg, inputField }) => {
+              const icon = captchaImg.nextElementSibling;
+              // 确保图标元素存在
+              if (icon && icon.classList.contains("captcha-recognition-icon")) {
+                // 直接调用处理函数，无需等待点击
+                this.processCaptcha(captchaImg, inputField, icon);
+              }
+            });
+          } else {
+            // 保留原始行为: 如果未开启自动识别，则提示用户点击
+            this.showToast(
+              `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
+              "info"
+            );
+          }
         }
-      }, 1000);
+      }, 1e3);
     },
 
     /**
