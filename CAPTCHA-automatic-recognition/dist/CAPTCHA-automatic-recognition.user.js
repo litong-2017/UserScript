@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.9
+// @version      0.0.10
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -15,11 +15,46 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-left:5px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');background-size:contain;cursor:pointer;position:relative;z-index:999;opacity:.7;transition:opacity .2s}.captcha-recognition-icon:hover{opacity:1}.input-group-append{position:relative}.input-group-append .captcha-recognition-icon{position:absolute;left:100%}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>');animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')}body.captcha-settings-open{overflow:hidden}.captcha-settings-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#00000080;display:flex;justify-content:center;align-items:center;z-index:2147483647;text-align:left}.captcha-settings-content{background-color:#fff;color:#333;padding:20px;border-radius:8px;width:400px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 4px 12px #00000026}.captcha-settings-content h3{margin-top:0;color:#333;font-size:18px;margin-bottom:16px;text-align:center}.captcha-settings-item{margin-bottom:12px}.captcha-settings-item label{display:block;margin-bottom:4px;color:#555;font-size:14px}.captcha-settings-item input,.captcha-settings-item select,.captcha-settings-item textarea{width:100%;padding:8px;border:1px solid #ddd;background:none;border-radius:4px;font-size:14px;box-sizing:border-box!important;background:#fff!important;color:#333!important;margin:0!important}.captcha-settings-item input,.captcha-settings-item select{height:33px}.captcha-settings-item textarea{resize:vertical;min-height:80px}.textarea-with-button{position:relative;display:flex;flex-direction:column}.use-default-prompt{position:absolute;top:5px;right:5px;background-color:#f1f1f1;border:1px solid #ddd;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;color:#333;transition:background-color .2s}.use-default-prompt:hover{background-color:#e4e4e4}.captcha-settings-buttons{display:flex;justify-content:flex-end;margin-top:20px;gap:10px}.captcha-settings-buttons button{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .2s}.captcha-settings-buttons button:first-child{background-color:#1a73e8;color:#fff}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0}.captcha-settings-buttons button:last-child{background-color:#f1f1f1;color:#333}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4}.dev-settings-button{position:fixed;bottom:20px;right:20px;padding:10px 15px;background-color:#1a73e8;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;font-size:14px;box-shadow:0 2px 5px #0003;transition:background-color .2s}.dev-settings-button:hover{background-color:#1557b0}#captcha-toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;text-align:left}.captcha-toast{width:280px;padding:12px 16px;border-radius:4px;box-shadow:0 4px 12px #00000026;color:#fff;font-size:14px;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:auto;word-break:break-word;text-align:left}.captcha-toast-show{opacity:1;transform:translateY(0)}.captcha-toast-hide{opacity:0;transform:translateY(-20px)}.captcha-toast-info{background-color:#1a73e8}.captcha-toast-success{background-color:#4caf50}.captcha-toast-error{background-color:#f44336}.input-with-button{position:relative;display:flex;align-items:center}.input-with-button input{flex:1}.test-api-button{background-color:#1a73e8;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:14px;cursor:pointer;transition:background-color .2s,color .2s;min-width:80px;display:flex;justify-content:center;align-items:center;height:33px;margin-left:10px}.captcha-settings-tip{margin:16px 0;padding:12px;background-color:#f8f9fa;border-left:4px solid #1a73e8;border-radius:4px;font-size:13px;color:#333}.captcha-settings-tip p{margin:0 0 8px}.captcha-settings-tip ol{margin:8px 0 0;padding-left:24px}.captcha-settings-tip li{margin-bottom:4px}.test-api-button:hover{background-color:#1557b0}.test-api-button.test-loading{background-color:#f1f1f1;color:#666;position:relative}.test-api-button.test-loading:after{content:"";position:absolute;width:12px;height:12px;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #666;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite}@keyframes spin{0%{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}.test-api-button.test-success{background-color:#4caf50;color:#fff}.test-api-button.test-error{background-color:#f44336;color:#fff}img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon{position:absolute;left:270px} `);
+(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-left:5px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');background-size:contain;cursor:pointer;position:relative;z-index:999;opacity:.7;transition:opacity .2s}.captcha-recognition-icon:hover{opacity:1}.input-group-append{position:relative}.input-group-append .captcha-recognition-icon{position:absolute;left:100%}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>');animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')}body.captcha-settings-open{overflow:hidden}.captcha-settings-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#00000080;display:flex;justify-content:center;align-items:center;z-index:2147483647;text-align:left}.captcha-settings-content{background-color:#fff;color:#333;padding:20px;border-radius:8px;width:400px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 4px 12px #00000026}.captcha-settings-content h3{margin-top:0;color:#333;font-size:18px;margin-bottom:16px;text-align:center}.captcha-settings-content h3 span{font-size:16px}.captcha-settings-item{margin-bottom:12px}.captcha-settings-item label{display:block;margin-bottom:4px;color:#555;font-size:14px}.captcha-settings-item input,.captcha-settings-item select,.captcha-settings-item textarea{width:100%;padding:8px;border:1px solid #ddd;background:none;border-radius:4px;font-size:14px;box-sizing:border-box!important;background:#fff!important;color:#333!important;margin:0!important}.captcha-settings-item input,.captcha-settings-item select{height:33px}.captcha-settings-item textarea{resize:vertical;min-height:80px}.textarea-with-button{position:relative;display:flex;flex-direction:column}.use-default-prompt{position:absolute;top:5px;right:5px;background-color:#f1f1f1;border:1px solid #ddd;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;color:#333;transition:background-color .2s}.use-default-prompt:hover{background-color:#e4e4e4}.captcha-settings-buttons{display:flex;justify-content:flex-end;margin-top:20px;gap:10px}.captcha-settings-buttons button{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .2s}.captcha-settings-buttons button:first-child{background-color:#1a73e8;color:#fff}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0}.captcha-settings-buttons button:last-child{background-color:#f1f1f1;color:#333}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4}.dev-settings-button{position:fixed;bottom:20px;right:20px;padding:10px 15px;background-color:#1a73e8;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;font-size:14px;box-shadow:0 2px 5px #0003;transition:background-color .2s}.dev-settings-button:hover{background-color:#1557b0}#captcha-toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;text-align:left}.captcha-toast{width:280px;padding:12px 16px;border-radius:4px;box-shadow:0 4px 12px #00000026;color:#fff;font-size:14px;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:auto;word-break:break-word;text-align:left}.captcha-toast-show{opacity:1;transform:translateY(0)}.captcha-toast-hide{opacity:0;transform:translateY(-20px)}.captcha-toast-info{background-color:#1a73e8}.captcha-toast-success{background-color:#4caf50}.captcha-toast-error{background-color:#f44336}.input-with-button{position:relative;display:flex;align-items:center}.input-with-button input{flex:1}.test-api-button{background-color:#1a73e8;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:14px;cursor:pointer;transition:background-color .2s,color .2s;min-width:80px;display:flex;justify-content:center;align-items:center;height:33px;margin-left:10px}.captcha-settings-tip{margin:16px 0;padding:12px;background-color:#f8f9fa;border-left:4px solid #1a73e8;border-radius:4px;font-size:13px;color:#333}.captcha-settings-tip p{margin:0 0 8px}.captcha-settings-tip ol{margin:8px 0 0;padding-left:24px}.captcha-settings-tip li{margin-bottom:4px}.test-api-button:hover{background-color:#1557b0}.test-api-button.test-loading{background-color:#f1f1f1;color:#666;position:relative}.test-api-button.test-loading:after{content:"";position:absolute;width:12px;height:12px;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #666;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite}@keyframes spin{0%{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}.test-api-button.test-success{background-color:#4caf50;color:#fff}.test-api-button.test-error{background-color:#f44336;color:#fff}img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon{position:absolute;left:270px} `);
 
 (function (vue) {
   'use strict';
 
+  const name = "CAPTCHA-automatic-recognition";
+  const version = "0.0.10";
+  const author = "ezyshu";
+  const description = "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。";
+  const type = "module";
+  const license = "Apache-2.0";
+  const scripts = {
+    dev: "vite --mode development",
+    build: "vite build",
+    preview: "vite preview"
+  };
+  const dependencies = {
+    vue: "^3.4.27",
+    webdav: "^5.7.1",
+    axios: "^1.6.2"
+  };
+  const devDependencies = {
+    "@vitejs/plugin-vue": "^5.0.4",
+    less: "^4.1.0",
+    "less-loader": "^8.0.0",
+    "style-loader": "^2.0.0",
+    vite: "^5.2.12",
+    "vite-plugin-monkey": "^4.0.0"
+  };
+  const packageJson = {
+    name,
+    version,
+    author,
+    description,
+    type,
+    license,
+    scripts,
+    dependencies,
+    devDependencies
+  };
   function bind(fn, thisArg) {
     return function wrap() {
       return fn.apply(thisArg, arguments);
@@ -32,11 +67,11 @@
     const str = toString.call(thing);
     return cache[str] || (cache[str] = str.slice(8, -1).toLowerCase());
   })(/* @__PURE__ */ Object.create(null));
-  const kindOfTest = (type) => {
-    type = type.toLowerCase();
-    return (thing) => kindOf(thing) === type;
+  const kindOfTest = (type2) => {
+    type2 = type2.toLowerCase();
+    return (thing) => kindOf(thing) === type2;
   };
-  const typeOfTest = (type) => (thing) => typeof thing === type;
+  const typeOfTest = (type2) => (thing) => typeof thing === type2;
   const { isArray } = Array;
   const isUndefined = typeOfTest("undefined");
   function isBuffer(val) {
@@ -239,20 +274,20 @@
   const reduceDescriptors = (obj, reducer) => {
     const descriptors2 = Object.getOwnPropertyDescriptors(obj);
     const reducedDescriptors = {};
-    forEach(descriptors2, (descriptor, name) => {
+    forEach(descriptors2, (descriptor, name2) => {
       let ret;
-      if ((ret = reducer(descriptor, name, obj)) !== false) {
-        reducedDescriptors[name] = ret || descriptor;
+      if ((ret = reducer(descriptor, name2, obj)) !== false) {
+        reducedDescriptors[name2] = ret || descriptor;
       }
     });
     Object.defineProperties(obj, reducedDescriptors);
   };
   const freezeMethods = (obj) => {
-    reduceDescriptors(obj, (descriptor, name) => {
-      if (isFunction(obj) && ["arguments", "caller", "callee"].indexOf(name) !== -1) {
+    reduceDescriptors(obj, (descriptor, name2) => {
+      if (isFunction(obj) && ["arguments", "caller", "callee"].indexOf(name2) !== -1) {
         return false;
       }
-      const value = obj[name];
+      const value = obj[name2];
       if (!isFunction(value)) return;
       descriptor.enumerable = false;
       if ("writable" in descriptor) {
@@ -261,7 +296,7 @@
       }
       if (!descriptor.set) {
         descriptor.set = () => {
-          throw Error("Can not rewrite read-only method '" + name + "'");
+          throw Error("Can not rewrite read-only method '" + name2 + "'");
         };
       }
     });
@@ -592,8 +627,8 @@
     params && toFormData(params, this, options);
   }
   const prototype = AxiosURLSearchParams.prototype;
-  prototype.append = function append(name, value) {
-    this._pairs.push([name, value]);
+  prototype.append = function append(name2, value) {
+    this._pairs.push([name2, value]);
   };
   prototype.toString = function toString2(encoder) {
     const _encode = encoder ? function(value) {
@@ -741,8 +776,8 @@
       }
     }, options));
   }
-  function parsePropPath(name) {
-    return utils$1.matchAll(/\w+|\[(\w*)]/g, name).map((match) => {
+  function parsePropPath(name2) {
+    return utils$1.matchAll(/\w+|\[(\w*)]/g, name2).map((match) => {
       return match[0] === "[]" ? "" : match[1] || match[0];
     });
   }
@@ -760,32 +795,32 @@
   }
   function formDataToJSON(formData) {
     function buildPath(path, value, target, index) {
-      let name = path[index++];
-      if (name === "__proto__") return true;
-      const isNumericKey = Number.isFinite(+name);
+      let name2 = path[index++];
+      if (name2 === "__proto__") return true;
+      const isNumericKey = Number.isFinite(+name2);
       const isLast = index >= path.length;
-      name = !name && utils$1.isArray(target) ? target.length : name;
+      name2 = !name2 && utils$1.isArray(target) ? target.length : name2;
       if (isLast) {
-        if (utils$1.hasOwnProp(target, name)) {
-          target[name] = [target[name], value];
+        if (utils$1.hasOwnProp(target, name2)) {
+          target[name2] = [target[name2], value];
         } else {
-          target[name] = value;
+          target[name2] = value;
         }
         return !isNumericKey;
       }
-      if (!target[name] || !utils$1.isObject(target[name])) {
-        target[name] = [];
+      if (!target[name2] || !utils$1.isObject(target[name2])) {
+        target[name2] = [];
       }
-      const result = buildPath(path, value, target[name], index);
-      if (result && utils$1.isArray(target[name])) {
-        target[name] = arrayToObject(target[name]);
+      const result = buildPath(path, value, target[name2], index);
+      if (result && utils$1.isArray(target[name2])) {
+        target[name2] = arrayToObject(target[name2]);
       }
       return !isNumericKey;
     }
     if (utils$1.isFormData(formData) && utils$1.isFunction(formData.entries)) {
       const obj = {};
-      utils$1.forEachEntry(formData, (name, value) => {
-        buildPath(parsePropPath(name), value, obj, 0);
+      utils$1.forEachEntry(formData, (name2, value) => {
+        buildPath(parsePropPath(name2), value, obj, 0);
       });
       return obj;
     }
@@ -1313,20 +1348,20 @@
   const cookies = platform.hasStandardBrowserEnv ? (
     // Standard browser envs support document.cookie
     {
-      write(name, value, expires, path, domain, secure) {
-        const cookie = [name + "=" + encodeURIComponent(value)];
+      write(name2, value, expires, path, domain, secure) {
+        const cookie = [name2 + "=" + encodeURIComponent(value)];
         utils$1.isNumber(expires) && cookie.push("expires=" + new Date(expires).toGMTString());
         utils$1.isString(path) && cookie.push("path=" + path);
         utils$1.isString(domain) && cookie.push("domain=" + domain);
         secure === true && cookie.push("secure");
         document.cookie = cookie.join("; ");
       },
-      read(name) {
-        const match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
+      read(name2) {
+        const match = document.cookie.match(new RegExp("(^|;\\s*)(" + name2 + ")=([^;]*)"));
         return match ? decodeURIComponent(match[3]) : null;
       },
-      remove(name) {
-        this.write(name, "", Date.now() - 864e5);
+      remove(name2) {
+        this.write(name2, "", Date.now() - 864e5);
       }
     }
   ) : (
@@ -1448,8 +1483,8 @@
       if (platform.hasStandardBrowserEnv || platform.hasStandardBrowserWebWorkerEnv) {
         headers.setContentType(void 0);
       } else if ((contentType = headers.getContentType()) !== false) {
-        const [type, ...tokens] = contentType ? contentType.split(";").map((token) => token.trim()).filter(Boolean) : [];
-        headers.setContentType([type || "multipart/form-data", ...tokens].join("; "));
+        const [type2, ...tokens] = contentType ? contentType.split(";").map((token) => token.trim()).filter(Boolean) : [];
+        headers.setContentType([type2 || "multipart/form-data", ...tokens].join("; "));
       }
     }
     if (platform.hasStandardBrowserEnv) {
@@ -1724,9 +1759,9 @@
     stream: supportsResponseStream && ((res) => res.body)
   };
   isFetchSupported && ((res) => {
-    ["text", "arrayBuffer", "blob", "formData", "stream"].forEach((type) => {
-      !resolvers[type] && (resolvers[type] = utils$1.isFunction(res[type]) ? (res2) => res2[type]() : (_, config) => {
-        throw new AxiosError(`Response type '${type}' is not supported`, AxiosError.ERR_NOT_SUPPORT, config);
+    ["text", "arrayBuffer", "blob", "formData", "stream"].forEach((type2) => {
+      !resolvers[type2] && (resolvers[type2] = utils$1.isFunction(res[type2]) ? (res2) => res2[type2]() : (_, config) => {
+        throw new AxiosError(`Response type '${type2}' is not supported`, AxiosError.ERR_NOT_SUPPORT, config);
       });
     });
   })(new Response());
@@ -1955,29 +1990,29 @@
   }
   const VERSION = "1.10.0";
   const validators$1 = {};
-  ["object", "boolean", "number", "function", "string", "symbol"].forEach((type, i) => {
-    validators$1[type] = function validator2(thing) {
-      return typeof thing === type || "a" + (i < 1 ? "n " : " ") + type;
+  ["object", "boolean", "number", "function", "string", "symbol"].forEach((type2, i) => {
+    validators$1[type2] = function validator2(thing) {
+      return typeof thing === type2 || "a" + (i < 1 ? "n " : " ") + type2;
     };
   });
   const deprecatedWarnings = {};
-  validators$1.transitional = function transitional(validator2, version, message) {
+  validators$1.transitional = function transitional(validator2, version2, message) {
     function formatMessage(opt, desc) {
       return "[Axios v" + VERSION + "] Transitional option '" + opt + "'" + desc + (message ? ". " + message : "");
     }
     return (value, opt, opts) => {
       if (validator2 === false) {
         throw new AxiosError(
-          formatMessage(opt, " has been removed" + (version ? " in " + version : "")),
+          formatMessage(opt, " has been removed" + (version2 ? " in " + version2 : "")),
           AxiosError.ERR_DEPRECATED
         );
       }
-      if (version && !deprecatedWarnings[opt]) {
+      if (version2 && !deprecatedWarnings[opt]) {
         deprecatedWarnings[opt] = true;
         console.warn(
           formatMessage(
             opt,
-            " has been deprecated since v" + version + " and will be removed in the near future"
+            " has been deprecated since v" + version2 + " and will be removed in the near future"
           )
         );
       }
@@ -2451,9 +2486,11 @@
     }
     return target;
   };
+  const __vite_import_meta_env__ = { "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SSR": false, "VITE_GEMINI_KEY": "AIzaSyAxuUQEPRgKjkKjjN_1lQR9IHy17D23md8", "VITE_GEMINI_MODEL": "gemini-2.5-flash-lite", "VITE_GEMINI_URL": "https://generativelanguage.googleapis.com/v1beta/models", "VITE_OPENAI_KEY": "sk-TUkFdHRsyvx8vv6qMVz7cEJUGfq4BDQInyTG2UNyTl60yH2S", "VITE_OPENAI_MODEL": "gemini-2.5-flash-lite", "VITE_OPENAI_URL": "https://tbai.xin/v1/chat/completions" };
   const _sfc_main = {
     data() {
       return {
+        packageJson,
         // 导入的常量
         DEFAULT_PROMPT,
         // API测试状态
@@ -2468,15 +2505,15 @@
           apiType: "openai",
           // openai, gemini
           // OpenAI设置
-          openaiKey: "",
-          openaiApiUrl: "",
-          openaiModel: "",
+          openaiKey: "sk-TUkFdHRsyvx8vv6qMVz7cEJUGfq4BDQInyTG2UNyTl60yH2S",
+          openaiApiUrl: "https://tbai.xin/v1/chat/completions",
+          openaiModel: "gemini-2.5-flash-lite",
           openaiPrompt: DEFAULT_PROMPT,
           // 自定义提示词，默认填充
           // Gemini设置
-          geminiKey: "",
-          geminiApiUrl: "",
-          geminiModel: "",
+          geminiKey: "AIzaSyAxuUQEPRgKjkKjjN_1lQR9IHy17D23md8",
+          geminiApiUrl: "https://generativelanguage.googleapis.com/v1beta/models",
+          geminiModel: "gemini-2.5-flash-lite",
           geminiPrompt: DEFAULT_PROMPT,
           // 自定义提示词，默认填充
           // 自动识别设置
@@ -2548,10 +2585,7 @@
           if (typeof GM_setValue !== "undefined") {
             GM_setValue("captchaSettings", JSON.stringify(this.settings));
           } else {
-            localStorage.setItem(
-              "captchaSettings",
-              JSON.stringify(this.settings)
-            );
+            localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
           }
           this.closeSettings();
           this.showToast("设置已保存！", "success");
@@ -2618,11 +2652,9 @@
       imageToBase64(imgElement) {
         try {
           const imgSrc = imgElement.src;
-          if (!imgSrc.startsWith("data:image") && !this.isSameOrigin(imgSrc)) {
-            return {
-              success: false,
-              message: "抱歉，检测到跨域图片链接"
-            };
+          if (!imgSrc.startsWith("data:image") && !this.isSameOrigin(imgSrc) && imgElement.crossOrigin != "anonymous") {
+            imgElement.crossOrigin = "anonymous";
+            imgElement.src = imgSrc;
           }
           const canvas = document.createElement("canvas");
           canvas.width = imgElement.naturalWidth || imgElement.width;
@@ -2772,9 +2804,7 @@
        * 查找页面上的验证码图片和相关输入框
        */
       findCaptchaElements() {
-        const captchaImages = document.querySelectorAll(
-          this.config.captchaSelector
-        );
+        const captchaImages = document.querySelectorAll(this.config.captchaSelector);
         if (captchaImages.length === 0) {
           return [];
         }
@@ -2917,10 +2947,7 @@
           setTimeout(() => {
             icon.classList.remove("captcha-recognition-error");
           }, 2e3);
-          this.showToast(
-            "处理验证码失败: " + (error.message || "未知错误"),
-            "error"
-          );
+          this.showToast("处理验证码失败: " + (error.message || "未知错误"), "error");
         }
       },
       /**
@@ -2934,9 +2961,7 @@
             if (mutation.type === "childList" && mutation.addedNodes.length) {
               mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === Node.ELEMENT_NODE) {
-                  const captchas = node.querySelectorAll(
-                    this.config.captchaSelector
-                  );
+                  const captchas = node.querySelectorAll(this.config.captchaSelector);
                   if (captchas.length > 0) {
                     hasNewCaptcha = true;
                     captchas.forEach((captcha) => {
@@ -2956,7 +2981,9 @@
             if (this.settings.autoRecognize) {
               setTimeout(() => {
                 const elements = this.findCaptchaElements();
-                const newElements = elements.filter(({ captchaImg }) => newCaptchaElements.includes(captchaImg));
+                const newElements = elements.filter(
+                  ({ captchaImg }) => newCaptchaElements.includes(captchaImg)
+                );
                 const unrecognizableImages = [];
                 newElements.forEach(({ captchaImg }) => {
                   const base64Result = this.imageToBase64(captchaImg);
@@ -2987,10 +3014,7 @@
                       icon = document.createElement("div");
                       icon.classList.add("captcha-recognition-icon");
                       if (captchaImg.nextSibling) {
-                        captchaImg.parentNode.insertBefore(
-                          icon,
-                          captchaImg.nextSibling
-                        );
+                        captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
                       } else {
                         captchaImg.parentNode.appendChild(icon);
                       }
@@ -3141,7 +3165,7 @@
        * @param {string} message - 提示信息
        * @param {string} type - 提示类型 (success, error, info)
        */
-      showToast(message, type = "info") {
+      showToast(message, type2 = "info") {
         let toastContainer = document.getElementById("captcha-toast-container");
         if (!toastContainer) {
           toastContainer = document.createElement("div");
@@ -3149,7 +3173,7 @@
           document.body.appendChild(toastContainer);
         }
         const toast = document.createElement("div");
-        toast.className = `captcha-toast captcha-toast-${type}`;
+        toast.className = `captcha-toast captcha-toast-${type2}`;
         toast.textContent = message;
         if (toastContainer.firstChild) {
           toastContainer.insertBefore(toast, toastContainer.firstChild);
@@ -3258,6 +3282,7 @@
     },
     mounted() {
       this.init();
+      console.log(__vite_import_meta_env__);
     }
   };
   const _hoisted_1 = { class: "captcha-recognition-container" };
@@ -3266,66 +3291,65 @@
     class: "captcha-settings-modal"
   };
   const _hoisted_3 = { class: "captcha-settings-content" };
-  const _hoisted_4 = /* @__PURE__ */ vue.createElementVNode("h3", null, "验证码识别设置", -1);
-  const _hoisted_5 = { class: "captcha-settings-item" };
-  const _hoisted_6 = /* @__PURE__ */ vue.createElementVNode("label", null, "API类型:", -1);
-  const _hoisted_7 = /* @__PURE__ */ vue.createElementVNode("option", { value: "openai" }, "OpenAI", -1);
-  const _hoisted_8 = /* @__PURE__ */ vue.createElementVNode("option", { value: "gemini" }, "Google Gemini", -1);
-  const _hoisted_9 = [
-    _hoisted_7,
-    _hoisted_8
+  const _hoisted_4 = { class: "captcha-settings-item" };
+  const _hoisted_5 = /* @__PURE__ */ vue.createElementVNode("label", null, "API类型:", -1);
+  const _hoisted_6 = /* @__PURE__ */ vue.createElementVNode("option", { value: "openai" }, "OpenAI", -1);
+  const _hoisted_7 = /* @__PURE__ */ vue.createElementVNode("option", { value: "gemini" }, "Google Gemini", -1);
+  const _hoisted_8 = [
+    _hoisted_6,
+    _hoisted_7
   ];
-  const _hoisted_10 = { key: 0 };
-  const _hoisted_11 = { class: "captcha-settings-item" };
-  const _hoisted_12 = /* @__PURE__ */ vue.createElementVNode("label", null, "OpenAI API Key:", -1);
-  const _hoisted_13 = { class: "input-with-button" };
-  const _hoisted_14 = { key: 0 };
-  const _hoisted_15 = { key: 1 };
-  const _hoisted_16 = { key: 2 };
-  const _hoisted_17 = { key: 3 };
-  const _hoisted_18 = { class: "captcha-settings-item" };
-  const _hoisted_19 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义API地址 (可选):", -1);
-  const _hoisted_20 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认地址", -1);
-  const _hoisted_21 = { class: "captcha-settings-item" };
-  const _hoisted_22 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
-  const _hoisted_23 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认模型", -1);
-  const _hoisted_24 = { class: "captcha-settings-item" };
-  const _hoisted_25 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义提示词 (可选):", -1);
-  const _hoisted_26 = { class: "textarea-with-button" };
-  const _hoisted_27 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认提示词", -1);
-  const _hoisted_28 = { key: 1 };
-  const _hoisted_29 = { class: "captcha-settings-item" };
-  const _hoisted_30 = /* @__PURE__ */ vue.createElementVNode("label", null, "Google Gemini API Key:", -1);
-  const _hoisted_31 = { class: "input-with-button" };
-  const _hoisted_32 = { key: 0 };
-  const _hoisted_33 = { key: 1 };
-  const _hoisted_34 = { key: 2 };
-  const _hoisted_35 = { key: 3 };
-  const _hoisted_36 = { class: "captcha-settings-item" };
-  const _hoisted_37 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义API地址 (可选):", -1);
-  const _hoisted_38 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认地址", -1);
-  const _hoisted_39 = { class: "captcha-settings-item" };
-  const _hoisted_40 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
-  const _hoisted_41 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认模型", -1);
-  const _hoisted_42 = { class: "captcha-settings-item" };
-  const _hoisted_43 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义提示词 (可选):", -1);
-  const _hoisted_44 = { class: "textarea-with-button" };
-  const _hoisted_45 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认提示词", -1);
-  const _hoisted_46 = { class: "captcha-settings-item" };
-  const _hoisted_47 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动识别:", -1);
-  const _hoisted_48 = { style: { "display": "flex", "align-items": "center" } };
-  const _hoisted_49 = /* @__PURE__ */ vue.createElementVNode("label", {
+  const _hoisted_9 = { key: 0 };
+  const _hoisted_10 = { class: "captcha-settings-item" };
+  const _hoisted_11 = /* @__PURE__ */ vue.createElementVNode("label", null, "OpenAI API Key:", -1);
+  const _hoisted_12 = { class: "input-with-button" };
+  const _hoisted_13 = { key: 0 };
+  const _hoisted_14 = { key: 1 };
+  const _hoisted_15 = { key: 2 };
+  const _hoisted_16 = { key: 3 };
+  const _hoisted_17 = { class: "captcha-settings-item" };
+  const _hoisted_18 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义API地址 (可选):", -1);
+  const _hoisted_19 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认地址", -1);
+  const _hoisted_20 = { class: "captcha-settings-item" };
+  const _hoisted_21 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
+  const _hoisted_22 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认模型", -1);
+  const _hoisted_23 = { class: "captcha-settings-item" };
+  const _hoisted_24 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义提示词 (可选):", -1);
+  const _hoisted_25 = { class: "textarea-with-button" };
+  const _hoisted_26 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认提示词", -1);
+  const _hoisted_27 = { key: 1 };
+  const _hoisted_28 = { class: "captcha-settings-item" };
+  const _hoisted_29 = /* @__PURE__ */ vue.createElementVNode("label", null, "Google Gemini API Key:", -1);
+  const _hoisted_30 = { class: "input-with-button" };
+  const _hoisted_31 = { key: 0 };
+  const _hoisted_32 = { key: 1 };
+  const _hoisted_33 = { key: 2 };
+  const _hoisted_34 = { key: 3 };
+  const _hoisted_35 = { class: "captcha-settings-item" };
+  const _hoisted_36 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义API地址 (可选):", -1);
+  const _hoisted_37 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认地址", -1);
+  const _hoisted_38 = { class: "captcha-settings-item" };
+  const _hoisted_39 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
+  const _hoisted_40 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认模型", -1);
+  const _hoisted_41 = { class: "captcha-settings-item" };
+  const _hoisted_42 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义提示词 (可选):", -1);
+  const _hoisted_43 = { class: "textarea-with-button" };
+  const _hoisted_44 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认提示词", -1);
+  const _hoisted_45 = { class: "captcha-settings-item" };
+  const _hoisted_46 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动识别:", -1);
+  const _hoisted_47 = { style: { "display": "flex", "align-items": "center" } };
+  const _hoisted_48 = /* @__PURE__ */ vue.createElementVNode("label", {
     for: "autoRecognize",
     style: { "margin-bottom": "0" }
   }, "验证码图片变化时自动识别", -1);
-  const _hoisted_50 = { class: "captcha-settings-item" };
-  const _hoisted_51 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动复制到剪贴板:", -1);
-  const _hoisted_52 = { style: { "display": "flex", "align-items": "center" } };
-  const _hoisted_53 = /* @__PURE__ */ vue.createElementVNode("label", {
+  const _hoisted_49 = { class: "captcha-settings-item" };
+  const _hoisted_50 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动复制到剪贴板:", -1);
+  const _hoisted_51 = { style: { "display": "flex", "align-items": "center" } };
+  const _hoisted_52 = /* @__PURE__ */ vue.createElementVNode("label", {
     for: "copyToClipboard",
     style: { "margin-bottom": "0" }
   }, "自动复制到剪贴板", -1);
-  const _hoisted_54 = { class: "captcha-settings-buttons" };
+  const _hoisted_53 = { class: "captcha-settings-buttons" };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", _hoisted_1, [
       $data.process.env.NODE_ENV === "development" && !$data.showSettings ? (vue.openBlock(), vue.createElementBlock("div", {
@@ -3335,19 +3359,22 @@
       }, " 打开设置 ")) : vue.createCommentVNode("", true),
       $data.showSettings ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2, [
         vue.createElementVNode("div", _hoisted_3, [
-          _hoisted_4,
-          vue.createElementVNode("div", _hoisted_5, [
-            _hoisted_6,
+          vue.createElementVNode("h3", null, [
+            vue.createTextVNode("验证码识别设置 "),
+            vue.createElementVNode("span", null, vue.toDisplayString($data.packageJson.version), 1)
+          ]),
+          vue.createElementVNode("div", _hoisted_4, [
+            _hoisted_5,
             vue.withDirectives(vue.createElementVNode("select", {
               "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $data.settings.apiType = $event)
-            }, _hoisted_9, 512), [
+            }, _hoisted_8, 512), [
               [vue.vModelSelect, $data.settings.apiType]
             ])
           ]),
-          $data.settings.apiType === "openai" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_10, [
-            vue.createElementVNode("div", _hoisted_11, [
-              _hoisted_12,
-              vue.createElementVNode("div", _hoisted_13, [
+          $data.settings.apiType === "openai" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_9, [
+            vue.createElementVNode("div", _hoisted_10, [
+              _hoisted_11,
+              vue.createElementVNode("div", _hoisted_12, [
                 vue.withDirectives(vue.createElementVNode("input", {
                   type: "text",
                   "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $data.settings.openaiKey = $event),
@@ -3364,12 +3391,12 @@
                   }]),
                   onClick: _cache[3] || (_cache[3] = ($event) => $options.testApiConnection("openai"))
                 }, [
-                  $data.apiTestStatus.openai === "" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_14, "测试连接")) : $data.apiTestStatus.openai === "loading" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_15)) : $data.apiTestStatus.openai === "success" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_16, "成功")) : $data.apiTestStatus.openai === "error" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_17, "失败")) : vue.createCommentVNode("", true)
+                  $data.apiTestStatus.openai === "" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_13, "测试连接")) : $data.apiTestStatus.openai === "loading" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_14)) : $data.apiTestStatus.openai === "success" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_15, "成功")) : $data.apiTestStatus.openai === "error" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_16, "失败")) : vue.createCommentVNode("", true)
                 ], 2)
               ])
             ]),
-            vue.createElementVNode("div", _hoisted_18, [
-              _hoisted_19,
+            vue.createElementVNode("div", _hoisted_17, [
+              _hoisted_18,
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
                 "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $data.settings.openaiApiUrl = $event),
@@ -3377,10 +3404,10 @@
               }, null, 512), [
                 [vue.vModelText, $data.settings.openaiApiUrl]
               ]),
-              _hoisted_20
+              _hoisted_19
             ]),
-            vue.createElementVNode("div", _hoisted_21, [
-              _hoisted_22,
+            vue.createElementVNode("div", _hoisted_20, [
+              _hoisted_21,
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
                 "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $data.settings.openaiModel = $event),
@@ -3388,11 +3415,11 @@
               }, null, 512), [
                 [vue.vModelText, $data.settings.openaiModel]
               ]),
-              _hoisted_23
+              _hoisted_22
             ]),
-            vue.createElementVNode("div", _hoisted_24, [
-              _hoisted_25,
-              vue.createElementVNode("div", _hoisted_26, [
+            vue.createElementVNode("div", _hoisted_23, [
+              _hoisted_24,
+              vue.createElementVNode("div", _hoisted_25, [
                 vue.withDirectives(vue.createElementVNode("textarea", {
                   "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $data.settings.openaiPrompt = $event),
                   placeholder: "输入自定义提示词，或点击右侧按钮使用默认提示词",
@@ -3406,13 +3433,13 @@
                   onClick: _cache[7] || (_cache[7] = ($event) => $data.settings.openaiPrompt = $data.DEFAULT_PROMPT)
                 }, " 使用默认 ")
               ]),
-              _hoisted_27
+              _hoisted_26
             ])
           ])) : vue.createCommentVNode("", true),
-          $data.settings.apiType === "gemini" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_28, [
-            vue.createElementVNode("div", _hoisted_29, [
-              _hoisted_30,
-              vue.createElementVNode("div", _hoisted_31, [
+          $data.settings.apiType === "gemini" ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_27, [
+            vue.createElementVNode("div", _hoisted_28, [
+              _hoisted_29,
+              vue.createElementVNode("div", _hoisted_30, [
                 vue.withDirectives(vue.createElementVNode("input", {
                   type: "text",
                   "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $data.settings.geminiKey = $event),
@@ -3429,12 +3456,12 @@
                   }]),
                   onClick: _cache[9] || (_cache[9] = ($event) => $options.testApiConnection("gemini"))
                 }, [
-                  $data.apiTestStatus.gemini === "" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_32, "测试连接")) : $data.apiTestStatus.gemini === "loading" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_33)) : $data.apiTestStatus.gemini === "success" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_34, "成功")) : $data.apiTestStatus.gemini === "error" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_35, "失败")) : vue.createCommentVNode("", true)
+                  $data.apiTestStatus.gemini === "" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_31, "测试连接")) : $data.apiTestStatus.gemini === "loading" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_32)) : $data.apiTestStatus.gemini === "success" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_33, "成功")) : $data.apiTestStatus.gemini === "error" ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_34, "失败")) : vue.createCommentVNode("", true)
                 ], 2)
               ])
             ]),
-            vue.createElementVNode("div", _hoisted_36, [
-              _hoisted_37,
+            vue.createElementVNode("div", _hoisted_35, [
+              _hoisted_36,
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
                 "onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => $data.settings.geminiApiUrl = $event),
@@ -3442,10 +3469,10 @@
               }, null, 512), [
                 [vue.vModelText, $data.settings.geminiApiUrl]
               ]),
-              _hoisted_38
+              _hoisted_37
             ]),
-            vue.createElementVNode("div", _hoisted_39, [
-              _hoisted_40,
+            vue.createElementVNode("div", _hoisted_38, [
+              _hoisted_39,
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
                 "onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => $data.settings.geminiModel = $event),
@@ -3453,11 +3480,11 @@
               }, null, 512), [
                 [vue.vModelText, $data.settings.geminiModel]
               ]),
-              _hoisted_41
+              _hoisted_40
             ]),
-            vue.createElementVNode("div", _hoisted_42, [
-              _hoisted_43,
-              vue.createElementVNode("div", _hoisted_44, [
+            vue.createElementVNode("div", _hoisted_41, [
+              _hoisted_42,
+              vue.createElementVNode("div", _hoisted_43, [
                 vue.withDirectives(vue.createElementVNode("textarea", {
                   "onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => $data.settings.geminiPrompt = $event),
                   placeholder: "输入自定义提示词，或点击右侧按钮使用默认提示词",
@@ -3471,12 +3498,12 @@
                   onClick: _cache[13] || (_cache[13] = ($event) => $data.settings.geminiPrompt = $data.DEFAULT_PROMPT)
                 }, " 使用默认 ")
               ]),
-              _hoisted_45
+              _hoisted_44
             ])
           ])) : vue.createCommentVNode("", true),
-          vue.createElementVNode("div", _hoisted_46, [
-            _hoisted_47,
-            vue.createElementVNode("div", _hoisted_48, [
+          vue.createElementVNode("div", _hoisted_45, [
+            _hoisted_46,
+            vue.createElementVNode("div", _hoisted_47, [
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "checkbox",
                 "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => $data.settings.autoRecognize = $event),
@@ -3485,12 +3512,12 @@
               }, null, 512), [
                 [vue.vModelCheckbox, $data.settings.autoRecognize]
               ]),
-              _hoisted_49
+              _hoisted_48
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_50, [
-            _hoisted_51,
-            vue.createElementVNode("div", _hoisted_52, [
+          vue.createElementVNode("div", _hoisted_49, [
+            _hoisted_50,
+            vue.createElementVNode("div", _hoisted_51, [
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "checkbox",
                 "onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => $data.settings.copyToClipboard = $event),
@@ -3499,10 +3526,10 @@
               }, null, 512), [
                 [vue.vModelCheckbox, $data.settings.copyToClipboard]
               ]),
-              _hoisted_53
+              _hoisted_52
             ])
           ]),
-          vue.createElementVNode("div", _hoisted_54, [
+          vue.createElementVNode("div", _hoisted_53, [
             vue.createElementVNode("button", {
               onClick: _cache[16] || (_cache[16] = (...args) => $options.saveSettings && $options.saveSettings(...args))
             }, "保存设置"),

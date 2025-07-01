@@ -12,7 +12,7 @@
     <!-- 设置弹窗 -->
     <div v-if="showSettings" class="captcha-settings-modal">
       <div class="captcha-settings-content">
-        <h3>验证码识别设置</h3>
+        <h3>验证码识别设置 <span>{{ packageJson.version }}</span></h3>
         <div class="captcha-settings-item">
           <label>API类型:</label>
           <select v-model="settings.apiType">
@@ -25,18 +25,14 @@
           <div class="captcha-settings-item">
             <label>OpenAI API Key:</label>
             <div class="input-with-button">
-              <input
-                type="text"
-                v-model="settings.openaiKey"
-                placeholder="sk-..."
-              />
+              <input type="text" v-model="settings.openaiKey" placeholder="sk-..." />
               <button
                 type="button"
                 class="test-api-button"
                 :class="{
                   'test-loading': apiTestStatus.openai === 'loading',
                   'test-success': apiTestStatus.openai === 'success',
-                  'test-error': apiTestStatus.openai === 'error'
+                  'test-error': apiTestStatus.openai === 'error',
                 }"
                 @click="testApiConnection('openai')"
               >
@@ -100,7 +96,7 @@
                 :class="{
                   'test-loading': apiTestStatus.gemini === 'loading',
                   'test-success': apiTestStatus.gemini === 'success',
-                  'test-error': apiTestStatus.gemini === 'error'
+                  'test-error': apiTestStatus.gemini === 'error',
                 }"
                 @click="testApiConnection('gemini')"
               >
@@ -173,9 +169,7 @@
               id="copyToClipboard"
               style="width: auto; margin-right: 8px"
             />
-            <label for="copyToClipboard" style="margin-bottom: 0"
-              >自动复制到剪贴板</label
-            >
+            <label for="copyToClipboard" style="margin-bottom: 0">自动复制到剪贴板</label>
           </div>
         </div>
 
@@ -196,25 +190,26 @@ import { DEFAULT_PROMPT } from "./assets/prompts.js";
 export default {
   data() {
     return {
+      packageJson: packageJson,
       // 导入的常量
       DEFAULT_PROMPT,
       // API测试状态
       apiTestStatus: {
-        openai: '', // 可能的值: '', 'loading', 'success', 'error'
-        gemini: '', // 可能的值: '', 'loading', 'success', 'error'
+        openai: "", // 可能的值: '', 'loading', 'success', 'error'
+        gemini: "", // 可能的值: '', 'loading', 'success', 'error'
       },
       // 设置项
       settings: {
         apiType: "openai", // openai, gemini
         // OpenAI设置
-        openaiKey: "",
-        openaiApiUrl: "",
-        openaiModel: "",
+        openaiKey: import.meta.env.VITE_OPENAI_KEY || "",
+        openaiApiUrl: import.meta.env.VITE_OPENAI_URL || "",
+        openaiModel: import.meta.env.VITE_OPENAI_MODEL || "",
         openaiPrompt: DEFAULT_PROMPT, // 自定义提示词，默认填充
         // Gemini设置
-        geminiKey: "",
-        geminiApiUrl: "",
-        geminiModel: "",
+        geminiKey: import.meta.env.VITE_GEMINI_KEY || "",
+        geminiApiUrl: import.meta.env.VITE_GEMINI_URL || "",
+        geminiModel: import.meta.env.VITE_GEMINI_MODEL || "",
         geminiPrompt: DEFAULT_PROMPT, // 自定义提示词，默认填充
         // 自动识别设置
         autoRecognize: false, // 是否启用自动识别
@@ -300,10 +295,7 @@ export default {
         } else {
           // console.log('未检测到油猴环境，将设置保存到localStorage');
           // 保存到localStorage（开发环境使用）
-          localStorage.setItem(
-            "captchaSettings",
-            JSON.stringify(this.settings)
-          );
+          localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
         }
         this.closeSettings();
         this.showToast("设置已保存！", "success");
@@ -380,15 +372,23 @@ export default {
       try {
         // 检查图片来源
         const imgSrc = imgElement.src;
-        
+
         // 如果图片来源是外部链接且跨域（非data:image开头，且不是同域）
-        if (!imgSrc.startsWith('data:image') && !this.isSameOrigin(imgSrc)) {
-          return {
-            success: false,
-            message: "抱歉，检测到跨域图片链接"
-          };
+        if (
+          !imgSrc.startsWith("data:image") &&
+          !this.isSameOrigin(imgSrc) &&
+          imgElement.crossOrigin != "anonymous"
+        ) {
+          imgElement.crossOrigin = "anonymous";
+          imgElement.src = imgSrc;
         }
-        
+        /*if (!imgSrc.startsWith("data:image") && !this.isSameOrigin(imgSrc)) {
+            return {
+              success: false,
+              message: "抱歉，检测到跨域图片链接"
+            };
+          }*/
+
         // 创建canvas
         const canvas = document.createElement("canvas");
         canvas.width = imgElement.naturalWidth || imgElement.width;
@@ -396,7 +396,7 @@ export default {
 
         // 在canvas上绘制图片
         const ctx = canvas.getContext("2d");
-        
+
         // 尝试绘制图片
         try {
           ctx.drawImage(imgElement, 0, 0);
@@ -405,34 +405,34 @@ export default {
         } catch (e) {
           return {
             success: false,
-            message: "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。"
+            message: "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
           };
         }
 
         // 转换为base64
         const base64Data = canvas.toDataURL("image/png").split(",")[1];
-        
+
         // 检查base64数据是否有效
         if (!base64Data || base64Data.length < 100) {
           return {
             success: false,
-            message: "图片转换失败或内容为空。请刷新验证码后重试。"
+            message: "图片转换失败或内容为空。请刷新验证码后重试。",
           };
         }
-        
+
         return {
           success: true,
-          data: base64Data
+          data: base64Data,
         };
       } catch (error) {
         console.error("图片转base64失败:", error);
         return {
           success: false,
-          message: "图片转换失败: " + (error.message || "未知错误")
+          message: "图片转换失败: " + (error.message || "未知错误"),
         };
       }
     },
-    
+
     /**
      * 检查URL是否与当前页面同源
      * @param {string} url - 要检查的URL
@@ -457,14 +457,14 @@ export default {
       if (!url) {
         return "https://api.openai.com/v1/chat/completions";
       }
-      
-      if (!url.endsWith('/v1/chat/completions')) {
+
+      if (!url.endsWith("/v1/chat/completions")) {
         // 移除末尾的斜杠（如果有）
-        url = url.replace(/\/+$/, '');
+        url = url.replace(/\/+$/, "");
         // 添加标准路径
         url = `${url}/v1/chat/completions`;
       }
-      
+
       return url;
     },
 
@@ -474,7 +474,7 @@ export default {
     async recognizeWithOpenAI(base64Image) {
       // 使用自定义API地址或默认地址，并格式化URL
       const apiUrl = this.formatOpenAIUrl(this.settings.openaiApiUrl);
-      
+
       // 使用自定义模型或默认模型
       const model = this.settings.openaiModel || "gpt-4.1-mini";
       // 使用自定义提示词或默认提示词
@@ -578,9 +578,7 @@ export default {
      * 查找页面上的验证码图片和相关输入框
      */
     findCaptchaElements() {
-      const captchaImages = document.querySelectorAll(
-        this.config.captchaSelector
-      );
+      const captchaImages = document.querySelectorAll(this.config.captchaSelector);
       if (captchaImages.length === 0) {
         // console.log('未找到验证码图片');
         return [];
@@ -660,10 +658,7 @@ export default {
       elements.forEach(({ captchaImg, inputField }) => {
         // 检查是否已经添加过图标
         const existingIcon = captchaImg.nextElementSibling;
-        if (
-          existingIcon &&
-          existingIcon.classList.contains("captcha-recognition-icon")
-        ) {
+        if (existingIcon && existingIcon.classList.contains("captcha-recognition-icon")) {
           return;
         }
 
@@ -706,7 +701,7 @@ export default {
         } else {
           // 否则转换图片为base64
           base64Result = this.imageToBase64(captchaImg);
-          
+
           // 如果图片转换失败，显示错误并终止识别
           if (!base64Result.success) {
             this.showToast(base64Result.message, "error");
@@ -773,10 +768,7 @@ export default {
           icon.classList.remove("captcha-recognition-error");
         }, 2000);
 
-        this.showToast(
-          "处理验证码失败: " + (error.message || "未知错误"),
-          "error"
-        );
+        this.showToast("处理验证码失败: " + (error.message || "未知错误"), "error");
       }
     },
 
@@ -793,9 +785,7 @@ export default {
           if (mutation.type === "childList" && mutation.addedNodes.length) {
             mutation.addedNodes.forEach((node) => {
               if (node.nodeType === Node.ELEMENT_NODE) {
-                const captchas = node.querySelectorAll(
-                  this.config.captchaSelector
-                );
+                const captchas = node.querySelectorAll(this.config.captchaSelector);
                 if (captchas.length > 0) {
                   hasNewCaptcha = true;
                   captchas.forEach((captcha) => {
@@ -826,11 +816,12 @@ export default {
           if (this.settings.autoRecognize) {
             setTimeout(() => {
               const elements = this.findCaptchaElements();
-              
+
               // 过滤出新检测到的元素
-              const newElements = elements.filter(({ captchaImg }) => 
-                newCaptchaElements.includes(captchaImg));
-              
+              const newElements = elements.filter(({ captchaImg }) =>
+                newCaptchaElements.includes(captchaImg)
+              );
+
               // 预先检测是否有不可识别的图片
               const unrecognizableImages = [];
               newElements.forEach(({ captchaImg }) => {
@@ -839,11 +830,11 @@ export default {
                 if (!base64Result.success) {
                   unrecognizableImages.push({
                     img: captchaImg,
-                    message: base64Result.message
+                    message: base64Result.message,
                   });
                 }
               });
-              
+
               // 如果有不可识别的图片，显示提示
               if (unrecognizableImages.length > 0) {
                 this.showToast(
@@ -851,13 +842,13 @@ export default {
                   "error"
                 );
               }
-              
+
               // 只识别可识别的图片
               const recognizableElements = newElements.filter(({ captchaImg }) => {
                 const base64Result = this.imageToBase64(captchaImg);
                 return base64Result.success;
               });
-              
+
               // 处理可识别的图片
               if (recognizableElements.length > 0) {
                 recognizableElements.forEach(({ captchaImg, inputField }) => {
@@ -873,10 +864,7 @@ export default {
                     icon = document.createElement("div");
                     icon.classList.add("captcha-recognition-icon");
                     if (captchaImg.nextSibling) {
-                      captchaImg.parentNode.insertBefore(
-                        icon,
-                        captchaImg.nextSibling
-                      );
+                      captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
                     } else {
                       captchaImg.parentNode.appendChild(icon);
                     }
@@ -941,11 +929,11 @@ export default {
             if (!base64Result.success) {
               unrecognizableImages.push({
                 img: captchaImg,
-                message: base64Result.message
+                message: base64Result.message,
               });
             }
           });
-          
+
           // 如果有不可识别的图片，显示提示
           if (unrecognizableImages.length > 0) {
             this.showToast(
@@ -954,7 +942,7 @@ export default {
             );
             return false;
           }
-          
+
           // 检查初始加载时的自动识别设置
           if (this.settings.autoRecognize) {
             // 只识别可识别的图片
@@ -962,7 +950,7 @@ export default {
               const base64Result = this.imageToBase64(captchaImg);
               return base64Result.success;
             });
-            
+
             if (recognizableElements.length > 0) {
               this.showToast(
                 `检测到 ${recognizableElements.length} 个可识别的验证码，正在自动识别...`,
@@ -1112,18 +1100,18 @@ export default {
     async testApiConnection(apiType) {
       try {
         if (!this.isApiConfigured(apiType)) {
-          this.apiTestStatus[apiType] = 'error';
+          this.apiTestStatus[apiType] = "error";
           // 3秒后重置状态
           setTimeout(() => {
-            this.apiTestStatus[apiType] = '';
+            this.apiTestStatus[apiType] = "";
           }, 3000);
           return;
         }
 
         // 设置加载状态
-        this.apiTestStatus[apiType] = 'loading';
+        this.apiTestStatus[apiType] = "loading";
 
-        if (apiType === 'openai') {
+        if (apiType === "openai") {
           // 测试OpenAI API
           const apiUrl = this.formatOpenAIUrl(this.settings.openaiApiUrl);
           const model = this.settings.openaiModel || "gpt-4.1-mini";
@@ -1140,9 +1128,9 @@ export default {
                     {
                       type: "text",
                       text: "测试连接，请回复'连接成功'",
-                    }
+                    },
                   ],
-                }
+                },
               ],
               max_tokens: 10,
             },
@@ -1153,12 +1141,14 @@ export default {
           });
 
           if (response && response.data) {
-            this.apiTestStatus[apiType] = 'success';
+            this.apiTestStatus[apiType] = "success";
           }
-        } else if (apiType === 'gemini') {
+        } else if (apiType === "gemini") {
           // 测试Google Gemini API
           const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
-          const baseApiUrl = this.settings.geminiApiUrl || "https://generativelanguage.googleapis.com/v1beta/models";
+          const baseApiUrl =
+            this.settings.geminiApiUrl ||
+            "https://generativelanguage.googleapis.com/v1beta/models";
           const apiUrl = `${baseApiUrl}/${model}:generateContent`;
 
           const response = await this.request({
@@ -1170,9 +1160,9 @@ export default {
                   parts: [
                     {
                       text: "测试连接，请回复'连接成功'",
-                    }
+                    },
                   ],
-                }
+                },
               ],
               generationConfig: {
                 temperature: 0,
@@ -1185,30 +1175,30 @@ export default {
           });
 
           if (response && response.data) {
-            this.apiTestStatus[apiType] = 'success';
+            this.apiTestStatus[apiType] = "success";
           }
         }
-        
+
         // 3秒后重置成功状态
         setTimeout(() => {
-          if (this.apiTestStatus[apiType] === 'success') {
-            this.apiTestStatus[apiType] = '';
+          if (this.apiTestStatus[apiType] === "success") {
+            this.apiTestStatus[apiType] = "";
           }
         }, 3000);
       } catch (error) {
         console.error("API连接测试失败:", error);
-        this.apiTestStatus[apiType] = 'error';
-        
+        this.apiTestStatus[apiType] = "error";
+
         // 3秒后重置错误状态
         setTimeout(() => {
-          this.apiTestStatus[apiType] = '';
+          this.apiTestStatus[apiType] = "";
         }, 3000);
       }
     },
   },
   mounted() {
     this.init();
+    console.log(import.meta.env)
   },
 };
 </script>
-
