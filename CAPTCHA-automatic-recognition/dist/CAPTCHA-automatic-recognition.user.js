@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.11
+// @version      0.0.12
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -15,13 +15,13 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-left:5px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');background-size:contain;cursor:pointer;position:relative;z-index:999;opacity:.7;transition:opacity .2s}.captcha-recognition-icon:hover{opacity:1}.input-group-append{position:relative}.input-group-append .captcha-recognition-icon{position:absolute;left:100%}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>');animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')}body.captcha-settings-open{overflow:hidden}.captcha-settings-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#00000080;display:flex;justify-content:center;align-items:center;z-index:2147483647;text-align:left}.captcha-settings-content{background-color:#fff;color:#333;padding:20px;border-radius:8px;width:400px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 4px 12px #00000026}.captcha-settings-content h3{margin-top:0;color:#333;font-size:18px;margin-bottom:16px;text-align:center}.captcha-settings-content h3 span{font-size:16px}.captcha-settings-item{margin-bottom:12px}.captcha-settings-item label{display:block;margin-bottom:4px;color:#555;font-size:14px}.captcha-settings-item input,.captcha-settings-item select,.captcha-settings-item textarea{width:100%;padding:8px;border:1px solid #ddd;background:none;border-radius:4px;font-size:14px;box-sizing:border-box!important;background:#fff!important;color:#333!important;margin:0!important}.captcha-settings-item input,.captcha-settings-item select{height:33px}.captcha-settings-item textarea{resize:vertical;min-height:80px}.textarea-with-button{position:relative;display:flex;flex-direction:column}.use-default-prompt{position:absolute;top:5px;right:5px;background-color:#f1f1f1;border:1px solid #ddd;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;color:#333;transition:background-color .2s}.use-default-prompt:hover{background-color:#e4e4e4}.captcha-settings-buttons{display:flex;justify-content:flex-end;margin-top:20px;gap:10px}.captcha-settings-buttons button{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .2s}.captcha-settings-buttons button:first-child{background-color:#1a73e8;color:#fff}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0}.captcha-settings-buttons button:last-child{background-color:#f1f1f1;color:#333}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4}.dev-settings-button{position:fixed;bottom:20px;right:20px;padding:10px 15px;background-color:#1a73e8;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;font-size:14px;box-shadow:0 2px 5px #0003;transition:background-color .2s}.dev-settings-button:hover{background-color:#1557b0}#captcha-toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;text-align:left}.captcha-toast{width:280px;padding:12px 16px;border-radius:4px;box-shadow:0 4px 12px #00000026;color:#fff;font-size:14px;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:auto;word-break:break-word;text-align:left}.captcha-toast-show{opacity:1;transform:translateY(0)}.captcha-toast-hide{opacity:0;transform:translateY(-20px)}.captcha-toast-info{background-color:#1a73e8}.captcha-toast-success{background-color:#4caf50}.captcha-toast-error{background-color:#f44336}.input-with-button{position:relative;display:flex;align-items:center}.input-with-button input{flex:1}.test-api-button{background-color:#1a73e8;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:14px;cursor:pointer;transition:background-color .2s,color .2s;min-width:80px;display:flex;justify-content:center;align-items:center;height:33px;margin-left:10px}.captcha-settings-tip{margin:16px 0;padding:12px;background-color:#f8f9fa;border-left:4px solid #1a73e8;border-radius:4px;font-size:13px;color:#333}.captcha-settings-tip p{margin:0 0 8px}.captcha-settings-tip ol{margin:8px 0 0;padding-left:24px}.captcha-settings-tip li{margin-bottom:4px}.test-api-button:hover{background-color:#1557b0}.test-api-button.test-loading{background-color:#f1f1f1;color:#666;position:relative}.test-api-button.test-loading:after{content:"";position:absolute;width:12px;height:12px;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #666;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite}@keyframes spin{0%{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}.test-api-button.test-success{background-color:#4caf50;color:#fff}.test-api-button.test-error{background-color:#f44336;color:#fff}img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon{position:absolute;left:270px} `);
+(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-left:5px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');background-size:contain;cursor:pointer;position:relative;z-index:999;opacity:.7;transition:opacity .2s}.captcha-recognition-icon:hover{opacity:1}.input-group-append{position:relative}.input-group-append .captcha-recognition-icon{position:absolute;left:100%}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>');animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')}body.captcha-settings-open{overflow:hidden}.captcha-settings-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#00000080;display:flex;justify-content:center;align-items:center;z-index:2147483647;text-align:left}.captcha-settings-content{background-color:#fff;color:#333;padding:20px;border-radius:8px;width:400px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 4px 12px #00000026}.captcha-settings-content h3{margin-top:0;color:#333;font-size:18px;margin-bottom:16px;text-align:center}.captcha-settings-content h3 span{font-size:16px}.captcha-settings-item{margin-bottom:12px}.captcha-settings-item label{display:block;margin-bottom:4px;color:#555;font-size:14px}.captcha-settings-item input,.captcha-settings-item select,.captcha-settings-item textarea{width:100%;padding:8px;border:1px solid #ddd;background:none;border-radius:4px;font-size:14px;box-sizing:border-box!important;background:#fff!important;color:#333!important;margin:0!important}.captcha-settings-item input,.captcha-settings-item select{height:33px}.captcha-settings-item textarea{resize:vertical;min-height:80px}.textarea-with-button{position:relative;display:flex;flex-direction:column}.use-default-prompt{position:absolute;top:5px;right:5px;background-color:#f1f1f1;border:1px solid #ddd;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;color:#333;transition:background-color .2s}.use-default-prompt:hover{background-color:#e4e4e4}.captcha-settings-buttons{display:flex;justify-content:flex-end;margin-top:20px;gap:10px}.captcha-settings-buttons button{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .2s}.captcha-settings-buttons button:first-child{background-color:#1a73e8;color:#fff}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0}.captcha-settings-buttons button:last-child{background-color:#f1f1f1;color:#333}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4}.dev-settings-button{position:fixed;bottom:20px;right:20px;padding:10px 15px;background-color:#1a73e8;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;font-size:14px;box-shadow:0 2px 5px #0003;transition:background-color .2s}.dev-settings-button:hover{background-color:#1557b0}#captcha-toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;text-align:left}.captcha-toast{width:280px;padding:12px 16px;border-radius:4px;box-shadow:0 4px 12px #00000026;color:#fff;font-size:14px;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:auto;word-break:break-word;text-align:left}.captcha-toast-show{opacity:1;transform:translateY(0)}.captcha-toast-hide{opacity:0;transform:translateY(-20px)}.captcha-toast-info{background-color:#1a73e8}.captcha-toast-success{background-color:#4caf50}.captcha-toast-error{background-color:#f44336}.input-with-button{position:relative;display:flex;align-items:center}.input-with-button input{flex:1}.test-api-button{background-color:#1a73e8;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:14px;cursor:pointer;transition:background-color .2s,color .2s;min-width:80px;display:flex;justify-content:center;align-items:center;height:33px;margin-left:10px}.captcha-settings-tip{margin:16px 0;padding:12px;background-color:#f8f9fa;border-left:4px solid #1a73e8;border-radius:4px;font-size:13px;color:#333}.captcha-settings-tip p{margin:0 0 8px}.captcha-settings-tip ol{margin:8px 0 0;padding-left:24px}.captcha-settings-tip li{margin-bottom:4px}.test-api-button:hover{background-color:#1557b0}.test-api-button.test-loading{background-color:#f1f1f1;color:#666;position:relative}.test-api-button.test-loading:after{content:"";position:absolute;width:12px;height:12px;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #666;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite}@keyframes spin{0%{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}.test-api-button.test-success{background-color:#4caf50;color:#fff}.test-api-button.test-error{background-color:#f44336;color:#fff}img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon{position:absolute;left:270px}.authcode.co>a:nth-child(2)>#authImage+.captcha-recognition-icon{display:none} `);
 
 (function (vue) {
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "0.0.11";
+  const version = "0.0.12";
   const author = "ezyshu";
   const description = "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。";
   const type = "module";
@@ -2492,24 +2492,24 @@
         packageJson,
         // 导入的常量
         DEFAULT_PROMPT,
-        // API测试状态
+        // API 测试状态
         apiTestStatus: {
           openai: "",
-          // 可能的值: '', 'loading', 'success', 'error'
+          // 可能的值：'', 'loading', 'success', 'error'
           gemini: ""
-          // 可能的值: '', 'loading', 'success', 'error'
+          // 可能的值：'', 'loading', 'success', 'error'
         },
         // 设置项
         settings: {
           apiType: "openai",
           // openai, gemini
-          // OpenAI设置
+          // OpenAI 设置
           openaiKey: "",
           openaiApiUrl: "",
           openaiModel: "",
           openaiPrompt: DEFAULT_PROMPT,
           // 自定义提示词，默认填充
-          // Gemini设置
+          // Gemini 设置
           geminiKey: "",
           geminiApiUrl: "",
           geminiModel: "",
@@ -2527,9 +2527,9 @@
         // 配置选项
         config: {
           // 验证码图片选择器
-          captchaSelector: 'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[title*="点击刷新验证码"], img[alt*="captcha"], img[id="captchaPic"], .validate-code img, img[src*="/login_check_code.php"], img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]',
+          captchaSelector: 'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[title*="点击刷新验证码"], img[alt*="captcha"], img[id="captchaPic"], .validate-code img, img[src*="/login_check_code.php"], img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"],.authcode img[id="authImage"]',
           // 相关输入框选择器 (通常在验证码图片附近的输入框)
-          inputSelector: 'input[name*="captcha"], input[name*="verify"], input[placeholder*="验证码"], input[placeholder*="captcha"]'
+          inputSelector: 'input[name*="captcha"], input[name*="verify"], input[placeholder*="验证码"], input[placeholder*="captcha"],input[id="authcode"]'
         },
         // 用于在模板中访问环境变量
         process: {
@@ -2559,7 +2559,7 @@
             }
           }
         } catch (error) {
-          console.error("加载设置失败:", error);
+          console.error("加载设置失败：", error);
         }
       },
       /**
@@ -2589,18 +2589,18 @@
           this.closeSettings();
           this.showToast("设置已保存！", "success");
         } catch (error) {
-          console.error("保存设置失败:", error);
+          console.error("保存设置失败：", error);
           this.showToast("保存设置失败，请查看控制台获取更多信息。", "error");
         }
       },
       /**
-       * 使用AI识别验证码
-       * @param {string} base64Image - 验证码图片的base64编码
+       * 使用 AI 识别验证码
+       * @param {string} base64Image - 验证码图片的 base64 编码
        * @returns {Promise<string>} - 识别结果
        */
       async recognizeCaptcha(base64Image) {
         if (!this.isApiConfigured()) {
-          this.showToast("请先配置验证码识别API", "error");
+          this.showToast("请先配置验证码识别 API", "error");
           this.openSettings();
           return "";
         }
@@ -2616,21 +2616,21 @@
               break;
           }
           if (result) {
-            this.showToast(`识别成功: ${result}`, "success");
+            this.showToast(`识别成功：${result}`, "success");
           } else {
             this.showToast("识别结果为空", "error");
           }
           return result;
         } catch (error) {
-          console.error("验证码识别失败:", error);
-          this.showToast("识别失败: " + (error.message || "未知错误"), "error");
+          console.error("验证码识别失败：", error);
+          this.showToast("识别失败：" + (error.message || "未知错误"), "error");
           return "";
         }
       },
       /**
-       * 检查API是否配置
-       * @param {string} specificType - 指定要检查的API类型，不传则检查当前选中的API
-       * @returns {boolean} - API是否已配置
+       * 检查 API 是否配置
+       * @param {string} specificType - 指定要检查的 API 类型，不传则检查当前选中的 API
+       * @returns {boolean} - API 是否已配置
        */
       isApiConfigured(specificType) {
         const typeToCheck = specificType || this.settings.apiType;
@@ -2644,7 +2644,7 @@
         }
       },
       /**
-       * 将图片转换为base64格式
+       * 将图片转换为 base64 格式
        * @param {HTMLImageElement} imgElement - 图片元素
        * @returns {Object} - 返回包含成功状态和数据的对象
        */
@@ -2884,7 +2884,7 @@
        * @param {HTMLImageElement} captchaImg - 验证码图片元素
        * @param {HTMLInputElement} inputField - 输入框元素
        * @param {HTMLElement} icon - 识别图标元素
-       * @param {Object} checkedBase64 - 可选，已经预先检查过的base64结果
+       * @param {Object} checkedBase64 - 可选，已经预先检查过的 base64 结果
        */
       async processCaptcha(captchaImg, inputField, icon, checkedBase64) {
         try {
@@ -2929,10 +2929,10 @@
               textarea.select();
               document.execCommand("copy");
               document.body.removeChild(textarea);
-              this.showToast(`验证码已识别: ${text} (已复制到剪贴板)`, "success");
+              this.showToast(`验证码已识别：${text} (已复制到剪贴板)`, "success");
             }
           } else {
-            this.showToast(`验证码已识别: ${text}`, "success");
+            this.showToast(`验证码已识别：${text}`, "success");
           }
           icon.classList.remove("captcha-recognition-loading");
           icon.classList.add("captcha-recognition-success");
@@ -2940,17 +2940,17 @@
             icon.classList.remove("captcha-recognition-success");
           }, 2e3);
         } catch (error) {
-          console.error("验证码识别失败:", error);
+          console.error("验证码识别失败：", error);
           icon.classList.remove("captcha-recognition-loading");
           icon.classList.add("captcha-recognition-error");
           setTimeout(() => {
             icon.classList.remove("captcha-recognition-error");
           }, 2e3);
-          this.showToast("处理验证码失败: " + (error.message || "未知错误"), "error");
+          this.showToast("处理验证码失败：" + (error.message || "未知错误"), "error");
         }
       },
       /**
-       * 监听DOM变化，自动为新添加的验证码添加识别图标
+       * 监听 DOM 变化，自动为新添加的验证码添加识别图标
        */
       setupMutationObserver() {
         const observer = new MutationObserver((mutations) => {
@@ -3036,7 +3036,7 @@
           subtree: true,
           attributes: true,
           attributeFilter: ["src"]
-          // 只监听src属性变化
+          // 只监听 src 属性变化
         });
       },
       /**
@@ -3110,7 +3110,7 @@
         }, 1e3);
       },
       /**
-       * 通用请求函数，自动根据环境使用GM_xmlhttpRequest或axios
+       * 通用请求函数，自动根据环境使用 GM_xmlhttpRequest 或 axios
        * @param {Object} config - 请求配置
        * @returns {Promise} - 请求结果
        */
@@ -3160,7 +3160,7 @@
         }
       },
       /**
-       * 显示Toast提示
+       * 显示 Toast 提示
        * @param {string} message - 提示信息
        * @param {string} type - 提示类型 (success, error, info)
        */
@@ -3193,8 +3193,8 @@
         }, 3e3);
       },
       /**
-       * 测试API连通性
-       * @param {string} apiType - API类型，'openai'或'gemini'
+       * 测试 API 连通性
+       * @param {string} apiType - API 类型，'openai'或'gemini'
        */
       async testApiConnection(apiType) {
         try {
@@ -3271,7 +3271,7 @@
             }
           }, 3e3);
         } catch (error) {
-          console.error("API连接测试失败:", error);
+          console.error("API 连接测试失败：", error);
           this.apiTestStatus[apiType] = "error";
           setTimeout(() => {
             this.apiTestStatus[apiType] = "";
@@ -3281,6 +3281,22 @@
     },
     mounted() {
       this.init();
+    },
+    created() {
+      if (window.location.host == "nportal.ntut.edu.tw") {
+        const observer = new MutationObserver(function(mutations) {
+          const authcodeElement = document.querySelector(".authcode.co");
+          if (authcodeElement) {
+            const captchaIcon = document.querySelector(".captcha-recognition-icon");
+            if (captchaIcon) {
+              captchaIcon.parentNode.removeChild(captchaIcon);
+              authcodeElement.appendChild(captchaIcon);
+              observer.disconnect();
+            }
+          }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
     }
   };
   const _hoisted_1 = { class: "captcha-recognition-container" };
@@ -3290,7 +3306,7 @@
   };
   const _hoisted_3 = { class: "captcha-settings-content" };
   const _hoisted_4 = { class: "captcha-settings-item" };
-  const _hoisted_5 = /* @__PURE__ */ vue.createElementVNode("label", null, "API类型:", -1);
+  const _hoisted_5 = /* @__PURE__ */ vue.createElementVNode("label", null, "API 类型：", -1);
   const _hoisted_6 = /* @__PURE__ */ vue.createElementVNode("option", { value: "openai" }, "OpenAI", -1);
   const _hoisted_7 = /* @__PURE__ */ vue.createElementVNode("option", { value: "gemini" }, "Google Gemini", -1);
   const _hoisted_8 = [
@@ -3306,7 +3322,7 @@
   const _hoisted_15 = { key: 2 };
   const _hoisted_16 = { key: 3 };
   const _hoisted_17 = { class: "captcha-settings-item" };
-  const _hoisted_18 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义API地址 (可选):", -1);
+  const _hoisted_18 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义 API 地址 (可选):", -1);
   const _hoisted_19 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认地址", -1);
   const _hoisted_20 = { class: "captcha-settings-item" };
   const _hoisted_21 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
@@ -3324,7 +3340,7 @@
   const _hoisted_33 = { key: 2 };
   const _hoisted_34 = { key: 3 };
   const _hoisted_35 = { class: "captcha-settings-item" };
-  const _hoisted_36 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义API地址 (可选):", -1);
+  const _hoisted_36 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义 API 地址 (可选):", -1);
   const _hoisted_37 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认地址", -1);
   const _hoisted_38 = { class: "captcha-settings-item" };
   const _hoisted_39 = /* @__PURE__ */ vue.createElementVNode("label", null, "模型 (可选):", -1);
@@ -3334,14 +3350,14 @@
   const _hoisted_43 = { class: "textarea-with-button" };
   const _hoisted_44 = /* @__PURE__ */ vue.createElementVNode("small", null, "留空使用默认提示词", -1);
   const _hoisted_45 = { class: "captcha-settings-item" };
-  const _hoisted_46 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动识别:", -1);
+  const _hoisted_46 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动识别：", -1);
   const _hoisted_47 = { style: { "display": "flex", "align-items": "center" } };
   const _hoisted_48 = /* @__PURE__ */ vue.createElementVNode("label", {
     for: "autoRecognize",
     style: { "margin-bottom": "0" }
   }, "验证码图片变化时自动识别", -1);
   const _hoisted_49 = { class: "captcha-settings-item" };
-  const _hoisted_50 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动复制到剪贴板:", -1);
+  const _hoisted_50 = /* @__PURE__ */ vue.createElementVNode("label", null, "自动复制到剪贴板：", -1);
   const _hoisted_51 = { style: { "display": "flex", "align-items": "center" } };
   const _hoisted_52 = /* @__PURE__ */ vue.createElementVNode("label", {
     for: "copyToClipboard",

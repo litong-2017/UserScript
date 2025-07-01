@@ -49,7 +49,7 @@
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>');
 }
 
-/* 当设置面板打开时，禁止body滚动 */
+/* 当设置面板打开时，禁止 body 滚动 */
 body.captcha-settings-open {
   overflow: hidden;
 }
@@ -67,7 +67,7 @@ body.captcha-settings-open {
   align-items: center;
   z-index: 2147483647;
   text-align: left;
-  /* 最高的z-index值，确保在页面最上层 */
+  /* 最高的 z-index 值，确保在页面最上层 */
 }
 
 .captcha-settings-content {
@@ -130,7 +130,7 @@ body.captcha-settings-open {
   min-height: 80px;
 }
 
-/* 带按钮的textarea容器 */
+/* 带按钮的 textarea 容器 */
 .textarea-with-button {
   position: relative;
   display: flex;
@@ -209,7 +209,7 @@ body.captcha-settings-open {
   background-color: #1557b0;
 }
 
-/* Toast提示样式 */
+/* Toast 提示样式 */
 #captcha-toast-container {
   position: fixed;
   top: 20px;
@@ -270,7 +270,7 @@ body.captcha-settings-open {
   flex: 1;
 }
 
-/* API测试按钮 */
+/* API 测试按钮 */
 .test-api-button {
   background-color: #1a73e8;
   color: white;
@@ -363,4 +363,8 @@ body.captcha-settings-open {
 img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon {
   position: absolute;
   left: 270px;
+}
+
+.authcode.co>a:nth-child(2)>#authImage+.captcha-recognition-icon {
+  display: none;
 }
