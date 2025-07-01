@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.10
+// @version      0.0.11
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -21,7 +21,7 @@
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "0.0.10";
+  const version = "0.0.11";
   const author = "ezyshu";
   const description = "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。";
   const type = "module";
@@ -2486,7 +2486,6 @@
     }
     return target;
   };
-  const __vite_import_meta_env__ = { "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SSR": false, "VITE_GEMINI_KEY": "AIzaSyAxuUQEPRgKjkKjjN_1lQR9IHy17D23md8", "VITE_GEMINI_MODEL": "gemini-2.5-flash-lite", "VITE_GEMINI_URL": "https://generativelanguage.googleapis.com/v1beta/models", "VITE_OPENAI_KEY": "sk-TUkFdHRsyvx8vv6qMVz7cEJUGfq4BDQInyTG2UNyTl60yH2S", "VITE_OPENAI_MODEL": "gemini-2.5-flash-lite", "VITE_OPENAI_URL": "https://tbai.xin/v1/chat/completions" };
   const _sfc_main = {
     data() {
       return {
@@ -2505,15 +2504,15 @@
           apiType: "openai",
           // openai, gemini
           // OpenAI设置
-          openaiKey: "sk-TUkFdHRsyvx8vv6qMVz7cEJUGfq4BDQInyTG2UNyTl60yH2S",
-          openaiApiUrl: "https://tbai.xin/v1/chat/completions",
-          openaiModel: "gemini-2.5-flash-lite",
+          openaiKey: "",
+          openaiApiUrl: "",
+          openaiModel: "",
           openaiPrompt: DEFAULT_PROMPT,
           // 自定义提示词，默认填充
           // Gemini设置
-          geminiKey: "AIzaSyAxuUQEPRgKjkKjjN_1lQR9IHy17D23md8",
-          geminiApiUrl: "https://generativelanguage.googleapis.com/v1beta/models",
-          geminiModel: "gemini-2.5-flash-lite",
+          geminiKey: "",
+          geminiApiUrl: "",
+          geminiModel: "",
           geminiPrompt: DEFAULT_PROMPT,
           // 自定义提示词，默认填充
           // 自动识别设置
@@ -3282,7 +3281,6 @@
     },
     mounted() {
       this.init();
-      console.log(__vite_import_meta_env__);
     }
   };
   const _hoisted_1 = { class: "captcha-recognition-container" };
@@ -3360,7 +3358,7 @@
       $data.showSettings ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2, [
         vue.createElementVNode("div", _hoisted_3, [
           vue.createElementVNode("h3", null, [
-            vue.createTextVNode("验证码识别设置 "),
+            vue.createTextVNode(" 验证码识别设置 "),
             vue.createElementVNode("span", null, vue.toDisplayString($data.packageJson.version), 1)
           ]),
           vue.createElementVNode("div", _hoisted_4, [

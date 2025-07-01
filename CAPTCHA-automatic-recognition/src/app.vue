@@ -12,7 +12,9 @@
     <!-- 设置弹窗 -->
     <div v-if="showSettings" class="captcha-settings-modal">
       <div class="captcha-settings-content">
-        <h3>验证码识别设置 <span>{{ packageJson.version }}</span></h3>
+        <h3>
+          验证码识别设置 <span>{{ packageJson.version }}</span>
+        </h3>
         <div class="captcha-settings-item">
           <label>API类型:</label>
           <select v-model="settings.apiType">
@@ -202,14 +204,14 @@ export default {
       settings: {
         apiType: "openai", // openai, gemini
         // OpenAI设置
-        openaiKey: import.meta.env.VITE_OPENAI_KEY || "",
-        openaiApiUrl: import.meta.env.VITE_OPENAI_URL || "",
-        openaiModel: import.meta.env.VITE_OPENAI_MODEL || "",
+        openaiKey: "",
+        openaiApiUrl: "",
+        openaiModel: "",
         openaiPrompt: DEFAULT_PROMPT, // 自定义提示词，默认填充
         // Gemini设置
-        geminiKey: import.meta.env.VITE_GEMINI_KEY || "",
-        geminiApiUrl: import.meta.env.VITE_GEMINI_URL || "",
-        geminiModel: import.meta.env.VITE_GEMINI_MODEL || "",
+        geminiKey: "",
+        geminiApiUrl: "",
+        geminiModel: "",
         geminiPrompt: DEFAULT_PROMPT, // 自定义提示词，默认填充
         // 自动识别设置
         autoRecognize: false, // 是否启用自动识别
@@ -1198,7 +1200,6 @@ export default {
   },
   mounted() {
     this.init();
-    console.log(import.meta.env)
   },
 };
 </script>
