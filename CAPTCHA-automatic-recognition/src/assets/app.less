@@ -115,6 +115,32 @@ body.captcha-settings-open {
   min-height: 80px;
 }
 
+/* 带按钮的textarea容器 */
+.textarea-with-button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 使用默认提示词按钮 */
+.use-default-prompt {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.use-default-prompt:hover {
+  background-color: #e4e4e4;
+}
+
 .captcha-settings-buttons {
   display: flex;
   justify-content: flex-end;
@@ -215,4 +241,80 @@ body.captcha-settings-open {
 
 .captcha-toast-error {
   background-color: #f44336;
+}
+
+/* 带按钮的输入框容器 */
+.input-with-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-button input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+/* API测试按钮 */
+.test-api-button {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  min-width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 33px;
+}
+
+.test-api-button:hover {
+  background-color: #1557b0;
+}
+
+/* 加载中状态 */
+.test-api-button.test-loading {
+  background-color: #f1f1f1;
+  color: #666;
+  position: relative;
+}
+
+.test-api-button.test-loading::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #666;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* 成功状态 */
+.test-api-button.test-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* 错误状态 */
+.test-api-button.test-error {
+  background-color: #f44336;
+  color: white;
 }

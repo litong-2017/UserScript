@@ -24,11 +24,28 @@
         <div v-if="settings.apiType === 'openai'">
           <div class="captcha-settings-item">
             <label>OpenAI API Key:</label>
-            <input
-              type="text"
-              v-model="settings.openaiKey"
-              placeholder="sk-..."
-            />
+            <div class="input-with-button">
+              <input
+                type="text"
+                v-model="settings.openaiKey"
+                placeholder="sk-..."
+              />
+              <button
+                type="button"
+                class="test-api-button"
+                :class="{
+                  'test-loading': apiTestStatus.openai === 'loading',
+                  'test-success': apiTestStatus.openai === 'success',
+                  'test-error': apiTestStatus.openai === 'error'
+                }"
+                @click="testApiConnection('openai')"
+              >
+                <span v-if="apiTestStatus.openai === ''">测试连接</span>
+                <span v-else-if="apiTestStatus.openai === 'loading'"></span>
+                <span v-else-if="apiTestStatus.openai === 'success'">成功</span>
+                <span v-else-if="apiTestStatus.openai === 'error'">失败</span>
+              </button>
+            </div>
           </div>
           <div class="captcha-settings-item">
             <label>自定义API地址 (可选):</label>
@@ -50,12 +67,20 @@
           </div>
           <div class="captcha-settings-item">
             <label>自定义提示词 (可选):</label>
-            <textarea
-              v-model="settings.openaiPrompt"
-              placeholder="1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
-2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；"
-              rows="3"
-            ></textarea>
+            <div class="textarea-with-button">
+              <textarea
+                v-model="settings.openaiPrompt"
+                placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
+                rows="3"
+              ></textarea>
+              <button
+                type="button"
+                class="use-default-prompt"
+                @click="settings.openaiPrompt = DEFAULT_PROMPT"
+              >
+                使用默认
+              </button>
+            </div>
             <small>留空使用默认提示词</small>
           </div>
         </div>
@@ -63,11 +88,28 @@
         <div v-if="settings.apiType === 'gemini'">
           <div class="captcha-settings-item">
             <label>Google Gemini API Key:</label>
-            <input
-              type="text"
-              v-model="settings.geminiKey"
-              placeholder="输入Gemini API Key"
-            />
+            <div class="input-with-button">
+              <input
+                type="text"
+                v-model="settings.geminiKey"
+                placeholder="输入Gemini API Key"
+              />
+              <button
+                type="button"
+                class="test-api-button"
+                :class="{
+                  'test-loading': apiTestStatus.gemini === 'loading',
+                  'test-success': apiTestStatus.gemini === 'success',
+                  'test-error': apiTestStatus.gemini === 'error'
+                }"
+                @click="testApiConnection('gemini')"
+              >
+                <span v-if="apiTestStatus.gemini === ''">测试连接</span>
+                <span v-else-if="apiTestStatus.gemini === 'loading'"></span>
+                <span v-else-if="apiTestStatus.gemini === 'success'">成功</span>
+                <span v-else-if="apiTestStatus.gemini === 'error'">失败</span>
+              </button>
+            </div>
           </div>
           <div class="captcha-settings-item">
             <label>自定义API地址 (可选):</label>
@@ -89,12 +131,20 @@
           </div>
           <div class="captcha-settings-item">
             <label>自定义提示词 (可选):</label>
-            <textarea
-              v-model="settings.geminiPrompt"
-              placeholder="1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
-2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；"
-              rows="3"
-            ></textarea>
+            <div class="textarea-with-button">
+              <textarea
+                v-model="settings.geminiPrompt"
+                placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
+                rows="3"
+              ></textarea>
+              <button
+                type="button"
+                class="use-default-prompt"
+                @click="settings.geminiPrompt = DEFAULT_PROMPT"
+              >
+                使用默认
+              </button>
+            </div>
             <small>留空使用默认提示词</small>
           </div>
         </div>
@@ -141,10 +191,18 @@
 <script>
 import packageJson from "../package.json";
 import axios from "axios";
+import { DEFAULT_PROMPT } from "./assets/prompts.js";
 
 export default {
   data() {
     return {
+      // 导入的常量
+      DEFAULT_PROMPT,
+      // API测试状态
+      apiTestStatus: {
+        openai: '', // 可能的值: '', 'loading', 'success', 'error'
+        gemini: '', // 可能的值: '', 'loading', 'success', 'error'
+      },
       // 设置项
       settings: {
         apiType: "openai", // openai, gemini
@@ -152,12 +210,12 @@ export default {
         openaiKey: "",
         openaiApiUrl: "",
         openaiModel: "",
-        openaiPrompt: "", // 自定义提示词
+        openaiPrompt: DEFAULT_PROMPT, // 自定义提示词，默认填充
         // Gemini设置
         geminiKey: "",
         geminiApiUrl: "",
         geminiModel: "",
-        geminiPrompt: "", // 自定义提示词
+        geminiPrompt: DEFAULT_PROMPT, // 自定义提示词，默认填充
         // 自动识别设置
         autoRecognize: false, // 是否启用自动识别
         // 剪贴板设置
@@ -192,14 +250,18 @@ export default {
         if (typeof GM_getValue !== "undefined") {
           const savedSettings = GM_getValue("captchaSettings");
           if (savedSettings) {
-            this.settings = JSON.parse(savedSettings);
+            const parsedSettings = JSON.parse(savedSettings);
+            // 合并设置，确保新增字段也有默认值
+            this.settings = { ...this.settings, ...parsedSettings };
           }
         } else {
           // console.log('未检测到油猴环境，无法加载设置');
           // 尝试从localStorage加载设置（开发环境使用）
           const localSettings = localStorage.getItem("captchaSettings");
           if (localSettings) {
-            this.settings = JSON.parse(localSettings);
+            const parsedSettings = JSON.parse(localSettings);
+            // 合并设置，确保新增字段也有默认值
+            this.settings = { ...this.settings, ...parsedSettings };
           }
         }
       } catch (error) {
@@ -297,9 +359,12 @@ export default {
 
     /**
      * 检查API是否配置
+     * @param {string} specificType - 指定要检查的API类型，不传则检查当前选中的API
+     * @returns {boolean} - API是否已配置
      */
-    isApiConfigured() {
-      switch (this.settings.apiType) {
+    isApiConfigured(specificType) {
+      const typeToCheck = specificType || this.settings.apiType;
+      switch (typeToCheck) {
         case "openai":
           return !!this.settings.openaiKey;
         case "gemini":
@@ -337,10 +402,7 @@ export default {
       // 使用自定义模型或默认模型
       const model = this.settings.openaiModel || "gpt-4.1-mini";
       // 使用自定义提示词或默认提示词
-      const prompt =
-        this.settings.openaiPrompt ||
-        `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
-2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；`;
+      const prompt = this.settings.openaiPrompt || DEFAULT_PROMPT;
 
       const response = await this.request({
         method: "POST",
@@ -388,10 +450,7 @@ export default {
         "https://generativelanguage.googleapis.com/v1beta/models";
       const apiUrl = `${baseApiUrl}/${model}:generateContent`;
       // 使用自定义提示词或默认提示词
-      const prompt =
-        this.settings.geminiPrompt ||
-        `1.这是一个验证码图片,请识别图片中的文字,只返回识别结果,不要有任何其他文字或解释；
-2.如果你识别到了是一道数学计算题（加减乘除），请进行计算，然后直接输出数字，不要有任何其他文字或解释；`;
+      const prompt = this.settings.geminiPrompt || DEFAULT_PROMPT;
 
       const response = await this.request({
         method: "POST",
@@ -868,9 +927,114 @@ export default {
         }, 300); // 300ms是动画持续时间
       }, 3000);
     },
+
+    /**
+     * 测试API连通性
+     * @param {string} apiType - API类型，'openai'或'gemini'
+     */
+    async testApiConnection(apiType) {
+      try {
+        if (!this.isApiConfigured(apiType)) {
+          this.apiTestStatus[apiType] = 'error';
+          // 3秒后重置状态
+          setTimeout(() => {
+            this.apiTestStatus[apiType] = '';
+          }, 3000);
+          return;
+        }
+
+        // 设置加载状态
+        this.apiTestStatus[apiType] = 'loading';
+
+        if (apiType === 'openai') {
+          // 测试OpenAI API
+          const apiUrl = this.settings.openaiApiUrl || "https://api.openai.com/v1/chat/completions";
+          const model = this.settings.openaiModel || "gpt-4.1-mini";
+
+          const response = await this.request({
+            method: "POST",
+            url: apiUrl,
+            data: {
+              model: model,
+              messages: [
+                {
+                  role: "user",
+                  content: [
+                    {
+                      type: "text",
+                      text: "测试连接，请回复'连接成功'",
+                    }
+                  ],
+                }
+              ],
+              max_tokens: 10,
+            },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${this.settings.openaiKey}`,
+            },
+          });
+
+          if (response && response.data) {
+            this.apiTestStatus[apiType] = 'success';
+          }
+        } else if (apiType === 'gemini') {
+          // 测试Google Gemini API
+          const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
+          const baseApiUrl = this.settings.geminiApiUrl || "https://generativelanguage.googleapis.com/v1beta/models";
+          const apiUrl = `${baseApiUrl}/${model}:generateContent`;
+
+          const response = await this.request({
+            method: "POST",
+            url: `${apiUrl}?key=${this.settings.geminiKey}`,
+            data: {
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: "测试连接，请回复'连接成功'",
+                    }
+                  ],
+                }
+              ],
+              generationConfig: {
+                temperature: 0,
+                maxOutputTokens: 10,
+              },
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response && response.data) {
+            this.apiTestStatus[apiType] = 'success';
+          }
+        }
+        
+        // 3秒后重置成功状态
+        setTimeout(() => {
+          if (this.apiTestStatus[apiType] === 'success') {
+            this.apiTestStatus[apiType] = '';
+          }
+        }, 3000);
+      } catch (error) {
+        console.error("API连接测试失败:", error);
+        this.apiTestStatus[apiType] = 'error';
+        
+        // 3秒后重置错误状态
+        setTimeout(() => {
+          this.apiTestStatus[apiType] = '';
+        }, 3000);
+      }
+    },
+  },
+  created() {
+    console.log(this.settings.openaiPrompt);
   },
   mounted() {
     this.init();
   },
 };
 </script>
+
