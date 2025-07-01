@@ -6,7 +6,7 @@
 
 自动识别网页验证码并填充输入框，支持 OpenAI 和 Google Gemini，需要模型支持视觉。（推荐 gemini-2.5-flash-lite，速度较快）
 
-![image](https://github.com/user-attachments/assets/a2987157-e6cd-47cb-92d4-0a060b5b37c8)
+![image](https://github.com/user-attachments/assets/c3a24ea0-7ce9-4e2f-930b-73f3951197d5)
 
 ### 1. 功能
 
