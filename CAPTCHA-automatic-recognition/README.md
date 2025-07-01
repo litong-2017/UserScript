@@ -1,10 +1,13 @@
 ## CAPTCHA-automatic-recognition（AI 验证码自动识别填充）
 
-[GitHub](https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition)
+[GitHub](https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition) |
+[Greasyfork](https://greasyfork.org/scripts/540822) |
+[更新日志](https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition/version-log.md)
 
+![Greasy Fork Version](https://img.shields.io/greasyfork/v/540822)
 ![Greasy Fork Downloads](https://img.shields.io/greasyfork/dt/540822)
 
-自动识别网页验证码并填充输入框，支持 OpenAI 和 Google Gemini，需要模型支持视觉。（推荐 gemini-2.5-flash-lite，速度较快）
+AI 自动识别网页验证码，支持 OpenAI 和 Google Gemini，限制视觉模型。（推荐 gemini-2.5-flash-lite，速度较快、稳定性较高）
 
 ![image](https://github.com/user-attachments/assets/c3a24ea0-7ce9-4e2f-930b-73f3951197d5)
 
@@ -31,25 +34,7 @@
 5. 对于使用框架模板语法的网站，可开启"自动复制到剪贴板"功能
 6. 之后所有网站都可直接用，无需重复配置
 
-### 4. 更新日志
-
-**0.0.12**
-- 网站兼容性处理
-
-**0.0.10**
-- 处理跨域图片访问出错
-
-**0.0.9**
-- 兼容特殊网站验证码格式
-- 优化后缀显示，允许只填写 api 域名
-- 优化跨域图片访问出错提示
-- 优化不同网站下 UI 兼容性显示
-
-**0.0.8**
-- 新增连通性测试
-- 新增提示词强化
-
-### 5. LICENSE
+### 4. LICENSE
 
 [Apache-2.0](https://github.com/ezyshu/UserScript/blob/main/CAPTCHA-automatic-recognition/LICENSE)
 
