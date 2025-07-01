@@ -227,7 +227,7 @@ export default {
       config: {
         // 验证码图片选择器
         captchaSelector:
-          'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[title*="点击刷新验证码"], img[alt*="captcha"], img[id="captchaPic"], .validate-code img',
+          'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[title*="点击刷新验证码"], img[alt*="captcha"], img[id="captchaPic"], .validate-code img, img[src*="/login_check_code.php"], img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]',
         // 相关输入框选择器 (通常在验证码图片附近的输入框)
         inputSelector:
           'input[name*="captcha"], input[name*="verify"], input[placeholder*="验证码"], input[placeholder*="captcha"]',
@@ -315,19 +315,16 @@ export default {
 
     /**
      * 使用AI识别验证码
-     * @param {HTMLImageElement} captchaImg - 验证码图片元素
+     * @param {string} base64Image - 验证码图片的base64编码
      * @returns {Promise<string>} - 识别结果
      */
-    async recognizeCaptcha(captchaImg) {
+    async recognizeCaptcha(base64Image) {
       // 检查是否配置了API
       if (!this.isApiConfigured()) {
         this.showToast("请先配置验证码识别API", "error");
         this.openSettings();
         return "";
       }
-
-      // 将图片转换为base64
-      const base64Image = this.imageToBase64(captchaImg);
 
       // 根据API类型调用不同的识别方法
       let result = "";
@@ -376,29 +373,108 @@ export default {
 
     /**
      * 将图片转换为base64格式
+     * @param {HTMLImageElement} imgElement - 图片元素
+     * @returns {Object} - 返回包含成功状态和数据的对象
      */
     imageToBase64(imgElement) {
-      // 创建canvas
-      const canvas = document.createElement("canvas");
-      canvas.width = imgElement.naturalWidth || imgElement.width;
-      canvas.height = imgElement.naturalHeight || imgElement.height;
+      try {
+        // 检查图片来源
+        const imgSrc = imgElement.src;
+        
+        // 如果图片来源是外部链接且跨域（非data:image开头，且不是同域）
+        if (!imgSrc.startsWith('data:image') && !this.isSameOrigin(imgSrc)) {
+          return {
+            success: false,
+            message: "抱歉，检测到跨域图片链接"
+          };
+        }
+        
+        // 创建canvas
+        const canvas = document.createElement("canvas");
+        canvas.width = imgElement.naturalWidth || imgElement.width;
+        canvas.height = imgElement.naturalHeight || imgElement.height;
 
-      // 在canvas上绘制图片
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(imgElement, 0, 0);
+        // 在canvas上绘制图片
+        const ctx = canvas.getContext("2d");
+        
+        // 尝试绘制图片
+        try {
+          ctx.drawImage(imgElement, 0, 0);
+          // 测试能否访问图片数据（如果是跨域图片会抛出错误）
+          ctx.getImageData(0, 0, 1, 1);
+        } catch (e) {
+          return {
+            success: false,
+            message: "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。"
+          };
+        }
 
-      // 转换为base64
-      return canvas.toDataURL("image/png").split(",")[1];
+        // 转换为base64
+        const base64Data = canvas.toDataURL("image/png").split(",")[1];
+        
+        // 检查base64数据是否有效
+        if (!base64Data || base64Data.length < 100) {
+          return {
+            success: false,
+            message: "图片转换失败或内容为空。请刷新验证码后重试。"
+          };
+        }
+        
+        return {
+          success: true,
+          data: base64Data
+        };
+      } catch (error) {
+        console.error("图片转base64失败:", error);
+        return {
+          success: false,
+          message: "图片转换失败: " + (error.message || "未知错误")
+        };
+      }
+    },
+    
+    /**
+     * 检查URL是否与当前页面同源
+     * @param {string} url - 要检查的URL
+     * @returns {boolean} - 是否同源
+     */
+    isSameOrigin(url) {
+      try {
+        const currentOrigin = window.location.origin;
+        const urlObj = new URL(url, currentOrigin);
+        return urlObj.origin === currentOrigin;
+      } catch (e) {
+        return false;
+      }
+    },
+
+    /**
+     * 格式化OpenAI API URL，如果只提供了前缀，自动补全'/v1/chat/completions'
+     * @param {string} url - 原始URL
+     * @returns {string} - 格式化后的URL
+     */
+    formatOpenAIUrl(url) {
+      if (!url) {
+        return "https://api.openai.com/v1/chat/completions";
+      }
+      
+      if (!url.endsWith('/v1/chat/completions')) {
+        // 移除末尾的斜杠（如果有）
+        url = url.replace(/\/+$/, '');
+        // 添加标准路径
+        url = `${url}/v1/chat/completions`;
+      }
+      
+      return url;
     },
 
     /**
      * 使用OpenAI API识别验证码
      */
     async recognizeWithOpenAI(base64Image) {
-      // 使用自定义API地址或默认地址
-      const apiUrl =
-        this.settings.openaiApiUrl ||
-        "https://api.openai.com/v1/chat/completions";
+      // 使用自定义API地址或默认地址，并格式化URL
+      const apiUrl = this.formatOpenAIUrl(this.settings.openaiApiUrl);
+      
       // 使用自定义模型或默认模型
       const model = this.settings.openaiModel || "gpt-4.1-mini";
       // 使用自定义提示词或默认提示词
@@ -612,14 +688,39 @@ export default {
 
     /**
      * 处理验证码识别
+     * @param {HTMLImageElement} captchaImg - 验证码图片元素
+     * @param {HTMLInputElement} inputField - 输入框元素
+     * @param {HTMLElement} icon - 识别图标元素
+     * @param {Object} checkedBase64 - 可选，已经预先检查过的base64结果
      */
-    async processCaptcha(captchaImg, inputField, icon) {
+    async processCaptcha(captchaImg, inputField, icon, checkedBase64) {
       try {
         // 更新图标状态为加载中
         icon.classList.add("captcha-recognition-loading");
 
+        // 获取base64编码的图片
+        let base64Result;
+        if (checkedBase64) {
+          // 如果已经有检查过的结果，直接使用
+          base64Result = checkedBase64;
+        } else {
+          // 否则转换图片为base64
+          base64Result = this.imageToBase64(captchaImg);
+          
+          // 如果图片转换失败，显示错误并终止识别
+          if (!base64Result.success) {
+            this.showToast(base64Result.message, "error");
+            icon.classList.remove("captcha-recognition-loading");
+            icon.classList.add("captcha-recognition-error");
+            setTimeout(() => {
+              icon.classList.remove("captcha-recognition-error");
+            }, 2000);
+            return;
+          }
+        }
+
         // 识别验证码
-        const text = await this.recognizeCaptcha(captchaImg);
+        const text = await this.recognizeCaptcha(base64Result.data);
 
         // 如果识别结果为空，显示错误
         if (!text) {
@@ -641,7 +742,7 @@ export default {
         if (this.settings.copyToClipboard) {
           try {
             await navigator.clipboard.writeText(text);
-            this.showToast(`验证码已识别: ${text} (已复制到剪贴板)`, "success");
+            this.showToast(`已将验证码复制到剪贴板`, "success");
           } catch (clipboardError) {
             // 如果剪贴板API不可用，使用传统方法
             const textarea = document.createElement("textarea");
@@ -725,9 +826,41 @@ export default {
           if (this.settings.autoRecognize) {
             setTimeout(() => {
               const elements = this.findCaptchaElements();
-              elements.forEach(({ captchaImg, inputField }) => {
-                // 检查这个验证码图片是否是新添加或变化的
-                if (newCaptchaElements.includes(captchaImg)) {
+              
+              // 过滤出新检测到的元素
+              const newElements = elements.filter(({ captchaImg }) => 
+                newCaptchaElements.includes(captchaImg));
+              
+              // 预先检测是否有不可识别的图片
+              const unrecognizableImages = [];
+              newElements.forEach(({ captchaImg }) => {
+                // 预先检测图片是否可以转换为base64
+                const base64Result = this.imageToBase64(captchaImg);
+                if (!base64Result.success) {
+                  unrecognizableImages.push({
+                    img: captchaImg,
+                    message: base64Result.message
+                  });
+                }
+              });
+              
+              // 如果有不可识别的图片，显示提示
+              if (unrecognizableImages.length > 0) {
+                this.showToast(
+                  `检测到 ${unrecognizableImages.length} 个新验证码图片无法识别：${unrecognizableImages[0].message}`,
+                  "error"
+                );
+              }
+              
+              // 只识别可识别的图片
+              const recognizableElements = newElements.filter(({ captchaImg }) => {
+                const base64Result = this.imageToBase64(captchaImg);
+                return base64Result.success;
+              });
+              
+              // 处理可识别的图片
+              if (recognizableElements.length > 0) {
+                recognizableElements.forEach(({ captchaImg, inputField }) => {
                   // 查找或创建识别图标
                   let icon;
                   const existingIcon = captchaImg.nextElementSibling;
@@ -749,10 +882,17 @@ export default {
                     }
                   }
 
-                  // 自动进行识别
-                  this.processCaptcha(captchaImg, inputField, icon);
-                }
-              });
+                  // 获取base64结果，避免重复转换
+                  const base64Result = this.imageToBase64(captchaImg);
+                  // 自动进行识别，传入已检查的base64结果
+                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                });
+              } else if (newElements.length > 0) {
+                this.showToast(
+                  `检测到 ${newElements.length} 个新验证码，但均无法自动识别`,
+                  "error"
+                );
+              }
             }, 500); // 延迟500ms，确保图片已经加载完成
           }
         }
@@ -793,21 +933,58 @@ export default {
         const elements = this.findCaptchaElements();
 
         if (elements.length > 0) {
-          // 新增逻辑: 检查初始加载时的自动识别设置
-          if (this.settings.autoRecognize) {
+          // 新增逻辑: 预先检测验证码图片是否可以识别
+          const unrecognizableImages = [];
+          elements.forEach(({ captchaImg }) => {
+            // 预先检测图片是否可以转换为base64
+            const base64Result = this.imageToBase64(captchaImg);
+            if (!base64Result.success) {
+              unrecognizableImages.push({
+                img: captchaImg,
+                message: base64Result.message
+              });
+            }
+          });
+          
+          // 如果有不可识别的图片，显示提示
+          if (unrecognizableImages.length > 0) {
             this.showToast(
-              `检测到 ${elements.length} 个验证码，正在自动识别...`,
-              "info"
+              `检测到 ${unrecognizableImages.length} 个验证码图片无法识别：${unrecognizableImages[0].message}`,
+              "error"
             );
-            // 遍历所有找到的验证码并处理
-            elements.forEach(({ captchaImg, inputField }) => {
-              const icon = captchaImg.nextElementSibling;
-              // 确保图标元素存在
-              if (icon && icon.classList.contains("captcha-recognition-icon")) {
-                // 直接调用处理函数，无需等待点击
-                this.processCaptcha(captchaImg, inputField, icon);
-              }
+            return false;
+          }
+          
+          // 检查初始加载时的自动识别设置
+          if (this.settings.autoRecognize) {
+            // 只识别可识别的图片
+            const recognizableElements = elements.filter(({ captchaImg }) => {
+              const base64Result = this.imageToBase64(captchaImg);
+              return base64Result.success;
             });
+            
+            if (recognizableElements.length > 0) {
+              this.showToast(
+                `检测到 ${recognizableElements.length} 个可识别的验证码，正在自动识别...`,
+                "info"
+              );
+              // 遍历所有找到的可识别验证码并处理
+              recognizableElements.forEach(({ captchaImg, inputField }) => {
+                const icon = captchaImg.nextElementSibling;
+                // 确保图标元素存在
+                if (icon && icon.classList.contains("captcha-recognition-icon")) {
+                  // 获取base64结果，避免重复转换
+                  const base64Result = this.imageToBase64(captchaImg);
+                  // 直接调用处理函数，传入已检查的base64结果
+                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                }
+              });
+            } else if (elements.length > 0) {
+              this.showToast(
+                `检测到 ${elements.length} 个验证码，但均无法自动识别`,
+                "error"
+              );
+            }
           } else {
             // 保留原始行为: 如果未开启自动识别，则提示用户点击
             this.showToast(
@@ -948,7 +1125,7 @@ export default {
 
         if (apiType === 'openai') {
           // 测试OpenAI API
-          const apiUrl = this.settings.openaiApiUrl || "https://api.openai.com/v1/chat/completions";
+          const apiUrl = this.formatOpenAIUrl(this.settings.openaiApiUrl);
           const model = this.settings.openaiModel || "gpt-4.1-mini";
 
           const response = await this.request({
@@ -1028,9 +1205,6 @@ export default {
         }, 3000);
       }
     },
-  },
-  created() {
-    console.log(this.settings.openaiPrompt);
   },
   mounted() {
     this.init();

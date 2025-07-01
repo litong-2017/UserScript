@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.8
+// @version      0.0.9
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -15,7 +15,7 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-left:5px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');background-size:contain;cursor:pointer;z-index:999;opacity:.7;transition:opacity .2s}.captcha-recognition-icon:hover{opacity:1}.input-group-append{position:relative}.input-group-append .captcha-recognition-icon{position:absolute;left:100%}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>');animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')}body.captcha-settings-open{overflow:hidden}.captcha-settings-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#00000080;display:flex;justify-content:center;align-items:center;z-index:2147483647;text-align:left}.captcha-settings-content{background-color:#fff;padding:20px;border-radius:8px;width:400px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 4px 12px #00000026}.captcha-settings-content h3{margin-top:0;color:#333;font-size:18px;margin-bottom:16px;text-align:center}.captcha-settings-item{margin-bottom:12px}.captcha-settings-item label{display:block;margin-bottom:4px;color:#555;font-size:14px}.captcha-settings-item input,.captcha-settings-item select,.captcha-settings-item textarea{width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box}.captcha-settings-item textarea{resize:vertical;min-height:80px}.textarea-with-button{position:relative;display:flex;flex-direction:column}.use-default-prompt{position:absolute;top:5px;right:5px;background-color:#f1f1f1;border:1px solid #ddd;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;color:#333;transition:background-color .2s}.use-default-prompt:hover{background-color:#e4e4e4}.captcha-settings-buttons{display:flex;justify-content:flex-end;margin-top:20px;gap:10px}.captcha-settings-buttons button{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .2s}.captcha-settings-buttons button:first-child{background-color:#1a73e8;color:#fff}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0}.captcha-settings-buttons button:last-child{background-color:#f1f1f1;color:#333}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4}.dev-settings-button{position:fixed;bottom:20px;right:20px;padding:10px 15px;background-color:#1a73e8;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;font-size:14px;box-shadow:0 2px 5px #0003;transition:background-color .2s}.dev-settings-button:hover{background-color:#1557b0}#captcha-toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}.captcha-toast{min-width:250px;max-width:350px;padding:12px 16px;border-radius:4px;box-shadow:0 4px 12px #00000026;color:#fff;font-size:14px;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:auto;word-break:break-word}.captcha-toast-show{opacity:1;transform:translateY(0)}.captcha-toast-hide{opacity:0;transform:translateY(-20px)}.captcha-toast-info{background-color:#1a73e8}.captcha-toast-success{background-color:#4caf50}.captcha-toast-error{background-color:#f44336}.input-with-button{position:relative;display:flex;align-items:center}.input-with-button input{flex:1;margin-right:10px}.test-api-button{background-color:#1a73e8;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:14px;cursor:pointer;transition:background-color .2s,color .2s;min-width:80px;display:flex;justify-content:center;align-items:center;height:33px}.test-api-button:hover{background-color:#1557b0}.test-api-button.test-loading{background-color:#f1f1f1;color:#666;position:relative}.test-api-button.test-loading:after{content:"";position:absolute;width:12px;height:12px;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #666;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite}@keyframes spin{0%{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}.test-api-button.test-success{background-color:#4caf50;color:#fff}.test-api-button.test-error{background-color:#f44336;color:#fff} `);
+(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-left:5px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');background-size:contain;cursor:pointer;position:relative;z-index:999;opacity:.7;transition:opacity .2s}.captcha-recognition-icon:hover{opacity:1}.input-group-append{position:relative}.input-group-append .captcha-recognition-icon{position:absolute;left:100%}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>');animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')}body.captcha-settings-open{overflow:hidden}.captcha-settings-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#00000080;display:flex;justify-content:center;align-items:center;z-index:2147483647;text-align:left}.captcha-settings-content{background-color:#fff;color:#333;padding:20px;border-radius:8px;width:400px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 4px 12px #00000026}.captcha-settings-content h3{margin-top:0;color:#333;font-size:18px;margin-bottom:16px;text-align:center}.captcha-settings-item{margin-bottom:12px}.captcha-settings-item label{display:block;margin-bottom:4px;color:#555;font-size:14px}.captcha-settings-item input,.captcha-settings-item select,.captcha-settings-item textarea{width:100%;padding:8px;border:1px solid #ddd;background:none;border-radius:4px;font-size:14px;box-sizing:border-box!important;background:#fff!important;color:#333!important;margin:0!important}.captcha-settings-item input,.captcha-settings-item select{height:33px}.captcha-settings-item textarea{resize:vertical;min-height:80px}.textarea-with-button{position:relative;display:flex;flex-direction:column}.use-default-prompt{position:absolute;top:5px;right:5px;background-color:#f1f1f1;border:1px solid #ddd;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;color:#333;transition:background-color .2s}.use-default-prompt:hover{background-color:#e4e4e4}.captcha-settings-buttons{display:flex;justify-content:flex-end;margin-top:20px;gap:10px}.captcha-settings-buttons button{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .2s}.captcha-settings-buttons button:first-child{background-color:#1a73e8;color:#fff}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0}.captcha-settings-buttons button:last-child{background-color:#f1f1f1;color:#333}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4}.dev-settings-button{position:fixed;bottom:20px;right:20px;padding:10px 15px;background-color:#1a73e8;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;font-size:14px;box-shadow:0 2px 5px #0003;transition:background-color .2s}.dev-settings-button:hover{background-color:#1557b0}#captcha-toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;text-align:left}.captcha-toast{width:280px;padding:12px 16px;border-radius:4px;box-shadow:0 4px 12px #00000026;color:#fff;font-size:14px;opacity:0;transform:translateY(-20px);transition:all .3s ease;pointer-events:auto;word-break:break-word;text-align:left}.captcha-toast-show{opacity:1;transform:translateY(0)}.captcha-toast-hide{opacity:0;transform:translateY(-20px)}.captcha-toast-info{background-color:#1a73e8}.captcha-toast-success{background-color:#4caf50}.captcha-toast-error{background-color:#f44336}.input-with-button{position:relative;display:flex;align-items:center}.input-with-button input{flex:1}.test-api-button{background-color:#1a73e8;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:14px;cursor:pointer;transition:background-color .2s,color .2s;min-width:80px;display:flex;justify-content:center;align-items:center;height:33px;margin-left:10px}.captcha-settings-tip{margin:16px 0;padding:12px;background-color:#f8f9fa;border-left:4px solid #1a73e8;border-radius:4px;font-size:13px;color:#333}.captcha-settings-tip p{margin:0 0 8px}.captcha-settings-tip ol{margin:8px 0 0;padding-left:24px}.captcha-settings-tip li{margin-bottom:4px}.test-api-button:hover{background-color:#1557b0}.test-api-button.test-loading{background-color:#f1f1f1;color:#666;position:relative}.test-api-button.test-loading:after{content:"";position:absolute;width:12px;height:12px;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #666;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite}@keyframes spin{0%{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}.test-api-button.test-success{background-color:#4caf50;color:#fff}.test-api-button.test-error{background-color:#f44336;color:#fff}img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon{position:absolute;left:270px} `);
 
 (function (vue) {
   'use strict';
@@ -2491,7 +2491,7 @@
         // 配置选项
         config: {
           // 验证码图片选择器
-          captchaSelector: 'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[title*="点击刷新验证码"], img[alt*="captcha"], img[id="captchaPic"], .validate-code img',
+          captchaSelector: 'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[title*="点击刷新验证码"], img[alt*="captcha"], img[id="captchaPic"], .validate-code img, img[src*="/login_check_code.php"], img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]',
           // 相关输入框选择器 (通常在验证码图片附近的输入框)
           inputSelector: 'input[name*="captcha"], input[name*="verify"], input[placeholder*="验证码"], input[placeholder*="captcha"]'
         },
@@ -2562,16 +2562,15 @@
       },
       /**
        * 使用AI识别验证码
-       * @param {HTMLImageElement} captchaImg - 验证码图片元素
+       * @param {string} base64Image - 验证码图片的base64编码
        * @returns {Promise<string>} - 识别结果
        */
-      async recognizeCaptcha(captchaImg) {
+      async recognizeCaptcha(base64Image) {
         if (!this.isApiConfigured()) {
           this.showToast("请先配置验证码识别API", "error");
           this.openSettings();
           return "";
         }
-        const base64Image = this.imageToBase64(captchaImg);
         let result = "";
         try {
           this.showToast("正在识别验证码...", "info");
@@ -2613,20 +2612,84 @@
       },
       /**
        * 将图片转换为base64格式
+       * @param {HTMLImageElement} imgElement - 图片元素
+       * @returns {Object} - 返回包含成功状态和数据的对象
        */
       imageToBase64(imgElement) {
-        const canvas = document.createElement("canvas");
-        canvas.width = imgElement.naturalWidth || imgElement.width;
-        canvas.height = imgElement.naturalHeight || imgElement.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(imgElement, 0, 0);
-        return canvas.toDataURL("image/png").split(",")[1];
+        try {
+          const imgSrc = imgElement.src;
+          if (!imgSrc.startsWith("data:image") && !this.isSameOrigin(imgSrc)) {
+            return {
+              success: false,
+              message: "抱歉，检测到跨域图片链接"
+            };
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = imgElement.naturalWidth || imgElement.width;
+          canvas.height = imgElement.naturalHeight || imgElement.height;
+          const ctx = canvas.getContext("2d");
+          try {
+            ctx.drawImage(imgElement, 0, 0);
+            ctx.getImageData(0, 0, 1, 1);
+          } catch (e) {
+            return {
+              success: false,
+              message: "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。"
+            };
+          }
+          const base64Data = canvas.toDataURL("image/png").split(",")[1];
+          if (!base64Data || base64Data.length < 100) {
+            return {
+              success: false,
+              message: "图片转换失败或内容为空。请刷新验证码后重试。"
+            };
+          }
+          return {
+            success: true,
+            data: base64Data
+          };
+        } catch (error) {
+          console.error("图片转base64失败:", error);
+          return {
+            success: false,
+            message: "图片转换失败: " + (error.message || "未知错误")
+          };
+        }
+      },
+      /**
+       * 检查URL是否与当前页面同源
+       * @param {string} url - 要检查的URL
+       * @returns {boolean} - 是否同源
+       */
+      isSameOrigin(url) {
+        try {
+          const currentOrigin = window.location.origin;
+          const urlObj = new URL(url, currentOrigin);
+          return urlObj.origin === currentOrigin;
+        } catch (e) {
+          return false;
+        }
+      },
+      /**
+       * 格式化OpenAI API URL，如果只提供了前缀，自动补全'/v1/chat/completions'
+       * @param {string} url - 原始URL
+       * @returns {string} - 格式化后的URL
+       */
+      formatOpenAIUrl(url) {
+        if (!url) {
+          return "https://api.openai.com/v1/chat/completions";
+        }
+        if (!url.endsWith("/v1/chat/completions")) {
+          url = url.replace(/\/+$/, "");
+          url = `${url}/v1/chat/completions`;
+        }
+        return url;
       },
       /**
        * 使用OpenAI API识别验证码
        */
       async recognizeWithOpenAI(base64Image) {
-        const apiUrl = this.settings.openaiApiUrl || "https://api.openai.com/v1/chat/completions";
+        const apiUrl = this.formatOpenAIUrl(this.settings.openaiApiUrl);
         const model = this.settings.openaiModel || "gpt-4.1-mini";
         const prompt = this.settings.openaiPrompt || DEFAULT_PROMPT;
         const response = await this.request({
@@ -2789,11 +2852,30 @@
       },
       /**
        * 处理验证码识别
+       * @param {HTMLImageElement} captchaImg - 验证码图片元素
+       * @param {HTMLInputElement} inputField - 输入框元素
+       * @param {HTMLElement} icon - 识别图标元素
+       * @param {Object} checkedBase64 - 可选，已经预先检查过的base64结果
        */
-      async processCaptcha(captchaImg, inputField, icon) {
+      async processCaptcha(captchaImg, inputField, icon, checkedBase64) {
         try {
           icon.classList.add("captcha-recognition-loading");
-          const text = await this.recognizeCaptcha(captchaImg);
+          let base64Result;
+          if (checkedBase64) {
+            base64Result = checkedBase64;
+          } else {
+            base64Result = this.imageToBase64(captchaImg);
+            if (!base64Result.success) {
+              this.showToast(base64Result.message, "error");
+              icon.classList.remove("captcha-recognition-loading");
+              icon.classList.add("captcha-recognition-error");
+              setTimeout(() => {
+                icon.classList.remove("captcha-recognition-error");
+              }, 2e3);
+              return;
+            }
+          }
+          const text = await this.recognizeCaptcha(base64Result.data);
           if (!text) {
             icon.classList.remove("captcha-recognition-loading");
             icon.classList.add("captcha-recognition-error");
@@ -2808,7 +2890,7 @@
           if (this.settings.copyToClipboard) {
             try {
               await navigator.clipboard.writeText(text);
-              this.showToast(`验证码已识别: ${text} (已复制到剪贴板)`, "success");
+              this.showToast(`已将验证码复制到剪贴板`, "success");
             } catch (clipboardError) {
               const textarea = document.createElement("textarea");
               textarea.value = text;
@@ -2874,8 +2956,29 @@
             if (this.settings.autoRecognize) {
               setTimeout(() => {
                 const elements = this.findCaptchaElements();
-                elements.forEach(({ captchaImg, inputField }) => {
-                  if (newCaptchaElements.includes(captchaImg)) {
+                const newElements = elements.filter(({ captchaImg }) => newCaptchaElements.includes(captchaImg));
+                const unrecognizableImages = [];
+                newElements.forEach(({ captchaImg }) => {
+                  const base64Result = this.imageToBase64(captchaImg);
+                  if (!base64Result.success) {
+                    unrecognizableImages.push({
+                      img: captchaImg,
+                      message: base64Result.message
+                    });
+                  }
+                });
+                if (unrecognizableImages.length > 0) {
+                  this.showToast(
+                    `检测到 ${unrecognizableImages.length} 个新验证码图片无法识别：${unrecognizableImages[0].message}`,
+                    "error"
+                  );
+                }
+                const recognizableElements = newElements.filter(({ captchaImg }) => {
+                  const base64Result = this.imageToBase64(captchaImg);
+                  return base64Result.success;
+                });
+                if (recognizableElements.length > 0) {
+                  recognizableElements.forEach(({ captchaImg, inputField }) => {
                     let icon;
                     const existingIcon = captchaImg.nextElementSibling;
                     if (existingIcon && existingIcon.classList.contains("captcha-recognition-icon")) {
@@ -2892,9 +2995,15 @@
                         captchaImg.parentNode.appendChild(icon);
                       }
                     }
-                    this.processCaptcha(captchaImg, inputField, icon);
-                  }
-                });
+                    const base64Result = this.imageToBase64(captchaImg);
+                    this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                  });
+                } else if (newElements.length > 0) {
+                  this.showToast(
+                    `检测到 ${newElements.length} 个新验证码，但均无法自动识别`,
+                    "error"
+                  );
+                }
               }, 500);
             }
           }
@@ -2928,17 +3037,46 @@
           this.setupMutationObserver();
           const elements = this.findCaptchaElements();
           if (elements.length > 0) {
-            if (this.settings.autoRecognize) {
+            const unrecognizableImages = [];
+            elements.forEach(({ captchaImg }) => {
+              const base64Result = this.imageToBase64(captchaImg);
+              if (!base64Result.success) {
+                unrecognizableImages.push({
+                  img: captchaImg,
+                  message: base64Result.message
+                });
+              }
+            });
+            if (unrecognizableImages.length > 0) {
               this.showToast(
-                `检测到 ${elements.length} 个验证码，正在自动识别...`,
-                "info"
+                `检测到 ${unrecognizableImages.length} 个验证码图片无法识别：${unrecognizableImages[0].message}`,
+                "error"
               );
-              elements.forEach(({ captchaImg, inputField }) => {
-                const icon = captchaImg.nextElementSibling;
-                if (icon && icon.classList.contains("captcha-recognition-icon")) {
-                  this.processCaptcha(captchaImg, inputField, icon);
-                }
+              return false;
+            }
+            if (this.settings.autoRecognize) {
+              const recognizableElements = elements.filter(({ captchaImg }) => {
+                const base64Result = this.imageToBase64(captchaImg);
+                return base64Result.success;
               });
+              if (recognizableElements.length > 0) {
+                this.showToast(
+                  `检测到 ${recognizableElements.length} 个可识别的验证码，正在自动识别...`,
+                  "info"
+                );
+                recognizableElements.forEach(({ captchaImg, inputField }) => {
+                  const icon = captchaImg.nextElementSibling;
+                  if (icon && icon.classList.contains("captcha-recognition-icon")) {
+                    const base64Result = this.imageToBase64(captchaImg);
+                    this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                  }
+                });
+              } else if (elements.length > 0) {
+                this.showToast(
+                  `检测到 ${elements.length} 个验证码，但均无法自动识别`,
+                  "error"
+                );
+              }
             } else {
               this.showToast(
                 `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
@@ -3046,7 +3184,7 @@
           }
           this.apiTestStatus[apiType] = "loading";
           if (apiType === "openai") {
-            const apiUrl = this.settings.openaiApiUrl || "https://api.openai.com/v1/chat/completions";
+            const apiUrl = this.formatOpenAIUrl(this.settings.openaiApiUrl);
             const model = this.settings.openaiModel || "gpt-4.1-mini";
             const response = await this.request({
               method: "POST",
@@ -3117,9 +3255,6 @@
           }, 3e3);
         }
       }
-    },
-    created() {
-      console.log(this.settings.openaiPrompt);
     },
     mounted() {
       this.init();

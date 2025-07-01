@@ -7,7 +7,6 @@
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>');
   background-size: contain;
   cursor: pointer;
-  position: relative;
   z-index: 999;
   opacity: 0.7;
   transition: opacity 0.2s;
@@ -72,7 +71,6 @@ body.captcha-settings-open {
 
 .captcha-settings-content {
   background-color: white;
-  color: #333;
   padding: 20px;
   border-radius: 8px;
   width: 400px;
@@ -107,18 +105,9 @@ body.captcha-settings-open {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
-  background: none;
   border-radius: 4px;
   font-size: 14px;
-  box-sizing: border-box !important;
-  background: #fff !important;
-  color: #333 !important;
-  margin: 0 !important;
-}
-
-.captcha-settings-item input,
-.captcha-settings-item select {
-  height: 33px;
+  box-sizing: border-box;
 }
 
 .captcha-settings-item textarea {
@@ -264,6 +253,7 @@ body.captcha-settings-open {
 
 .input-with-button input {
   flex: 1;
+  margin-right: 10px;
 }
 
 /* API测试按钮 */
@@ -281,7 +271,6 @@ body.captcha-settings-open {
   justify-content: center;
   align-items: center;
   height: 33px;
-  margin-left: 10px;
 }
 
 /* 设置中的提示框 */
@@ -353,10 +342,4 @@ body.captcha-settings-open {
 .test-api-button.test-error {
   background-color: #f44336;
   color: white;
-}
-
-// 兼容网站样式
-img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon {
-  position: absolute;
-  left: 270px;
 }
