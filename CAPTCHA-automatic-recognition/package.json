@@ -2,7 +2,7 @@
   "name": "CAPTCHA-automatic-recognition",
   "version": "0.0.12",
   "author": "ezyshu",
-  "description": "自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。",
+  "description": "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.",
   "type": "module",
   "license": "Apache-2.0",
   "scripts": {
