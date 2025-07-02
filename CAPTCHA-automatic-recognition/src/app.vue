@@ -190,8 +190,9 @@
           
           <div v-if="showAdvancedSettings" class="advanced-settings-content">
             <div class="advanced-settings-warning">
-            ⚠️ 警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效
+              ⚠️ 警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效
             </div>
+            
             <div class="captcha-settings-item">
               <label>自定义验证码图片选择器：</label>
               <div class="custom-selectors">
