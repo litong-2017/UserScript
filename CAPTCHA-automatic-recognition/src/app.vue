@@ -27,7 +27,11 @@
           <div class="captcha-settings-item">
             <label>OpenAI API Key:</label>
             <div class="input-with-button">
-              <input type="text" v-model="settings.openaiKey" placeholder="sk-..." />
+              <input
+                type="text"
+                v-model="settings.openaiKey"
+                placeholder="sk-..."
+              />
               <button
                 type="button"
                 class="test-api-button"
@@ -171,7 +175,44 @@
               id="copyToClipboard"
               style="width: auto; margin-right: 8px"
             />
-            <label for="copyToClipboard" style="margin-bottom: 0">自动复制到剪贴板</label>
+            <label for="copyToClipboard" style="margin-bottom: 0"
+              >自动复制到剪贴板</label
+            >
+          </div>
+        </div>
+
+        <!-- 高级设置折叠面板 -->
+        <div class="captcha-settings-item">
+          <div class="advanced-settings-header" @click="toggleAdvancedSettings">
+            <span>高级设置 <a href="https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition/docs/advanced-settings.md" target="_blank" class="tutorial-link" @click.stop>教程</a></span>
+            <span class="toggle-icon" :class="{ 'expanded': showAdvancedSettings }">▶</span>
+          </div>
+          
+          <div v-if="showAdvancedSettings" class="advanced-settings-content">
+            <div class="advanced-settings-warning">
+            ⚠️ 警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效
+            </div>
+            <div class="captcha-settings-item">
+              <label>自定义验证码图片选择器：</label>
+              <div class="custom-selectors">
+                <div v-for="(selector, index) in settings.customCaptchaSelectors" :key="'captcha-'+index" class="selector-item">
+                  <input type="text" v-model="settings.customCaptchaSelectors[index]" placeholder="例如: img[src*='captcha']" />
+                  <button type="button" class="remove-selector" @click="removeSelector('captcha', index)">×</button>
+                </div>
+                <button type="button" class="add-selector" @click="addSelector('captcha')">添加选择器</button>
+              </div>
+            </div>
+            
+            <div class="captcha-settings-item">
+              <label>自定义输入框选择器：</label>
+              <div class="custom-selectors">
+                <div v-for="(selector, index) in settings.customInputSelectors" :key="'input-'+index" class="selector-item">
+                  <input type="text" v-model="settings.customInputSelectors[index]" placeholder="例如: input[name*='captcha']" />
+                  <button type="button" class="remove-selector" @click="removeSelector('input', index)">×</button>
+                </div>
+                <button type="button" class="add-selector" @click="addSelector('input')">添加选择器</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -217,17 +258,37 @@ export default {
         autoRecognize: false, // 是否启用自动识别
         // 剪贴板设置
         copyToClipboard: true, // 是否自动复制到剪贴板
+        // 自定义选择器
+        customCaptchaSelectors: [],
+        customInputSelectors: [],
       },
       // 是否显示设置面板
       showSettings: false,
+      // 是否显示高级设置
+      showAdvancedSettings: false,
       // 配置选项
       config: {
         // 验证码图片选择器
-        captchaSelector:
-          'img[src*="captcha"], img[src*="verify"], img[alt*="验证码"], img[title*="点击刷新验证码"], img[alt*="captcha"], img[id="captchaPic"], .validate-code img, img[src*="/login_check_code.php"], img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"],.authcode img[id="authImage"]',
+        captchaSelectors: [
+          'img[src*="captcha"]',
+          'img[src*="verify"]',
+          'img[alt*="验证码"]',
+          'img[title*="验证码"]',
+          'img[alt*="captcha"]',
+          'img[id="captchaPic"]',
+          ".validate-code img",
+          'img[src*="/login_check_code.php"]',
+          'img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]',
+          '.authcode img[id="authImage"]',
+        ],
         // 相关输入框选择器 (通常在验证码图片附近的输入框)
-        inputSelector:
-          'input[name*="captcha"], input[name*="verify"], input[placeholder*="验证码"], input[placeholder*="captcha"],input[id="authcode"]',
+        inputSelectors: [
+          'input[name*="captcha"]',
+          'input[name*="verify"]',
+          'input[placeholder*="验证码"]',
+          'input[placeholder*="captcha"]',
+          'input[id="authcode"]',
+        ],
       },
       // 用于在模板中访问环境变量
       process: {
@@ -297,7 +358,10 @@ export default {
         } else {
           // console.log('未检测到油猴环境，将设置保存到 localStorage');
           // 保存到 localStorage（开发环境使用）
-          localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
+          localStorage.setItem(
+            "captchaSettings",
+            JSON.stringify(this.settings)
+          );
         }
         this.closeSettings();
         this.showToast("设置已保存！", "success");
@@ -407,7 +471,8 @@ export default {
         } catch (e) {
           return {
             success: false,
-            message: "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
+            message:
+              "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
           };
         }
 
@@ -577,10 +642,35 @@ export default {
     },
 
     /**
+     * 获取合并后的选择器字符串
+     * @param {Array} selectors - 选择器数组
+     * @returns {string} - 合并后的选择器字符串
+     */
+    getCombinedSelector(selectors) {
+      // 合并默认选择器和自定义选择器
+      let allSelectors = [...selectors];
+      
+      // 如果是验证码选择器，添加自定义验证码选择器
+      if (selectors === this.config.captchaSelectors && this.settings.customCaptchaSelectors) {
+        allSelectors = [...allSelectors, ...this.settings.customCaptchaSelectors.filter(s => s.trim())];
+      }
+      
+      // 如果是输入框选择器，添加自定义输入框选择器
+      if (selectors === this.config.inputSelectors && this.settings.customInputSelectors) {
+        allSelectors = [...allSelectors, ...this.settings.customInputSelectors.filter(s => s.trim())];
+      }
+      
+      return allSelectors.join(", ");
+    },
+
+    /**
      * 查找页面上的验证码图片和相关输入框
      */
     findCaptchaElements() {
-      const captchaImages = document.querySelectorAll(this.config.captchaSelector);
+      const captchaSelector = this.getCombinedSelector(
+        this.config.captchaSelectors
+      );
+      const captchaImages = document.querySelectorAll(captchaSelector);
       if (captchaImages.length === 0) {
         // console.log('未找到验证码图片');
         return [];
@@ -592,7 +682,10 @@ export default {
         let inputField = null;
 
         // 方法 1：尝试通过选择器查找相关输入框
-        const inputs = document.querySelectorAll(this.config.inputSelector);
+        const inputSelector = this.getCombinedSelector(
+          this.config.inputSelectors
+        );
+        const inputs = document.querySelectorAll(inputSelector);
         if (inputs.length > 0) {
           // 找到距离验证码图片最近的输入框
           let minDistance = Infinity;
@@ -660,7 +753,10 @@ export default {
       elements.forEach(({ captchaImg, inputField }) => {
         // 检查是否已经添加过图标
         const existingIcon = captchaImg.nextElementSibling;
-        if (existingIcon && existingIcon.classList.contains("captcha-recognition-icon")) {
+        if (
+          existingIcon &&
+          existingIcon.classList.contains("captcha-recognition-icon")
+        ) {
           return;
         }
 
@@ -770,7 +866,10 @@ export default {
           icon.classList.remove("captcha-recognition-error");
         }, 2000);
 
-        this.showToast("处理验证码失败：" + (error.message || "未知错误"), "error");
+        this.showToast(
+          "处理验证码失败：" + (error.message || "未知错误"),
+          "error"
+        );
       }
     },
 
@@ -781,13 +880,16 @@ export default {
       const observer = new MutationObserver((mutations) => {
         let hasNewCaptcha = false;
         let newCaptchaElements = [];
+        const captchaSelector = this.getCombinedSelector(
+          this.config.captchaSelectors
+        );
 
         mutations.forEach((mutation) => {
           // 检查新增节点
           if (mutation.type === "childList" && mutation.addedNodes.length) {
             mutation.addedNodes.forEach((node) => {
               if (node.nodeType === Node.ELEMENT_NODE) {
-                const captchas = node.querySelectorAll(this.config.captchaSelector);
+                const captchas = node.querySelectorAll(captchaSelector);
                 if (captchas.length > 0) {
                   hasNewCaptcha = true;
                   captchas.forEach((captcha) => {
@@ -803,7 +905,7 @@ export default {
             mutation.type === "attributes" &&
             mutation.attributeName === "src" &&
             mutation.target.matches &&
-            mutation.target.matches(this.config.captchaSelector)
+            mutation.target.matches(captchaSelector)
           ) {
             hasNewCaptcha = true;
             newCaptchaElements.push(mutation.target);
@@ -846,10 +948,12 @@ export default {
               }
 
               // 只识别可识别的图片
-              const recognizableElements = newElements.filter(({ captchaImg }) => {
-                const base64Result = this.imageToBase64(captchaImg);
-                return base64Result.success;
-              });
+              const recognizableElements = newElements.filter(
+                ({ captchaImg }) => {
+                  const base64Result = this.imageToBase64(captchaImg);
+                  return base64Result.success;
+                }
+              );
 
               // 处理可识别的图片
               if (recognizableElements.length > 0) {
@@ -866,7 +970,10 @@ export default {
                     icon = document.createElement("div");
                     icon.classList.add("captcha-recognition-icon");
                     if (captchaImg.nextSibling) {
-                      captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
+                      captchaImg.parentNode.insertBefore(
+                        icon,
+                        captchaImg.nextSibling
+                      );
                     } else {
                       captchaImg.parentNode.appendChild(icon);
                     }
@@ -875,7 +982,12 @@ export default {
                   // 获取 base64 结果，避免重复转换
                   const base64Result = this.imageToBase64(captchaImg);
                   // 自动进行识别，传入已检查的 base64 结果
-                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                  this.processCaptcha(
+                    captchaImg,
+                    inputField,
+                    icon,
+                    base64Result
+                  );
                 });
               } else if (newElements.length > 0) {
                 this.showToast(
@@ -962,11 +1074,19 @@ export default {
               recognizableElements.forEach(({ captchaImg, inputField }) => {
                 const icon = captchaImg.nextElementSibling;
                 // 确保图标元素存在
-                if (icon && icon.classList.contains("captcha-recognition-icon")) {
+                if (
+                  icon &&
+                  icon.classList.contains("captcha-recognition-icon")
+                ) {
                   // 获取 base64 结果，避免重复转换
                   const base64Result = this.imageToBase64(captchaImg);
                   // 直接调用处理函数，传入已检查的 base64 结果
-                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                  this.processCaptcha(
+                    captchaImg,
+                    inputField,
+                    icon,
+                    base64Result
+                  );
                 }
               });
             } else if (elements.length > 0) {
@@ -1197,6 +1317,38 @@ export default {
         }, 3000);
       }
     },
+
+    /**
+     * 切换高级设置的显示状态
+     */
+    toggleAdvancedSettings() {
+      this.showAdvancedSettings = !this.showAdvancedSettings;
+    },
+    
+    /**
+     * 添加自定义选择器
+     * @param {string} type - 选择器类型，'captcha'或'input'
+     */
+    addSelector(type) {
+      if (type === 'captcha') {
+        this.settings.customCaptchaSelectors.push('');
+      } else if (type === 'input') {
+        this.settings.customInputSelectors.push('');
+      }
+    },
+    
+    /**
+     * 删除自定义选择器
+     * @param {string} type - 选择器类型，'captcha'或'input'
+     * @param {number} index - 要删除的选择器索引
+     */
+    removeSelector(type, index) {
+      if (type === 'captcha') {
+        this.settings.customCaptchaSelectors.splice(index, 1);
+      } else if (type === 'input') {
+        this.settings.customInputSelectors.splice(index, 1);
+      }
+    },
   },
   mounted() {
     this.init();
@@ -1207,7 +1359,9 @@ export default {
       const observer = new MutationObserver(function (mutations) {
         const authcodeElement = document.querySelector(".authcode.co");
         if (authcodeElement) {
-          const captchaIcon = document.querySelector(".captcha-recognition-icon");
+          const captchaIcon = document.querySelector(
+            ".captcha-recognition-icon"
+          );
           if (captchaIcon) {
             captchaIcon.parentNode.removeChild(captchaIcon);
             authcodeElement.appendChild(captchaIcon);

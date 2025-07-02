@@ -368,3 +368,103 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
 .authcode.co>a:nth-child(2)>#authImage+.captcha-recognition-icon {
   display: none;
 }
+
+/* 高级设置样式 */
+.advanced-settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 0;
+  font-weight: bold;
+  color: #333;
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+}
+
+.tutorial-link {
+  font-size: 12px;
+  color: #1890ff;
+  margin-left: 8px;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.tutorial-link:hover {
+  text-decoration: underline;
+}
+
+.advanced-settings-warning {
+  font-size: 12px;
+  color: #ff4d4f;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+.toggle-icon {
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+.toggle-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.advanced-settings-content {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.custom-selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selector-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.selector-item input {
+  flex: 1;
+}
+
+.remove-selector {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.add-selector {
+  margin-top: 8px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.add-selector:hover {
+  background-color: #40a9ff;
+}
+
+.remove-selector:hover {
+  background-color: #ff7875;
+}
