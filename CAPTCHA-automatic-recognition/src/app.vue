@@ -20,6 +20,7 @@
           <select v-model="settings.apiType">
             <option value="openai">OpenAI</option>
             <option value="gemini">Google Gemini</option>
+            <option value="qwen">阿里云通义千问</option>
           </select>
         </div>
 
@@ -151,6 +152,70 @@
           </div>
         </div>
 
+        <div v-if="settings.apiType === 'qwen'">
+          <div class="captcha-settings-item">
+            <label>阿里云通义千问 API Key:</label>
+            <div class="input-with-button">
+              <input
+                type="text"
+                v-model="settings.qwenKey"
+                placeholder="输入通义千问 API Key"
+              />
+              <button
+                type="button"
+                class="test-api-button"
+                :class="{
+                  'test-loading': apiTestStatus.qwen === 'loading',
+                  'test-success': apiTestStatus.qwen === 'success',
+                  'test-error': apiTestStatus.qwen === 'error',
+                }"
+                @click="testApiConnection('qwen')"
+              >
+                <span v-if="apiTestStatus.qwen === ''">测试连接</span>
+                <span v-else-if="apiTestStatus.qwen === 'loading'"></span>
+                <span v-else-if="apiTestStatus.qwen === 'success'">成功</span>
+                <span v-else-if="apiTestStatus.qwen === 'error'">失败</span>
+              </button>
+            </div>
+          </div>
+          <div class="captcha-settings-item">
+            <label>自定义 API 地址 (可选):</label>
+            <input
+              type="text"
+              v-model="settings.qwenApiUrl"
+              placeholder="https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation"
+            />
+            <small>留空使用默认地址</small>
+          </div>
+          <div class="captcha-settings-item">
+            <label>模型 (可选):</label>
+            <input
+              type="text"
+              v-model="settings.qwenModel"
+              placeholder="qwen-vl-plus"
+            />
+            <small>留空使用默认模型</small>
+          </div>
+          <div class="captcha-settings-item">
+            <label>自定义提示词 (可选):</label>
+            <div class="textarea-with-button">
+              <textarea
+                v-model="settings.qwenPrompt"
+                placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
+                rows="3"
+              ></textarea>
+              <button
+                type="button"
+                class="use-default-prompt"
+                @click="settings.qwenPrompt = DEFAULT_PROMPT"
+              >
+                使用默认
+              </button>
+            </div>
+            <small>留空使用默认提示词</small>
+          </div>
+        </div>
+
         <div class="captcha-settings-item">
           <label>自动识别：</label>
           <div style="display: flex; align-items: center">
@@ -241,10 +306,11 @@ export default {
       apiTestStatus: {
         openai: "", // 可能的值：'', 'loading', 'success', 'error'
         gemini: "", // 可能的值：'', 'loading', 'success', 'error'
+        qwen: "", // 可能的值：'', 'loading', 'success', 'error'
       },
       // 设置项
       settings: {
-        apiType: "openai", // openai, gemini
+        apiType: "openai", // openai, gemini, qwen
         // OpenAI 设置
         openaiKey: "",
         openaiApiUrl: "",
@@ -255,6 +321,11 @@ export default {
         geminiApiUrl: "",
         geminiModel: "",
         geminiPrompt: DEFAULT_PROMPT, // 自定义提示词，默认填充
+        // 通义千问设置
+        qwenKey: "",
+        qwenApiUrl: "",
+        qwenModel: "",
+        qwenPrompt: DEFAULT_PROMPT, // 自定义提示词，默认填充
         // 自动识别设置
         autoRecognize: false, // 是否启用自动识别
         // 剪贴板设置
@@ -397,6 +468,9 @@ export default {
           case "gemini":
             result = await this.recognizeWithGemini(base64Image);
             break;
+          case "qwen":
+            result = await this.recognizeWithQwen(base64Image);
+            break;
         }
 
         if (result) {
@@ -425,6 +499,8 @@ export default {
           return !!this.settings.openaiKey;
         case "gemini":
           return !!this.settings.geminiKey;
+        case "qwen":
+          return !!this.settings.qwenKey;
         default:
           return false;
       }
@@ -639,6 +715,46 @@ export default {
         }
       }
 
+      return "";
+    },
+
+    /**
+     * 使用通义千问 API 识别验证码（新版API格式，messages/content结构）
+     */
+    async recognizeWithQwen(base64Image) {
+      const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+      const model = this.settings.qwenModel || "qwen-vl-plus";
+      const prompt = this.settings.qwenPrompt || DEFAULT_PROMPT;
+
+      const response = await this.request({
+        method: "POST",
+        url: apiUrl,
+        data: {
+          model: model,
+          messages: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: prompt },
+                { type: "image_url", image_url: { url: `data:image/png;base64,${base64Image}` } }
+              ]
+            }
+          ],
+          temperature: 0.1,
+          top_p: 1,
+          stream: false
+        },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.settings.qwenKey}`
+        }
+      });
+
+      // 提取结果
+      if (response.data && response.data.choices && response.data.choices.length > 0) {
+        const text = response.data.choices[0].message.content;
+        return text.replace(/[^a-zA-Z0-9]/g, "").trim();
+      }
       return "";
     },
 
@@ -1295,6 +1411,37 @@ export default {
             headers: {
               "Content-Type": "application/json",
             },
+          });
+
+          if (response && response.data) {
+            this.apiTestStatus[apiType] = "success";
+          }
+        } else if (apiType === "qwen") {
+          // 测试通义千问 API（新版API格式）
+          const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation";
+          const model = this.settings.qwenModel || "qwen-vl-plus";
+
+          const response = await this.request({
+            method: "POST",
+            url: apiUrl,
+            data: {
+              model: model,
+              messages: [
+                {
+                  role: "user",
+                  content: [
+                    { type: "text", text: "测试连接，请回复'连接成功'" }
+                  ]
+                }
+              ],
+              temperature: 0.1,
+              top_p: 1,
+              stream: false
+            },
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${this.settings.qwenKey}`
+            }
           });
 
           if (response && response.data) {

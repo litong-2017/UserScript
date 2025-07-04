@@ -7,7 +7,11 @@
 ![Greasy Fork Version](https://img.shields.io/greasyfork/v/540822)
 ![Greasy Fork Downloads](https://img.shields.io/greasyfork/dt/540822)
 
-AI 自动识别网页验证码，支持 OpenAI 和 Google Gemini，限制视觉模型。（推荐 gemini-2.5-flash-lite，速度较快、稳定性较高）
+AI 自动识别网页验证码，支持各大主流厂商，限制视觉模型。（推荐 gemini-2.5-flash-lite，速度较快、稳定性较高）
+
+- OpenAI
+- Gemini
+- 阿里云通义千问
 
 ![image](https://github.com/user-attachments/assets/c3a24ea0-7ce9-4e2f-930b-73f3951197d5)
 
@@ -17,7 +21,7 @@ AI 自动识别网页验证码，支持 OpenAI 和 Google Gemini，限制视觉�
 - 验证码图片后出现识别按钮，点击即可识别并填充
 - 支持自动识别模式：验证码图片更新时自动识别并填充（可在设置中开启）
 - 支持自动复制到剪贴板：对于使用框架模板语法的网站，直接修改 input 值可能无效
-- 支持 OpenAI / Gemini，支持自定义 API 地址和模型
+- 支持 OpenAI / Gemini / 阿里云通义千问，支持自定义 API 地址和模型
 - 高级设置支持自定义验证码标签
 - 全局配置一次，所有网站通用
 
