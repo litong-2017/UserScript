@@ -159,7 +159,7 @@
               <input
                 type="text"
                 v-model="settings.qwenKey"
-                placeholder="输入通义千问 API Key"
+                placeholder="API Key"
               />
               <button
                 type="button"
@@ -183,7 +183,7 @@
             <input
               type="text"
               v-model="settings.qwenApiUrl"
-              placeholder="https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation"
+              placeholder="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
             />
             <small>留空使用默认地址</small>
           </div>
@@ -192,7 +192,7 @@
             <input
               type="text"
               v-model="settings.qwenModel"
-              placeholder="qwen-vl-plus"
+              placeholder="qwen-vl-max-2025-04-02"
             />
             <small>留空使用默认模型</small>
           </div>
@@ -723,7 +723,7 @@ export default {
      */
     async recognizeWithQwen(base64Image) {
       const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
-      const model = this.settings.qwenModel || "qwen-vl-plus";
+      const model = this.settings.qwenModel || "qwen-vl-max-2025-04-02";
       const prompt = this.settings.qwenPrompt || DEFAULT_PROMPT;
 
       const response = await this.request({
@@ -1418,8 +1418,8 @@ export default {
           }
         } else if (apiType === "qwen") {
           // 测试通义千问 API（新版API格式）
-          const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation";
-          const model = this.settings.qwenModel || "qwen-vl-plus";
+          const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+          const model = this.settings.qwenModel || "qwen-vl-max-2025-04-02";
 
           const response = await this.request({
             method: "POST",

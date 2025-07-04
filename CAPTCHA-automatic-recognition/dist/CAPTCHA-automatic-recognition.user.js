@@ -2842,7 +2842,7 @@
        */
       async recognizeWithQwen(base64Image) {
         const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
-        const model = this.settings.qwenModel || "qwen-vl-plus";
+        const model = this.settings.qwenModel || "qwen-vl-max-2025-04-02";
         const prompt = this.settings.qwenPrompt || DEFAULT_PROMPT;
         const response = await this.request({
           method: "POST",
@@ -3381,8 +3381,8 @@
               this.apiTestStatus[apiType] = "success";
             }
           } else if (apiType === "qwen") {
-            const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation";
-            const model = this.settings.qwenModel || "qwen-vl-plus";
+            const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+            const model = this.settings.qwenModel || "qwen-vl-max-2025-04-02";
             const response = await this.request({
               method: "POST",
               url: apiUrl,
@@ -3733,7 +3733,7 @@
                 vue.withDirectives(vue.createElementVNode("input", {
                   type: "text",
                   "onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => $data.settings.qwenKey = $event),
-                  placeholder: "输入通义千问 API Key"
+                  placeholder: "API Key"
                 }, null, 512), [
                   [vue.vModelText, $data.settings.qwenKey]
                 ]),
@@ -3755,7 +3755,7 @@
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
                 "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => $data.settings.qwenApiUrl = $event),
-                placeholder: "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation"
+                placeholder: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
               }, null, 512), [
                 [vue.vModelText, $data.settings.qwenApiUrl]
               ]),
@@ -3766,7 +3766,7 @@
               vue.withDirectives(vue.createElementVNode("input", {
                 type: "text",
                 "onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => $data.settings.qwenModel = $event),
-                placeholder: "qwen-vl-plus"
+                placeholder: "qwen-vl-max-2025-04-02"
               }, null, 512), [
                 [vue.vModelText, $data.settings.qwenModel]
               ]),
