@@ -352,6 +352,7 @@ export default {
           'img[src*="/login_check_code.php"]',
           'img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]',
           '.authcode img[id="authImage"]',
+          'img[class="verification-img"]',
         ],
         // 相关输入框选择器 (通常在验证码图片附近的输入框)
         inputSelectors: [
