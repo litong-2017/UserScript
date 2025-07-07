@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.15
+// @version      0.0.16
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -21,7 +21,7 @@
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "0.0.15";
+  const version = "0.0.16";
   const author = "ezyshu";
   const description = "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.";
   const type = "module";
@@ -2791,7 +2791,8 @@
             Authorization: `Bearer ${this.settings.openaiKey}`
           }
         });
-        return response.data.choices[0].message.content.trim();
+        const content = response.data.choices[0].message.content.trim();
+        return content.replace(/[^a-zA-Z0-9]/g, "");
       },
       /**
        * 使用Google Gemini API识别验证码
@@ -2821,8 +2822,7 @@
               }
             ],
             generationConfig: {
-              temperature: 0,
-              maxOutputTokens: 100
+              temperature: 0
             }
           },
           headers: {
@@ -2833,7 +2833,7 @@
           const candidate = response.data.candidates[0];
           if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
             const text = candidate.content.parts[0].text || "";
-            return text.replace(/[^a-zA-Z0-9]/g, "").trim();
+            return text.replace(/[^a-zA-Z0-9]/g, "");
           }
         }
         return "";
@@ -2870,7 +2870,7 @@
         });
         if (response.data && response.data.choices && response.data.choices.length > 0) {
           const text = response.data.choices[0].message.content;
-          return text.replace(/[^a-zA-Z0-9]/g, "").trim();
+          return text.replace(/[^a-zA-Z0-9]/g, "");
         }
         return "";
       },
@@ -3323,6 +3323,7 @@
             return;
           }
           this.apiTestStatus[apiType] = "loading";
+          const testBase64Image = "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAmCAYAAAAycj4zAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPNSURBVGhD7ZgxbuswDIZ9r1zAx8ghfICX+Q0d28EIeoACRYcOAQpkKdDuWQp0yQGKXkEvSuSYIimKsqU4Md4HCEFkiqL4W5SSarfbGdtunbmsQy1IiQVrfGrn1dpdiqHxVO4zSokFa3yGbDRjp2RofDdbsm417hizOUPmgrpk5WLKF+AWXj4iSOmgU/3njEfrK+ecqYwWhLNP9SGR6ivH3CEfOXzHEAXRBMDZ+H3fpqn+mgq35ts9p2yfK1P96Vvz5R4QtqYBdtV9azYoHi4+Ddw4+329BvPB9rx1VjzaOJIF4fp4fk1bM0Kg1nDr+GlNrVnsV+MlpX7fuwc9Urwpz/bvtTdXqNkYOL+4j7OxJB/qIUeY9ZIXgGtUlL1p7+FCm8NeoPg7qTbtj3ugRFoLfKYVw7aQIJjOBtsmC6Ji++onnZQnVMbqz4MEPjgJtGzRckX3RxwuKZZzH96tx9aYtTemj4XbpRJ4bvF3SOiZNMaybfpk1+2v68X4JY3skljZipUrNpGwnXZUt5bQesjucMJzY6xtqiCYUYLA1gPf/le21JwBO4kKJ5etaLlSCLL64NfXg2OQLhhp0LydUJWsbjB2wPbvP03dCSLcpI5EbMNla0i5QsllbmQUNA96KcjaEwiNHSUIC0zy8k0eExMvVLZQudK8tb642guAXhB1fiLkP9Rhkhcvx7cwiGI3+aXplBC/b+kliWWAgCdkQSDXK4h0hhzPjL5v3z46O+HwJ8lESVqvnWEIZO92mSaBu93GrO7AWGZn6fzoxRIFSXEECd2yvP66F6OqHk2LDoF+bvyW+i32tnM7zKJZm32+eVqA8Yd2t/J2PfQTumVp5uoYJUjwufA7BIpybszvEOjbTypscrnCl4LlRpeUjmMMHyt6WzuI4sfbvzRFr70xpLFs4tn2QHYHAZWtc5PKFboQLJ42yevs1oeFldqkgsjo/ss6NVqyfPiyJZUrTRK1ybP5IaUr0EYL4j4LEvi3d/liVgvYJ/+IpGUrfOOx5Bake2mD5TPyb68WIki5HRPAXX3Df7HMH5jzYoLk8pOTHDGVWBf0WaxkpQaeaj8EzRwxG42PMVzgDNFReqFaLhVHaJ7sglxqQddOLA/dc2zzX5BCaPLA2VxNybo1NAkfwqwFKZU0C+dbM1/MZjJBNMGP5RJzQDTzxWxEQTQTDKWkby05Y0j1FbIngkDD0KC5kHN9qb44e/tdFCQH0F9u3ykMmTtXvFo/1qb4GQKD0QbGMWasJWV8Z5syRiLFz2SHeiq5kqPhknNhJhFkygVfN8b8A/Cu2G5QVhydAAAAAElFTkSuQmCC";
           if (apiType === "openai") {
             const apiUrl = this.formatOpenAIUrl(this.settings.openaiApiUrl);
             const model = this.settings.openaiModel || "gpt-4.1-mini";
@@ -3337,12 +3338,17 @@
                     content: [
                       {
                         type: "text",
-                        text: "测试连接，请回复'连接成功'"
+                        text: "这是一个验证码图片，请识别其中的字符"
+                      },
+                      {
+                        type: "image_url",
+                        image_url: {
+                          url: `data:image/png;base64,${testBase64Image}`
+                        }
                       }
                     ]
                   }
-                ],
-                max_tokens: 10
+                ]
               },
               headers: {
                 "Content-Type": "application/json",
@@ -3364,14 +3370,19 @@
                   {
                     parts: [
                       {
-                        text: "测试连接，请回复'连接成功'"
+                        text: "这是一个验证码图片，请识别其中的字符"
+                      },
+                      {
+                        inline_data: {
+                          mime_type: "image/png",
+                          data: testBase64Image
+                        }
                       }
                     ]
                   }
                 ],
                 generationConfig: {
-                  temperature: 0,
-                  maxOutputTokens: 10
+                  temperature: 0
                 }
               },
               headers: {
@@ -3393,7 +3404,8 @@
                   {
                     role: "user",
                     content: [
-                      { type: "text", text: "测试连接，请回复'连接成功'" }
+                      { type: "text", text: "这是一个验证码图片，请识别其中的字符" },
+                      { type: "image_url", image_url: { url: `data:image/png;base64,${testBase64Image}` } }
                     ]
                   }
                 ],

@@ -655,8 +655,9 @@ export default {
         },
       });
 
-      // 提取结果
-      return response.data.choices[0].message.content.trim();
+      // 提取结果并移除所有非字母数字字符（包括空格）
+      const content = response.data.choices[0].message.content.trim();
+      return content.replace(/[^a-zA-Z0-9]/g, "");
     },
 
     /**
@@ -694,7 +695,6 @@ export default {
           ],
           generationConfig: {
             temperature: 0,
-            maxOutputTokens: 100,
           },
         },
         headers: {
@@ -712,7 +712,7 @@ export default {
         ) {
           const text = candidate.content.parts[0].text || "";
           // 只保留数字和字母
-          return text.replace(/[^a-zA-Z0-9]/g, "").trim();
+          return text.replace(/[^a-zA-Z0-9]/g, "");
         }
       }
 
@@ -754,7 +754,8 @@ export default {
       // 提取结果
       if (response.data && response.data.choices && response.data.choices.length > 0) {
         const text = response.data.choices[0].message.content;
-        return text.replace(/[^a-zA-Z0-9]/g, "").trim();
+        // 只保留数字和字母
+        return text.replace(/[^a-zA-Z0-9]/g, "");
       }
       return "";
     },
@@ -1350,6 +1351,9 @@ export default {
 
         // 设置加载状态
         this.apiTestStatus[apiType] = "loading";
+        
+        // 测试图片base64
+        const testBase64Image = "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAmCAYAAAAycj4zAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPNSURBVGhD7ZgxbuswDIZ9r1zAx8ghfICX+Q0d28EIeoACRYcOAQpkKdDuWQp0yQGKXkEvSuSYIimKsqU4Md4HCEFkiqL4W5SSarfbGdtunbmsQy1IiQVrfGrn1dpdiqHxVO4zSokFa3yGbDRjp2RofDdbsm417hizOUPmgrpk5WLKF+AWXj4iSOmgU/3njEfrK+ecqYwWhLNP9SGR6ivH3CEfOXzHEAXRBMDZ+H3fpqn+mgq35ts9p2yfK1P96Vvz5R4QtqYBdtV9azYoHi4+Ddw4+329BvPB9rx1VjzaOJIF4fp4fk1bM0Kg1nDr+GlNrVnsV+MlpX7fuwc9Urwpz/bvtTdXqNkYOL+4j7OxJB/qIUeY9ZIXgGtUlL1p7+FCm8NeoPg7qTbtj3ugRFoLfKYVw7aQIJjOBtsmC6Ji++onnZQnVMbqz4MEPjgJtGzRckX3RxwuKZZzH96tx9aYtTemj4XbpRJ4bvF3SOiZNMaybfpk1+2v68X4JY3skljZipUrNpGwnXZUt5bQesjucMJzY6xtqiCYUYLA1gPf/le21JwBO4kKJ5etaLlSCLL64NfXg2OQLhhp0LydUJWsbjB2wPbvP03dCSLcpI5EbMNla0i5QsllbmQUNA96KcjaEwiNHSUIC0zy8k0eExMvVLZQudK8tb642guAXhB1fiLkP9Rhkhcvx7cwiGI3+aXplBC/b+kliWWAgCdkQSDXK4h0hhzPjL5v3z46O+HwJ8lESVqvnWEIZO92mSaBu93GrO7AWGZn6fzoxRIFSXEECd2yvP66F6OqHk2LDoF+bvyW+i32tnM7zKJZm32+eVqA8Yd2t/J2PfQTumVp5uoYJUjwufA7BIpybszvEOjbTypscrnCl4LlRpeUjmMMHyt6WzuI4sfbvzRFr70xpLFs4tn2QHYHAZWtc5PKFboQLJ42yevs1oeFldqkgsjo/ss6NVqyfPiyJZUrTRK1ybP5IaUr0EYL4j4LEvi3d/liVgvYJ/+IpGUrfOOx5Bake2mD5TPyb68WIki5HRPAXX3Df7HMH5jzYoLk8pOTHDGVWBf0WaxkpQaeaj8EzRwxG42PMVzgDNFReqFaLhVHaJ7sglxqQddOLA/dc2zzX5BCaPLA2VxNybo1NAkfwqwFKZU0C+dbM1/MZjJBNMGP5RJzQDTzxWxEQTQTDKWkby05Y0j1FbIngkDD0KC5kHN9qb44e/tdFCQH0F9u3ykMmTtXvFo/1qb4GQKD0QbGMWasJWV8Z5syRiLFz2SHeiq5kqPhknNhJhFkygVfN8b8A/Cu2G5QVhydAAAAAElFTkSuQmCC";
 
         if (apiType === "openai") {
           // 测试 OpenAI API
@@ -1367,12 +1371,17 @@ export default {
                   content: [
                     {
                       type: "text",
-                      text: "测试连接，请回复'连接成功'",
+                      text: "这是一个验证码图片，请识别其中的字符",
                     },
+                    {
+                      type: "image_url",
+                      image_url: {
+                        url: `data:image/png;base64,${testBase64Image}`
+                      }
+                    }
                   ],
                 },
               ],
-              max_tokens: 10,
             },
             headers: {
               "Content-Type": "application/json",
@@ -1399,14 +1408,19 @@ export default {
                 {
                   parts: [
                     {
-                      text: "测试连接，请回复'连接成功'",
+                      text: "这是一个验证码图片，请识别其中的字符",
+                    },
+                    {
+                      inline_data: {
+                        mime_type: "image/png",
+                        data: testBase64Image,
+                      },
                     },
                   ],
                 },
               ],
               generationConfig: {
                 temperature: 0,
-                maxOutputTokens: 10,
               },
             },
             headers: {
@@ -1431,7 +1445,8 @@ export default {
                 {
                   role: "user",
                   content: [
-                    { type: "text", text: "测试连接，请回复'连接成功'" }
+                    { type: "text", text: "这是一个验证码图片，请识别其中的字符" },
+                    { type: "image_url", image_url: { url: `data:image/png;base64,${testBase64Image}` } }
                   ]
                 }
               ],
