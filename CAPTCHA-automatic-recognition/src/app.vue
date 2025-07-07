@@ -246,6 +246,21 @@
           </div>
         </div>
 
+        <div class="captcha-settings-item">
+          <label>右上角通知：</label>
+          <div style="display: flex; align-items: center">
+            <input
+              type="checkbox"
+              v-model="settings.showNotification"
+              id="showNotification"
+              style="width: auto; margin-right: 8px"
+            />
+            <label for="showNotification" style="margin-bottom: 0"
+              >显示右上角通知提示</label
+            >
+          </div>
+        </div>
+
         <!-- 高级设置折叠面板 -->
         <div class="captcha-settings-item">
           <div class="advanced-settings-header" @click="toggleAdvancedSettings">
@@ -330,6 +345,8 @@ export default {
         autoRecognize: false, // 是否启用自动识别
         // 剪贴板设置
         copyToClipboard: true, // 是否自动复制到剪贴板
+        // 通知设置
+        showNotification: true, // 是否显示右上角通知，默认开启
         // 自定义选择器
         customCaptchaSelectors: [],
         customInputSelectors: [],
@@ -1295,6 +1312,11 @@ export default {
      * @param {string} type - 提示类型 (success, error, info)
      */
     showToast(message, type = "info") {
+      // 如果用户禁用了通知，则不显示
+      if (this.settings.showNotification === false) {
+        return;
+      }
+
       // 创建 toast 容器（如果不存在）
       let toastContainer = document.getElementById("captcha-toast-container");
       if (!toastContainer) {

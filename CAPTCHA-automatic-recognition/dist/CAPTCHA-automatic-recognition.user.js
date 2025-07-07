@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      0.0.16
+// @version      0.0.17
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -21,7 +21,7 @@
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "0.0.16";
+  const version = "0.0.17";
   const author = "ezyshu";
   const description = "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.";
   const type = "module";
@@ -2529,6 +2529,9 @@
           // 剪贴板设置
           copyToClipboard: true,
           // 是否自动复制到剪贴板
+          // 通知设置
+          showNotification: true,
+          // 是否显示右上角通知，默认开启
           // 自定义选择器
           customCaptchaSelectors: [],
           customInputSelectors: []
@@ -3282,6 +3285,9 @@
        * @param {string} type - 提示类型 (success, error, info)
        */
       showToast(message, type2 = "info") {
+        if (this.settings.showNotification === false) {
+          return;
+        }
         let toastContainer = document.getElementById("captcha-toast-container");
         if (!toastContainer) {
           toastContainer = document.createElement("div");
@@ -3572,22 +3578,29 @@
     style: { "margin-bottom": "0" }
   }, "自动复制到剪贴板", -1);
   const _hoisted_72 = { class: "captcha-settings-item" };
-  const _hoisted_73 = {
+  const _hoisted_73 = /* @__PURE__ */ vue.createElementVNode("label", null, "右上角通知：", -1);
+  const _hoisted_74 = { style: { "display": "flex", "align-items": "center" } };
+  const _hoisted_75 = /* @__PURE__ */ vue.createElementVNode("label", {
+    for: "showNotification",
+    style: { "margin-bottom": "0" }
+  }, "显示右上角通知提示", -1);
+  const _hoisted_76 = { class: "captcha-settings-item" };
+  const _hoisted_77 = {
     key: 0,
     class: "advanced-settings-content"
   };
-  const _hoisted_74 = /* @__PURE__ */ vue.createElementVNode("div", { class: "advanced-settings-warning" }, " ⚠️ 警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效 ", -1);
-  const _hoisted_75 = { class: "captcha-settings-item" };
-  const _hoisted_76 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义验证码图片选择器：", -1);
-  const _hoisted_77 = { class: "custom-selectors" };
-  const _hoisted_78 = ["onUpdate:modelValue"];
-  const _hoisted_79 = ["onClick"];
-  const _hoisted_80 = { class: "captcha-settings-item" };
-  const _hoisted_81 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义输入框选择器：", -1);
-  const _hoisted_82 = { class: "custom-selectors" };
-  const _hoisted_83 = ["onUpdate:modelValue"];
-  const _hoisted_84 = ["onClick"];
-  const _hoisted_85 = { class: "captcha-settings-buttons" };
+  const _hoisted_78 = /* @__PURE__ */ vue.createElementVNode("div", { class: "advanced-settings-warning" }, " ⚠️ 警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效 ", -1);
+  const _hoisted_79 = { class: "captcha-settings-item" };
+  const _hoisted_80 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义验证码图片选择器：", -1);
+  const _hoisted_81 = { class: "custom-selectors" };
+  const _hoisted_82 = ["onUpdate:modelValue"];
+  const _hoisted_83 = ["onClick"];
+  const _hoisted_84 = { class: "captcha-settings-item" };
+  const _hoisted_85 = /* @__PURE__ */ vue.createElementVNode("label", null, "自定义输入框选择器：", -1);
+  const _hoisted_86 = { class: "custom-selectors" };
+  const _hoisted_87 = ["onUpdate:modelValue"];
+  const _hoisted_88 = ["onClick"];
+  const _hoisted_89 = { class: "captcha-settings-buttons" };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", _hoisted_1, [
       $data.process.env.NODE_ENV === "development" && !$data.showSettings ? (vue.openBlock(), vue.createElementBlock("div", {
@@ -3833,9 +3846,23 @@
             ])
           ]),
           vue.createElementVNode("div", _hoisted_72, [
+            _hoisted_73,
+            vue.createElementVNode("div", _hoisted_74, [
+              vue.withDirectives(vue.createElementVNode("input", {
+                type: "checkbox",
+                "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => $data.settings.showNotification = $event),
+                id: "showNotification",
+                style: { "width": "auto", "margin-right": "8px" }
+              }, null, 512), [
+                [vue.vModelCheckbox, $data.settings.showNotification]
+              ]),
+              _hoisted_75
+            ])
+          ]),
+          vue.createElementVNode("div", _hoisted_76, [
             vue.createElementVNode("div", {
               class: "advanced-settings-header",
-              onClick: _cache[23] || (_cache[23] = (...args) => $options.toggleAdvancedSettings && $options.toggleAdvancedSettings(...args))
+              onClick: _cache[24] || (_cache[24] = (...args) => $options.toggleAdvancedSettings && $options.toggleAdvancedSettings(...args))
             }, [
               vue.createElementVNode("span", null, [
                 vue.createTextVNode("高级设置 "),
@@ -3843,7 +3870,7 @@
                   href: "https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition/docs/advanced-settings.md",
                   target: "_blank",
                   class: "tutorial-link",
-                  onClick: _cache[22] || (_cache[22] = vue.withModifiers(() => {
+                  onClick: _cache[23] || (_cache[23] = vue.withModifiers(() => {
                   }, ["stop"]))
                 }, "教程")
               ]),
@@ -3851,11 +3878,11 @@
                 class: vue.normalizeClass(["toggle-icon", { "expanded": $data.showAdvancedSettings }])
               }, "▶", 2)
             ]),
-            $data.showAdvancedSettings ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_73, [
-              _hoisted_74,
-              vue.createElementVNode("div", _hoisted_75, [
-                _hoisted_76,
-                vue.createElementVNode("div", _hoisted_77, [
+            $data.showAdvancedSettings ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_77, [
+              _hoisted_78,
+              vue.createElementVNode("div", _hoisted_79, [
+                _hoisted_80,
+                vue.createElementVNode("div", _hoisted_81, [
                   (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList($data.settings.customCaptchaSelectors, (selector, index) => {
                     return vue.openBlock(), vue.createElementBlock("div", {
                       key: "captcha-" + index,
@@ -3865,26 +3892,26 @@
                         type: "text",
                         "onUpdate:modelValue": ($event) => $data.settings.customCaptchaSelectors[index] = $event,
                         placeholder: "例如: img[src*='captcha']"
-                      }, null, 8, _hoisted_78), [
+                      }, null, 8, _hoisted_82), [
                         [vue.vModelText, $data.settings.customCaptchaSelectors[index]]
                       ]),
                       vue.createElementVNode("button", {
                         type: "button",
                         class: "remove-selector",
                         onClick: ($event) => $options.removeSelector("captcha", index)
-                      }, "×", 8, _hoisted_79)
+                      }, "×", 8, _hoisted_83)
                     ]);
                   }), 128)),
                   vue.createElementVNode("button", {
                     type: "button",
                     class: "add-selector",
-                    onClick: _cache[24] || (_cache[24] = ($event) => $options.addSelector("captcha"))
+                    onClick: _cache[25] || (_cache[25] = ($event) => $options.addSelector("captcha"))
                   }, "添加选择器")
                 ])
               ]),
-              vue.createElementVNode("div", _hoisted_80, [
-                _hoisted_81,
-                vue.createElementVNode("div", _hoisted_82, [
+              vue.createElementVNode("div", _hoisted_84, [
+                _hoisted_85,
+                vue.createElementVNode("div", _hoisted_86, [
                   (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList($data.settings.customInputSelectors, (selector, index) => {
                     return vue.openBlock(), vue.createElementBlock("div", {
                       key: "input-" + index,
@@ -3894,31 +3921,31 @@
                         type: "text",
                         "onUpdate:modelValue": ($event) => $data.settings.customInputSelectors[index] = $event,
                         placeholder: "例如: input[name*='captcha']"
-                      }, null, 8, _hoisted_83), [
+                      }, null, 8, _hoisted_87), [
                         [vue.vModelText, $data.settings.customInputSelectors[index]]
                       ]),
                       vue.createElementVNode("button", {
                         type: "button",
                         class: "remove-selector",
                         onClick: ($event) => $options.removeSelector("input", index)
-                      }, "×", 8, _hoisted_84)
+                      }, "×", 8, _hoisted_88)
                     ]);
                   }), 128)),
                   vue.createElementVNode("button", {
                     type: "button",
                     class: "add-selector",
-                    onClick: _cache[25] || (_cache[25] = ($event) => $options.addSelector("input"))
+                    onClick: _cache[26] || (_cache[26] = ($event) => $options.addSelector("input"))
                   }, "添加选择器")
                 ])
               ])
             ])) : vue.createCommentVNode("", true)
           ]),
-          vue.createElementVNode("div", _hoisted_85, [
+          vue.createElementVNode("div", _hoisted_89, [
             vue.createElementVNode("button", {
-              onClick: _cache[26] || (_cache[26] = (...args) => $options.saveSettings && $options.saveSettings(...args))
+              onClick: _cache[27] || (_cache[27] = (...args) => $options.saveSettings && $options.saveSettings(...args))
             }, "保存设置"),
             vue.createElementVNode("button", {
-              onClick: _cache[27] || (_cache[27] = (...args) => $options.closeSettings && $options.closeSettings(...args))
+              onClick: _cache[28] || (_cache[28] = (...args) => $options.closeSettings && $options.closeSettings(...args))
             }, "取消")
           ])
         ])
