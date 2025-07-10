@@ -28,11 +28,7 @@
           <div class="captcha-settings-item">
             <label>OpenAI API Key:</label>
             <div class="input-with-button">
-              <input
-                type="text"
-                v-model="settings.openaiKey"
-                placeholder="sk-..."
-              />
+              <input type="text" v-model="settings.openaiKey" placeholder="sk-..." />
               <button
                 type="button"
                 class="test-api-button"
@@ -156,11 +152,7 @@
           <div class="captcha-settings-item">
             <label>阿里云通义千问 API Key:</label>
             <div class="input-with-button">
-              <input
-                type="text"
-                v-model="settings.qwenKey"
-                placeholder="API Key"
-              />
+              <input type="text" v-model="settings.qwenKey" placeholder="API Key" />
               <button
                 type="button"
                 class="test-api-button"
@@ -223,7 +215,7 @@
               type="checkbox"
               v-model="settings.autoRecognize"
               id="autoRecognize"
-              style="width: auto; margin-right: 8px"
+              style="width: auto; margin-right: 8px !important"
             />
             <label for="autoRecognize" style="margin-bottom: 0"
               >验证码图片变化时自动识别</label
@@ -238,11 +230,9 @@
               type="checkbox"
               v-model="settings.copyToClipboard"
               id="copyToClipboard"
-              style="width: auto; margin-right: 8px"
+              style="width: auto; margin-right: 8px !important"
             />
-            <label for="copyToClipboard" style="margin-bottom: 0"
-              >自动复制到剪贴板</label
-            >
+            <label for="copyToClipboard" style="margin-bottom: 0">自动复制到剪贴板</label>
           </div>
         </div>
 
@@ -253,7 +243,7 @@
               type="checkbox"
               v-model="settings.showNotification"
               id="showNotification"
-              style="width: auto; margin-right: 8px"
+              style="width: auto; margin-right: 8px !important"
             />
             <label for="showNotification" style="margin-bottom: 0"
               >显示右上角通知提示</label
@@ -264,34 +254,79 @@
         <!-- 高级设置折叠面板 -->
         <div class="captcha-settings-item">
           <div class="advanced-settings-header" @click="toggleAdvancedSettings">
-            <span>高级设置 <a href="https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition/docs/advanced-settings.md" target="_blank" class="tutorial-link" @click.stop>教程</a></span>
-            <span class="toggle-icon" :class="{ 'expanded': showAdvancedSettings }">▶</span>
+            <span
+              >高级设置
+              <a
+                href="https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition/docs/advanced-settings.md"
+                target="_blank"
+                class="tutorial-link"
+                @click.stop
+                >教程</a
+              ></span
+            >
+            <span class="toggle-icon" :class="{ expanded: showAdvancedSettings }">▶</span>
           </div>
-          
+
           <div v-if="showAdvancedSettings" class="advanced-settings-content">
             <div class="advanced-settings-warning">
               ⚠️ 警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效
             </div>
-            
+
             <div class="captcha-settings-item">
               <label>自定义验证码图片选择器：</label>
               <div class="custom-selectors">
-                <div v-for="(selector, index) in settings.customCaptchaSelectors" :key="'captcha-'+index" class="selector-item">
-                  <input type="text" v-model="settings.customCaptchaSelectors[index]" placeholder="例如: img[src*='captcha']" />
-                  <button type="button" class="remove-selector" @click="removeSelector('captcha', index)">×</button>
+                <div
+                  v-for="(selector, index) in settings.customCaptchaSelectors"
+                  :key="'captcha-' + index"
+                  class="selector-item"
+                >
+                  <input
+                    type="text"
+                    v-model="settings.customCaptchaSelectors[index]"
+                    placeholder="例如: img[src*='captcha']"
+                  />
+                  <button
+                    type="button"
+                    class="remove-selector"
+                    @click="removeSelector('captcha', index)"
+                  >
+                    ×
+                  </button>
                 </div>
-                <button type="button" class="add-selector" @click="addSelector('captcha')">添加选择器</button>
+                <button
+                  type="button"
+                  class="add-selector"
+                  @click="addSelector('captcha')"
+                >
+                  添加选择器
+                </button>
               </div>
             </div>
-            
+
             <div class="captcha-settings-item">
               <label>自定义输入框选择器：</label>
               <div class="custom-selectors">
-                <div v-for="(selector, index) in settings.customInputSelectors" :key="'input-'+index" class="selector-item">
-                  <input type="text" v-model="settings.customInputSelectors[index]" placeholder="例如: input[name*='captcha']" />
-                  <button type="button" class="remove-selector" @click="removeSelector('input', index)">×</button>
+                <div
+                  v-for="(selector, index) in settings.customInputSelectors"
+                  :key="'input-' + index"
+                  class="selector-item"
+                >
+                  <input
+                    type="text"
+                    v-model="settings.customInputSelectors[index]"
+                    placeholder="例如: input[name*='captcha']"
+                  />
+                  <button
+                    type="button"
+                    class="remove-selector"
+                    @click="removeSelector('input', index)"
+                  >
+                    ×
+                  </button>
                 </div>
-                <button type="button" class="add-selector" @click="addSelector('input')">添加选择器</button>
+                <button type="button" class="add-selector" @click="addSelector('input')">
+                  添加选择器
+                </button>
               </div>
             </div>
           </div>
@@ -448,10 +483,7 @@ export default {
         } else {
           // console.log('未检测到油猴环境，将设置保存到 localStorage');
           // 保存到 localStorage（开发环境使用）
-          localStorage.setItem(
-            "captchaSettings",
-            JSON.stringify(this.settings)
-          );
+          localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
         }
         this.closeSettings();
         this.showToast("设置已保存！", "success");
@@ -566,8 +598,7 @@ export default {
         } catch (e) {
           return {
             success: false,
-            message:
-              "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
+            message: "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
           };
         }
 
@@ -740,7 +771,9 @@ export default {
      * 使用通义千问 API 识别验证码（新版API格式，messages/content结构）
      */
     async recognizeWithQwen(base64Image) {
-      const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+      const apiUrl =
+        this.settings.qwenApiUrl ||
+        "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
       const model = this.settings.qwenModel || "qwen-vl-max-2025-04-02";
       const prompt = this.settings.qwenPrompt || DEFAULT_PROMPT;
 
@@ -754,18 +787,21 @@ export default {
               role: "user",
               content: [
                 { type: "text", text: prompt },
-                { type: "image_url", image_url: { url: `data:image/png;base64,${base64Image}` } }
-              ]
-            }
+                {
+                  type: "image_url",
+                  image_url: { url: `data:image/png;base64,${base64Image}` },
+                },
+              ],
+            },
           ],
           temperature: 0.1,
           top_p: 1,
-          stream: false
+          stream: false,
         },
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.settings.qwenKey}`
-        }
+          Authorization: `Bearer ${this.settings.qwenKey}`,
+        },
       });
 
       // 提取结果
@@ -785,17 +821,29 @@ export default {
     getCombinedSelector(selectors) {
       // 合并默认选择器和自定义选择器
       let allSelectors = [...selectors];
-      
+
       // 如果是验证码选择器，添加自定义验证码选择器
-      if (selectors === this.config.captchaSelectors && this.settings.customCaptchaSelectors) {
-        allSelectors = [...allSelectors, ...this.settings.customCaptchaSelectors.filter(s => s.trim())];
+      if (
+        selectors === this.config.captchaSelectors &&
+        this.settings.customCaptchaSelectors
+      ) {
+        allSelectors = [
+          ...allSelectors,
+          ...this.settings.customCaptchaSelectors.filter((s) => s.trim()),
+        ];
       }
-      
+
       // 如果是输入框选择器，添加自定义输入框选择器
-      if (selectors === this.config.inputSelectors && this.settings.customInputSelectors) {
-        allSelectors = [...allSelectors, ...this.settings.customInputSelectors.filter(s => s.trim())];
+      if (
+        selectors === this.config.inputSelectors &&
+        this.settings.customInputSelectors
+      ) {
+        allSelectors = [
+          ...allSelectors,
+          ...this.settings.customInputSelectors.filter((s) => s.trim()),
+        ];
       }
-      
+
       return allSelectors.join(", ");
     },
 
@@ -803,9 +851,7 @@ export default {
      * 查找页面上的验证码图片和相关输入框
      */
     findCaptchaElements() {
-      const captchaSelector = this.getCombinedSelector(
-        this.config.captchaSelectors
-      );
+      const captchaSelector = this.getCombinedSelector(this.config.captchaSelectors);
       const captchaImages = document.querySelectorAll(captchaSelector);
       if (captchaImages.length === 0) {
         // console.log('未找到验证码图片');
@@ -818,9 +864,7 @@ export default {
         let inputField = null;
 
         // 方法 1：尝试通过选择器查找相关输入框
-        const inputSelector = this.getCombinedSelector(
-          this.config.inputSelectors
-        );
+        const inputSelector = this.getCombinedSelector(this.config.inputSelectors);
         const inputs = document.querySelectorAll(inputSelector);
         if (inputs.length > 0) {
           // 找到距离验证码图片最近的输入框
@@ -889,10 +933,7 @@ export default {
       elements.forEach(({ captchaImg, inputField }) => {
         // 检查是否已经添加过图标
         const existingIcon = captchaImg.nextElementSibling;
-        if (
-          existingIcon &&
-          existingIcon.classList.contains("captcha-recognition-icon")
-        ) {
+        if (existingIcon && existingIcon.classList.contains("captcha-recognition-icon")) {
           return;
         }
 
@@ -1002,10 +1043,7 @@ export default {
           icon.classList.remove("captcha-recognition-error");
         }, 2000);
 
-        this.showToast(
-          "处理验证码失败：" + (error.message || "未知错误"),
-          "error"
-        );
+        this.showToast("处理验证码失败：" + (error.message || "未知错误"), "error");
       }
     },
 
@@ -1016,9 +1054,7 @@ export default {
       const observer = new MutationObserver((mutations) => {
         let hasNewCaptcha = false;
         let newCaptchaElements = [];
-        const captchaSelector = this.getCombinedSelector(
-          this.config.captchaSelectors
-        );
+        const captchaSelector = this.getCombinedSelector(this.config.captchaSelectors);
 
         mutations.forEach((mutation) => {
           // 检查新增节点
@@ -1084,12 +1120,10 @@ export default {
               }
 
               // 只识别可识别的图片
-              const recognizableElements = newElements.filter(
-                ({ captchaImg }) => {
-                  const base64Result = this.imageToBase64(captchaImg);
-                  return base64Result.success;
-                }
-              );
+              const recognizableElements = newElements.filter(({ captchaImg }) => {
+                const base64Result = this.imageToBase64(captchaImg);
+                return base64Result.success;
+              });
 
               // 处理可识别的图片
               if (recognizableElements.length > 0) {
@@ -1106,10 +1140,7 @@ export default {
                     icon = document.createElement("div");
                     icon.classList.add("captcha-recognition-icon");
                     if (captchaImg.nextSibling) {
-                      captchaImg.parentNode.insertBefore(
-                        icon,
-                        captchaImg.nextSibling
-                      );
+                      captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
                     } else {
                       captchaImg.parentNode.appendChild(icon);
                     }
@@ -1118,12 +1149,7 @@ export default {
                   // 获取 base64 结果，避免重复转换
                   const base64Result = this.imageToBase64(captchaImg);
                   // 自动进行识别，传入已检查的 base64 结果
-                  this.processCaptcha(
-                    captchaImg,
-                    inputField,
-                    icon,
-                    base64Result
-                  );
+                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
                 });
               } else if (newElements.length > 0) {
                 this.showToast(
@@ -1210,19 +1236,11 @@ export default {
               recognizableElements.forEach(({ captchaImg, inputField }) => {
                 const icon = captchaImg.nextElementSibling;
                 // 确保图标元素存在
-                if (
-                  icon &&
-                  icon.classList.contains("captcha-recognition-icon")
-                ) {
+                if (icon && icon.classList.contains("captcha-recognition-icon")) {
                   // 获取 base64 结果，避免重复转换
                   const base64Result = this.imageToBase64(captchaImg);
                   // 直接调用处理函数，传入已检查的 base64 结果
-                  this.processCaptcha(
-                    captchaImg,
-                    inputField,
-                    icon,
-                    base64Result
-                  );
+                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
                 }
               });
             } else if (elements.length > 0) {
@@ -1373,9 +1391,10 @@ export default {
 
         // 设置加载状态
         this.apiTestStatus[apiType] = "loading";
-        
+
         // 测试图片base64
-        const testBase64Image = "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAmCAYAAAAycj4zAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPNSURBVGhD7ZgxbuswDIZ9r1zAx8ghfICX+Q0d28EIeoACRYcOAQpkKdDuWQp0yQGKXkEvSuSYIimKsqU4Md4HCEFkiqL4W5SSarfbGdtunbmsQy1IiQVrfGrn1dpdiqHxVO4zSokFa3yGbDRjp2RofDdbsm417hizOUPmgrpk5WLKF+AWXj4iSOmgU/3njEfrK+ecqYwWhLNP9SGR6ivH3CEfOXzHEAXRBMDZ+H3fpqn+mgq35ts9p2yfK1P96Vvz5R4QtqYBdtV9azYoHi4+Ddw4+329BvPB9rx1VjzaOJIF4fp4fk1bM0Kg1nDr+GlNrVnsV+MlpX7fuwc9Urwpz/bvtTdXqNkYOL+4j7OxJB/qIUeY9ZIXgGtUlL1p7+FCm8NeoPg7qTbtj3ugRFoLfKYVw7aQIJjOBtsmC6Ji++onnZQnVMbqz4MEPjgJtGzRckX3RxwuKZZzH96tx9aYtTemj4XbpRJ4bvF3SOiZNMaybfpk1+2v68X4JY3skljZipUrNpGwnXZUt5bQesjucMJzY6xtqiCYUYLA1gPf/le21JwBO4kKJ5etaLlSCLL64NfXg2OQLhhp0LydUJWsbjB2wPbvP03dCSLcpI5EbMNla0i5QsllbmQUNA96KcjaEwiNHSUIC0zy8k0eExMvVLZQudK8tb642guAXhB1fiLkP9Rhkhcvx7cwiGI3+aXplBC/b+kliWWAgCdkQSDXK4h0hhzPjL5v3z46O+HwJ8lESVqvnWEIZO92mSaBu93GrO7AWGZn6fzoxRIFSXEECd2yvP66F6OqHk2LDoF+bvyW+i32tnM7zKJZm32+eVqA8Yd2t/J2PfQTumVp5uoYJUjwufA7BIpybszvEOjbTypscrnCl4LlRpeUjmMMHyt6WzuI4sfbvzRFr70xpLFs4tn2QHYHAZWtc5PKFboQLJ42yevs1oeFldqkgsjo/ss6NVqyfPiyJZUrTRK1ybP5IaUr0EYL4j4LEvi3d/liVgvYJ/+IpGUrfOOx5Bake2mD5TPyb68WIki5HRPAXX3Df7HMH5jzYoLk8pOTHDGVWBf0WaxkpQaeaj8EzRwxG42PMVzgDNFReqFaLhVHaJ7sglxqQddOLA/dc2zzX5BCaPLA2VxNybo1NAkfwqwFKZU0C+dbM1/MZjJBNMGP5RJzQDTzxWxEQTQTDKWkby05Y0j1FbIngkDD0KC5kHN9qb44e/tdFCQH0F9u3ykMmTtXvFo/1qb4GQKD0QbGMWasJWV8Z5syRiLFz2SHeiq5kqPhknNhJhFkygVfN8b8A/Cu2G5QVhydAAAAAElFTkSuQmCC";
+        const testBase64Image =
+          "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAmCAYAAAAycj4zAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPNSURBVGhD7ZgxbuswDIZ9r1zAx8ghfICX+Q0d28EIeoACRYcOAQpkKdDuWQp0yQGKXkEvSuSYIimKsqU4Md4HCEFkiqL4W5SSarfbGdtunbmsQy1IiQVrfGrn1dpdiqHxVO4zSokFa3yGbDRjp2RofDdbsm417hizOUPmgrpk5WLKF+AWXj4iSOmgU/3njEfrK+ecqYwWhLNP9SGR6ivH3CEfOXzHEAXRBMDZ+H3fpqn+mgq35ts9p2yfK1P96Vvz5R4QtqYBdtV9azYoHi4+Ddw4+329BvPB9rx1VjzaOJIF4fp4fk1bM0Kg1nDr+GlNrVnsV+MlpX7fuwc9Urwpz/bvtTdXqNkYOL+4j7OxJB/qIUeY9ZIXgGtUlL1p7+FCm8NeoPg7qTbtj3ugRFoLfKYVw7aQIJjOBtsmC6Ji++onnZQnVMbqz4MEPjgJtGzRckX3RxwuKZZzH96tx9aYtTemj4XbpRJ4bvF3SOiZNMaybfpk1+2v68X4JY3skljZipUrNpGwnXZUt5bQesjucMJzY6xtqiCYUYLA1gPf/le21JwBO4kKJ5etaLlSCLL64NfXg2OQLhhp0LydUJWsbjB2wPbvP03dCSLcpI5EbMNla0i5QsllbmQUNA96KcjaEwiNHSUIC0zy8k0eExMvVLZQudK8tb642guAXhB1fiLkP9Rhkhcvx7cwiGI3+aXplBC/b+kliWWAgCdkQSDXK4h0hhzPjL5v3z46O+HwJ8lESVqvnWEIZO92mSaBu93GrO7AWGZn6fzoxRIFSXEECd2yvP66F6OqHk2LDoF+bvyW+i32tnM7zKJZm32+eVqA8Yd2t/J2PfQTumVp5uoYJUjwufA7BIpybszvEOjbTypscrnCl4LlRpeUjmMMHyt6WzuI4sfbvzRFr70xpLFs4tn2QHYHAZWtc5PKFboQLJ42yevs1oeFldqkgsjo/ss6NVqyfPiyJZUrTRK1ybP5IaUr0EYL4j4LEvi3d/liVgvYJ/+IpGUrfOOx5Bake2mD5TPyb68WIki5HRPAXX3Df7HMH5jzYoLk8pOTHDGVWBf0WaxkpQaeaj8EzRwxG42PMVzgDNFReqFaLhVHaJ7sglxqQddOLA/dc2zzX5BCaPLA2VxNybo1NAkfwqwFKZU0C+dbM1/MZjJBNMGP5RJzQDTzxWxEQTQTDKWkby05Y0j1FbIngkDD0KC5kHN9qb44e/tdFCQH0F9u3ykMmTtXvFo/1qb4GQKD0QbGMWasJWV8Z5syRiLFz2SHeiq5kqPhknNhJhFkygVfN8b8A/Cu2G5QVhydAAAAAElFTkSuQmCC";
 
         if (apiType === "openai") {
           // 测试 OpenAI API
@@ -1398,9 +1417,9 @@ export default {
                     {
                       type: "image_url",
                       image_url: {
-                        url: `data:image/png;base64,${testBase64Image}`
-                      }
-                    }
+                        url: `data:image/png;base64,${testBase64Image}`,
+                      },
+                    },
                   ],
                 },
               ],
@@ -1455,7 +1474,9 @@ export default {
           }
         } else if (apiType === "qwen") {
           // 测试通义千问 API（新版API格式）
-          const apiUrl = this.settings.qwenApiUrl || "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+          const apiUrl =
+            this.settings.qwenApiUrl ||
+            "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
           const model = this.settings.qwenModel || "qwen-vl-max-2025-04-02";
 
           const response = await this.request({
@@ -1468,18 +1489,21 @@ export default {
                   role: "user",
                   content: [
                     { type: "text", text: "这是一个验证码图片，请识别其中的字符" },
-                    { type: "image_url", image_url: { url: `data:image/png;base64,${testBase64Image}` } }
-                  ]
-                }
+                    {
+                      type: "image_url",
+                      image_url: { url: `data:image/png;base64,${testBase64Image}` },
+                    },
+                  ],
+                },
               ],
               temperature: 0.1,
               top_p: 1,
-              stream: false
+              stream: false,
             },
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${this.settings.qwenKey}`
-            }
+              Authorization: `Bearer ${this.settings.qwenKey}`,
+            },
           });
 
           if (response && response.data) {
@@ -1510,28 +1534,28 @@ export default {
     toggleAdvancedSettings() {
       this.showAdvancedSettings = !this.showAdvancedSettings;
     },
-    
+
     /**
      * 添加自定义选择器
      * @param {string} type - 选择器类型，'captcha'或'input'
      */
     addSelector(type) {
-      if (type === 'captcha') {
-        this.settings.customCaptchaSelectors.push('');
-      } else if (type === 'input') {
-        this.settings.customInputSelectors.push('');
+      if (type === "captcha") {
+        this.settings.customCaptchaSelectors.push("");
+      } else if (type === "input") {
+        this.settings.customInputSelectors.push("");
       }
     },
-    
+
     /**
      * 删除自定义选择器
      * @param {string} type - 选择器类型，'captcha'或'input'
      * @param {number} index - 要删除的选择器索引
      */
     removeSelector(type, index) {
-      if (type === 'captcha') {
+      if (type === "captcha") {
         this.settings.customCaptchaSelectors.splice(index, 1);
-      } else if (type === 'input') {
+      } else if (type === "input") {
         this.settings.customInputSelectors.splice(index, 1);
       }
     },
@@ -1545,9 +1569,7 @@ export default {
       const observer = new MutationObserver(function (mutations) {
         const authcodeElement = document.querySelector(".authcode.co");
         if (authcodeElement) {
-          const captchaIcon = document.querySelector(
-            ".captcha-recognition-icon"
-          );
+          const captchaIcon = document.querySelector(".captcha-recognition-icon");
           if (captchaIcon) {
             captchaIcon.parentNode.removeChild(captchaIcon);
             authcodeElement.appendChild(captchaIcon);
