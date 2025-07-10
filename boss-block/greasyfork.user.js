@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Boss直聘拉黑公司列表
+// @name         Boss 直聘拉黑公司列表
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      1.0.1
+// @version      1.0.2
 // @description  过滤职位列表中的黑名单公司，支持导入导出，一键拉黑功能。
 // @author       ezyshu
 // @match        *://*.zhipin.com/*
@@ -9,6 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_addStyle
 // @license      Apache-2.0 license
+// @icon         https://static.zhipin.com/favicon.ico
 // ==/UserScript==
 
 (function () {
@@ -239,7 +240,7 @@
     statusElement.className = 'status-message ' + (isSuccess ? 'success-message' : 'error-message');
     statusElement.style.display = 'block';
 
-    // 3秒后自动隐藏消息
+    // 3 秒后自动隐藏消息
     setTimeout(() => {
       statusElement.style.display = 'none';
     }, 3000);
@@ -302,7 +303,7 @@
 
         showStatusMessage(`成功导入 ${validItems.length} 个公司到黑名单`, true);
       } catch (error) {
-        showStatusMessage('导入失败: ' + error.message, false);
+        showStatusMessage('导入失败：' + error.message, false);
       }
 
       // 重置文件输入框
@@ -397,7 +398,7 @@
     createBlacklistPanel();
     processJobList();
 
-    // 监听DOM变化，处理动态加载的内容
+    // 监听 DOM 变化，处理动态加载的内容
     const observer = new MutationObserver((mutations) => {
       let shouldProcess = false;
 
