@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Boss直聘拉黑公司列表
-// @namespace    https://github.com/ezyshu/scripts
+// @namespace    https://github.com/ezyshu/UserScript
 // @version      1.0.1
 // @description  过滤职位列表中的黑名单公司，支持导入导出，一键拉黑功能。
 // @author       ezyshu

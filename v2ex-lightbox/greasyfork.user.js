@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         v2ex 图片灯箱插件
-// @namespace    https://github.com/ezyshu/scripts
+// @namespace    https://github.com/ezyshu/UserScript
 // @version      0.0.8
 // @description  v2ex 图片灯箱插件，可以使用滚轮放大缩小。
 // @author       ezyshu

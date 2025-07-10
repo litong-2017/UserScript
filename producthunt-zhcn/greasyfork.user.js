@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Product Hunt 汉化
-// @namespace   https://github.com/ezyshu/scripts
+// @namespace   https://github.com/ezyshu/UserScript
 // @description 由于官方不支持中文，汉化大部分的翻译
 // @match       *://*.producthunt.com/*
 // @grant       none

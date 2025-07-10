@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         tampermonkey-scripts
-// @namespace    https://github.com/ezyshu/scripts
+// @namespace    https://github.com/ezyshu/UserScript
 // @version      0.0.1
 // @description  Tampermonkey Scripts
 // @author       ezyshu
@@ -46,7 +46,7 @@
       });
     }
     menu_ID[menu_ID.length] = GM_registerMenuCommand('💬 建议与反馈！', function () {
-      window.GM_openInTab("https://github.com/ezyshu/scripts", {
+      window.GM_openInTab("https://github.com/ezyshu/UserScript", {
         active: true,
         insert: true,
         setParent: true

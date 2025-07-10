@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        feeder 汉化脚本
-// @namespace   https://github.com/ezyshu/scripts
+// @namespace   https://github.com/ezyshu/UserScript
 // @version     0.0.2
 // @author      ezyshu
 // @description feeder.com 汉化脚本

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         抖音视频下载 - 需进入详情页
-// @namespace    https://github.com/ezyshu/scripts
+// @namespace    https://github.com/ezyshu/UserScript
 // @version      0.0.1
 // @description  在浏览器中打开抖音，实现快速下载视频。
 // @author       ezyshu

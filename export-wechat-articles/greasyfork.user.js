@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         导出微信公众号文章为 PDF
-// @namespace    https://github.com/ezyshu/scripts
-// @version      0.5
+// @namespace    https://github.com/ezyshu/UserScript
+// @version      0.6
 // @author       ezyshu
 // @description  在微信公众号文章页面中添加按钮，点击后导出文章为 PDF 格式，并显示标题、作者和时间等元信息。
 // @match        https://mp.weixin.qq.com/s/*
 // @grant        none
 // @license      Apache-2.0 license
 // @require      https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js
+// @icon         https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico
 // ==/UserScript==
 
 (function () {
