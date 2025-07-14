@@ -44,7 +44,7 @@ AI 自动识别网页验证码，支持各大主流厂商，限制视觉模型�
 本项目基于 Apache-2.0 许可证开源，详细信息请查看 [LICENSE](https://github.com/ezyshu/UserScript/blob/main/CAPTCHA-automatic-recognition/LICENSE) 文件。
 
 
-## 4. 免责声明
+### 5. 免责声明
 
 本项目免费且开放源代码，但不保证其绝对完善无误，请您在决定使用前自行评估风险。同时，务必遵守所有适用法律法规，严禁任何形式的滥用行为。
 
