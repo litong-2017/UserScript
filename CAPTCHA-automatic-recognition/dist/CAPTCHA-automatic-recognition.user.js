@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      1.0.0
+// @version      1.0.1
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -21,7 +21,7 @@
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "1.0.0";
+  const version = "1.0.1";
   const author = "ezyshu";
   const description = "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.";
   const type = "module";
@@ -2638,7 +2638,10 @@
           if (typeof GM_setValue !== "undefined") {
             GM_setValue("captchaSettings", JSON.stringify(this.settings));
           } else {
-            localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
+            localStorage.setItem(
+              "captchaSettings",
+              JSON.stringify(this.settings)
+            );
           }
           this.closeSettings();
           this.showToast("设置已保存！", "success");
@@ -2922,7 +2925,9 @@
        * 查找页面上的验证码图片和相关输入框
        */
       findCaptchaElements() {
-        const captchaSelector = this.getCombinedSelector(this.config.captchaSelectors);
+        const captchaSelector = this.getCombinedSelector(
+          this.config.captchaSelectors
+        );
         const captchaImages = document.querySelectorAll(captchaSelector);
         if (captchaImages.length === 0) {
           return [];
@@ -2930,7 +2935,9 @@
         const elements = [];
         captchaImages.forEach((img) => {
           let inputField = null;
-          const inputSelector = this.getCombinedSelector(this.config.inputSelectors);
+          const inputSelector = this.getCombinedSelector(
+            this.config.inputSelectors
+          );
           const inputs = document.querySelectorAll(inputSelector);
           if (inputs.length > 0) {
             let minDistance = Infinity;
@@ -3074,7 +3081,10 @@
           setTimeout(() => {
             icon.classList.remove("captcha-recognition-error");
           }, 2e3);
-          this.showToast("处理验证码失败：" + (error.message || "未知错误"), "error");
+          this.showToast(
+            "处理验证码失败：" + (error.message || "未知错误"),
+            "error"
+          );
         }
       },
       /**
@@ -3087,7 +3097,9 @@
         const observer = new MutationObserver((mutations) => {
           let hasNewCaptcha = false;
           let newCaptchaElements = [];
-          const captchaSelector = this.getCombinedSelector(this.config.captchaSelectors);
+          const captchaSelector = this.getCombinedSelector(
+            this.config.captchaSelectors
+          );
           mutations.forEach((mutation) => {
             if (mutation.type === "childList" && mutation.addedNodes.length) {
               mutation.addedNodes.forEach((node) => {
@@ -3131,10 +3143,12 @@
                     "error"
                   );
                 }
-                const recognizableElements = newElements.filter(({ captchaImg }) => {
-                  const base64Result = this.imageToBase64(captchaImg);
-                  return base64Result.success;
-                });
+                const recognizableElements = newElements.filter(
+                  ({ captchaImg }) => {
+                    const base64Result = this.imageToBase64(captchaImg);
+                    return base64Result.success;
+                  }
+                );
                 if (recognizableElements.length > 0) {
                   recognizableElements.forEach(({ captchaImg, inputField }) => {
                     let icon;
@@ -3145,13 +3159,21 @@
                       icon = document.createElement("div");
                       icon.classList.add("captcha-recognition-icon");
                       if (captchaImg.nextSibling) {
-                        captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
+                        captchaImg.parentNode.insertBefore(
+                          icon,
+                          captchaImg.nextSibling
+                        );
                       } else {
                         captchaImg.parentNode.appendChild(icon);
                       }
                     }
                     const base64Result = this.imageToBase64(captchaImg);
-                    this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                    this.processCaptcha(
+                      captchaImg,
+                      inputField,
+                      icon,
+                      base64Result
+                    );
                   });
                 } else if (newElements.length > 0) {
                   this.showToast(
@@ -3226,7 +3248,12 @@
                   const icon = captchaImg.nextElementSibling;
                   if (icon && icon.classList.contains("captcha-recognition-icon")) {
                     const base64Result = this.imageToBase64(captchaImg);
-                    this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                    this.processCaptcha(
+                      captchaImg,
+                      inputField,
+                      icon,
+                      base64Result
+                    );
                   }
                 });
               } else if (elements.length > 0) {
@@ -3425,10 +3452,15 @@
                   {
                     role: "user",
                     content: [
-                      { type: "text", text: "这是一个验证码图片，请识别其中的字符" },
+                      {
+                        type: "text",
+                        text: "这是一个验证码图片，请识别其中的字符"
+                      },
                       {
                         type: "image_url",
-                        image_url: { url: `data:image/png;base64,${testBase64Image}` }
+                        image_url: {
+                          url: `data:image/png;base64,${testBase64Image}`
+                        }
                       }
                     ]
                   }
@@ -3532,10 +3564,38 @@
         const observer = new MutationObserver(function(mutations) {
           const authcodeElement = document.querySelector(".authcode.co");
           if (authcodeElement) {
-            const captchaIcon = document.querySelector(".captcha-recognition-icon");
+            const captchaIcon = document.querySelector(
+              ".captcha-recognition-icon"
+            );
             if (captchaIcon) {
               captchaIcon.parentNode.removeChild(captchaIcon);
               authcodeElement.appendChild(captchaIcon);
+              observer.disconnect();
+            }
+          }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+      if (window.location.host == "www.luogu.com.cn") {
+        const styleluogu = document.createElement("style");
+        styleluogu.textContent = `
+        .l-form-layout .img .captcha-recognition-icon {
+          display: none !important;
+        }
+      `;
+        document.head.appendChild(styleluogu);
+        const observer = new MutationObserver(function(mutations) {
+          const authcodeElement = document.querySelector(".l-form-layout .img");
+          if (authcodeElement) {
+            const captchaIcon = document.querySelector(
+              ".captcha-recognition-icon"
+            );
+            if (captchaIcon) {
+              captchaIcon.parentNode.removeChild(captchaIcon);
+              authcodeElement.parentNode.insertBefore(
+                captchaIcon,
+                authcodeElement.nextSibling
+              );
               observer.disconnect();
             }
           }

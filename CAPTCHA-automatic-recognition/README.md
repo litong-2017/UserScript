@@ -41,10 +41,11 @@ AI 自动识别网页验证码，支持各大主流厂商，限制视觉模型�
 
 ### 4. LICENSE
 
-[Apache-2.0](https://github.com/ezyshu/UserScript/blob/main/CAPTCHA-automatic-recognition/LICENSE)
+本项目基于 Apache-2.0 许可证开源，详细信息请查看 [LICENSE](https://github.com/ezyshu/UserScript/blob/main/CAPTCHA-automatic-recognition/LICENSE) 文件。
 
----
 
-If you think this feature is good, please give it a star to show your support~
+## 4. 免责声明
 
-如果你认为这个功能不错，可以点个 star 支持一下~
+本项目是一个免费且开源的项目，但并不保证其完全无 BUG，使用前请自行承担风险；使用时请遵守相关法律法规，不得滥用。
+
+如果有任何侵权行为，请联系 [ezyshu](https://github.com/ezyshu)，将会及时处理。

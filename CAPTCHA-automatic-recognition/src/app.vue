@@ -15,39 +15,39 @@
         <h3>
           验证码识别设置 <span>{{ packageJson.version }}</span>
         </h3>
-        
+
         <!-- 设置导航栏 -->
         <div class="settings-nav">
-          <div 
-            class="settings-nav-item" 
+          <div
+            class="settings-nav-item"
             :class="{ active: activeSettingTab === 'ai' }"
             @click="activeSettingTab = 'ai'"
           >
             AI服务商
           </div>
-          <div 
-            class="settings-nav-item" 
+          <div
+            class="settings-nav-item"
             :class="{ active: activeSettingTab === 'function' }"
             @click="activeSettingTab = 'function'"
           >
             功能设置
           </div>
-          <div 
-            class="settings-nav-item" 
+          <div
+            class="settings-nav-item"
             :class="{ active: activeSettingTab === 'domain' }"
             @click="activeSettingTab = 'domain'"
           >
             禁用域名
           </div>
-          <div 
-            class="settings-nav-item" 
+          <div
+            class="settings-nav-item"
             :class="{ active: activeSettingTab === 'advanced' }"
             @click="activeSettingTab = 'advanced'"
           >
             高级设置
           </div>
         </div>
-        
+
         <!-- 设置内容区域 -->
         <div class="settings-content">
           <!-- AI模型设置 -->
@@ -55,9 +55,11 @@
             <div class="settings-card">
               <div class="settings-card-title">
                 <span>AI服务商设置</span>
-                <span class="api-type">{{ getApiTypeName(settings.apiType) }}</span>
+                <span class="api-type">{{
+                  getApiTypeName(settings.apiType)
+                }}</span>
               </div>
-              
+
               <div class="captcha-settings-item">
                 <label>API 类型：</label>
                 <select v-model="settings.apiType">
@@ -71,7 +73,11 @@
                 <div class="captcha-settings-item">
                   <label>OpenAI API Key:</label>
                   <div class="input-with-button">
-                    <input type="text" v-model="settings.openaiKey" placeholder="sk-..." />
+                    <input
+                      type="text"
+                      v-model="settings.openaiKey"
+                      placeholder="sk-..."
+                    />
                     <button
                       type="button"
                       class="test-api-button"
@@ -83,9 +89,15 @@
                       @click="testApiConnection('openai')"
                     >
                       <span v-if="apiTestStatus.openai === ''">测试连接</span>
-                      <span v-else-if="apiTestStatus.openai === 'loading'"></span>
-                      <span v-else-if="apiTestStatus.openai === 'success'">成功</span>
-                      <span v-else-if="apiTestStatus.openai === 'error'">失败</span>
+                      <span
+                        v-else-if="apiTestStatus.openai === 'loading'"
+                      ></span>
+                      <span v-else-if="apiTestStatus.openai === 'success'"
+                        >成功</span
+                      >
+                      <span v-else-if="apiTestStatus.openai === 'error'"
+                        >失败</span
+                      >
                     </button>
                   </div>
                 </div>
@@ -147,9 +159,15 @@
                       @click="testApiConnection('gemini')"
                     >
                       <span v-if="apiTestStatus.gemini === ''">测试连接</span>
-                      <span v-else-if="apiTestStatus.gemini === 'loading'"></span>
-                      <span v-else-if="apiTestStatus.gemini === 'success'">成功</span>
-                      <span v-else-if="apiTestStatus.gemini === 'error'">失败</span>
+                      <span
+                        v-else-if="apiTestStatus.gemini === 'loading'"
+                      ></span>
+                      <span v-else-if="apiTestStatus.gemini === 'success'"
+                        >成功</span
+                      >
+                      <span v-else-if="apiTestStatus.gemini === 'error'"
+                        >失败</span
+                      >
                     </button>
                   </div>
                 </div>
@@ -195,7 +213,11 @@
                 <div class="captcha-settings-item">
                   <label>阿里云通义千问 API Key:</label>
                   <div class="input-with-button">
-                    <input type="text" v-model="settings.qwenKey" placeholder="API Key" />
+                    <input
+                      type="text"
+                      v-model="settings.qwenKey"
+                      placeholder="API Key"
+                    />
                     <button
                       type="button"
                       class="test-api-button"
@@ -208,8 +230,12 @@
                     >
                       <span v-if="apiTestStatus.qwen === ''">测试连接</span>
                       <span v-else-if="apiTestStatus.qwen === 'loading'"></span>
-                      <span v-else-if="apiTestStatus.qwen === 'success'">成功</span>
-                      <span v-else-if="apiTestStatus.qwen === 'error'">失败</span>
+                      <span v-else-if="apiTestStatus.qwen === 'success'"
+                        >成功</span
+                      >
+                      <span v-else-if="apiTestStatus.qwen === 'error'"
+                        >失败</span
+                      >
                     </button>
                   </div>
                 </div>
@@ -252,14 +278,17 @@
               </div>
             </div>
           </div>
-          
+
           <!-- 功能设置 -->
-          <div v-if="activeSettingTab === 'function'" class="settings-content-tab">
+          <div
+            v-if="activeSettingTab === 'function'"
+            class="settings-content-tab"
+          >
             <div class="settings-card">
               <div class="settings-card-title">
                 <span>功能设置</span>
               </div>
-              
+
               <div class="captcha-settings-item">
                 <div style="display: flex; align-items: center">
                   <input
@@ -282,7 +311,9 @@
                     id="copyToClipboard"
                     style="width: auto; margin-right: 8px !important"
                   />
-                  <label for="copyToClipboard" style="margin-bottom: 0">自动复制到剪贴板</label>
+                  <label for="copyToClipboard" style="margin-bottom: 0"
+                    >自动复制到剪贴板</label
+                  >
                 </div>
               </div>
 
@@ -301,14 +332,17 @@
               </div>
             </div>
           </div>
-          
+
           <!-- 禁用域名列表 -->
-          <div v-if="activeSettingTab === 'domain'" class="settings-content-tab">
+          <div
+            v-if="activeSettingTab === 'domain'"
+            class="settings-content-tab"
+          >
             <div class="settings-card">
               <div class="settings-card-title">
                 <span>禁用域名列表</span>
               </div>
-              
+
               <div class="captcha-settings-item">
                 <textarea
                   v-model="settings.disabledDomains"
@@ -322,7 +356,7 @@ example.*.com
                 ></textarea>
                 <small>
                   在这些域名下将不启用验证码识别功能
-                  <br>
+                  <br />
                   多个配置请使用换行显示
                 </small>
               </div>
@@ -330,10 +364,14 @@ example.*.com
           </div>
 
           <!-- 高级设置 -->
-          <div v-if="activeSettingTab === 'advanced'" class="settings-content-tab">
+          <div
+            v-if="activeSettingTab === 'advanced'"
+            class="settings-content-tab"
+          >
             <div class="settings-card">
               <div class="settings-card-title">
-                <span>高级设置
+                <span
+                  >高级设置
                   <a
                     href="https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition/docs/advanced-settings.md"
                     target="_blank"
@@ -342,9 +380,10 @@ example.*.com
                   >
                 </span>
               </div>
-              
+
               <div class="advanced-settings-warning">
-                ⚠️ 警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效
+                ⚠️
+                警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效
               </div>
 
               <div class="captcha-settings-item">
@@ -399,7 +438,11 @@ example.*.com
                       ×
                     </button>
                   </div>
-                  <button type="button" class="add-selector" @click="addSelector('input')">
+                  <button
+                    type="button"
+                    class="add-selector"
+                    @click="addSelector('input')"
+                  >
                     添加选择器
                   </button>
                 </div>
@@ -519,7 +562,7 @@ export default {
           return "未知";
       }
     },
-    
+
     /**
      * 加载用户设置
      */
@@ -579,7 +622,10 @@ export default {
         } else {
           // console.log('未检测到油猴环境，将设置保存到 localStorage');
           // 保存到 localStorage（开发环境使用）
-          localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
+          localStorage.setItem(
+            "captchaSettings",
+            JSON.stringify(this.settings)
+          );
         }
         this.closeSettings();
         this.showToast("设置已保存！", "success");
@@ -694,7 +740,8 @@ export default {
         } catch (e) {
           return {
             success: false,
-            message: "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
+            message:
+              "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
           };
         }
 
@@ -901,7 +948,11 @@ export default {
       });
 
       // 提取结果
-      if (response.data && response.data.choices && response.data.choices.length > 0) {
+      if (
+        response.data &&
+        response.data.choices &&
+        response.data.choices.length > 0
+      ) {
         const text = response.data.choices[0].message.content;
         // 只保留数字和字母
         return text.replace(/[^a-zA-Z0-9]/g, "");
@@ -947,7 +998,9 @@ export default {
      * 查找页面上的验证码图片和相关输入框
      */
     findCaptchaElements() {
-      const captchaSelector = this.getCombinedSelector(this.config.captchaSelectors);
+      const captchaSelector = this.getCombinedSelector(
+        this.config.captchaSelectors
+      );
       const captchaImages = document.querySelectorAll(captchaSelector);
       if (captchaImages.length === 0) {
         // console.log('未找到验证码图片');
@@ -960,7 +1013,9 @@ export default {
         let inputField = null;
 
         // 方法 1：尝试通过选择器查找相关输入框
-        const inputSelector = this.getCombinedSelector(this.config.inputSelectors);
+        const inputSelector = this.getCombinedSelector(
+          this.config.inputSelectors
+        );
         const inputs = document.querySelectorAll(inputSelector);
         if (inputs.length > 0) {
           // 找到距离验证码图片最近的输入框
@@ -1028,13 +1083,16 @@ export default {
       if (this.isCurrentDomainDisabled()) {
         return;
       }
-      
+
       const elements = this.findCaptchaElements();
 
       elements.forEach(({ captchaImg, inputField }) => {
         // 检查是否已经添加过图标
         const existingIcon = captchaImg.nextElementSibling;
-        if (existingIcon && existingIcon.classList.contains("captcha-recognition-icon")) {
+        if (
+          existingIcon &&
+          existingIcon.classList.contains("captcha-recognition-icon")
+        ) {
           return;
         }
 
@@ -1070,7 +1128,7 @@ export default {
         this.showToast("当前网站已设置为不启用验证码识别功能", "info");
         return;
       }
-      
+
       try {
         // 更新图标状态为加载中
         icon.classList.add("captcha-recognition-loading");
@@ -1150,7 +1208,10 @@ export default {
           icon.classList.remove("captcha-recognition-error");
         }, 2000);
 
-        this.showToast("处理验证码失败：" + (error.message || "未知错误"), "error");
+        this.showToast(
+          "处理验证码失败：" + (error.message || "未知错误"),
+          "error"
+        );
       }
     },
 
@@ -1162,11 +1223,13 @@ export default {
       if (this.isCurrentDomainDisabled()) {
         return;
       }
-      
+
       const observer = new MutationObserver((mutations) => {
         let hasNewCaptcha = false;
         let newCaptchaElements = [];
-        const captchaSelector = this.getCombinedSelector(this.config.captchaSelectors);
+        const captchaSelector = this.getCombinedSelector(
+          this.config.captchaSelectors
+        );
 
         mutations.forEach((mutation) => {
           // 检查新增节点
@@ -1232,10 +1295,12 @@ export default {
               }
 
               // 只识别可识别的图片
-              const recognizableElements = newElements.filter(({ captchaImg }) => {
-                const base64Result = this.imageToBase64(captchaImg);
-                return base64Result.success;
-              });
+              const recognizableElements = newElements.filter(
+                ({ captchaImg }) => {
+                  const base64Result = this.imageToBase64(captchaImg);
+                  return base64Result.success;
+                }
+              );
 
               // 处理可识别的图片
               if (recognizableElements.length > 0) {
@@ -1252,7 +1317,10 @@ export default {
                     icon = document.createElement("div");
                     icon.classList.add("captcha-recognition-icon");
                     if (captchaImg.nextSibling) {
-                      captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
+                      captchaImg.parentNode.insertBefore(
+                        icon,
+                        captchaImg.nextSibling
+                      );
                     } else {
                       captchaImg.parentNode.appendChild(icon);
                     }
@@ -1261,7 +1329,12 @@ export default {
                   // 获取 base64 结果，避免重复转换
                   const base64Result = this.imageToBase64(captchaImg);
                   // 自动进行识别，传入已检查的 base64 结果
-                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                  this.processCaptcha(
+                    captchaImg,
+                    inputField,
+                    icon,
+                    base64Result
+                  );
                 });
               } else if (newElements.length > 0) {
                 this.showToast(
@@ -1308,7 +1381,7 @@ export default {
       if (this.isCurrentDomainDisabled()) {
         return;
       }
-      
+
       setTimeout(() => {
         this.addIconsToCaptchas(); // 步骤 1: 确保所有图标都已创建
         this.setupMutationObserver();
@@ -1354,11 +1427,19 @@ export default {
               recognizableElements.forEach(({ captchaImg, inputField }) => {
                 const icon = captchaImg.nextElementSibling;
                 // 确保图标元素存在
-                if (icon && icon.classList.contains("captcha-recognition-icon")) {
+                if (
+                  icon &&
+                  icon.classList.contains("captcha-recognition-icon")
+                ) {
                   // 获取 base64 结果，避免重复转换
                   const base64Result = this.imageToBase64(captchaImg);
                   // 直接调用处理函数，传入已检查的 base64 结果
-                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
+                  this.processCaptcha(
+                    captchaImg,
+                    inputField,
+                    icon,
+                    base64Result
+                  );
                 }
               });
             } else if (elements.length > 0) {
@@ -1606,10 +1687,15 @@ export default {
                 {
                   role: "user",
                   content: [
-                    { type: "text", text: "这是一个验证码图片，请识别其中的字符" },
+                    {
+                      type: "text",
+                      text: "这是一个验证码图片，请识别其中的字符",
+                    },
                     {
                       type: "image_url",
-                      image_url: { url: `data:image/png;base64,${testBase64Image}` },
+                      image_url: {
+                        url: `data:image/png;base64,${testBase64Image}`,
+                      },
                     },
                   ],
                 },
@@ -1681,13 +1767,14 @@ export default {
       }
 
       const currentDomain = window.location.hostname;
-      const disabledDomainsList = this.settings.disabledDomains.split("\n")
-        .map(line => line.trim())
-        .filter(line => line !== "");
+      const disabledDomainsList = this.settings.disabledDomains
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line !== "");
 
       for (const domain of disabledDomainsList) {
         // 检查是否是正则表达式格式 /pattern/
-        if (domain.startsWith('/') && domain.endsWith('/')) {
+        if (domain.startsWith("/") && domain.endsWith("/")) {
           try {
             const regexPattern = domain.substring(1, domain.length - 1);
             const regex = new RegExp(regexPattern);
@@ -1701,10 +1788,10 @@ export default {
         }
 
         // 处理通配符 * (转换为正则表达式)
-        if (domain.includes('*')) {
+        if (domain.includes("*")) {
           const regexPattern = domain
-            .replace(/\./g, '\\.')
-            .replace(/\*/g, '.*');
+            .replace(/\./g, "\\.")
+            .replace(/\*/g, ".*");
           try {
             const regex = new RegExp(`^${regexPattern}$`);
             if (regex.test(currentDomain)) {
@@ -1734,10 +1821,39 @@ export default {
       const observer = new MutationObserver(function (mutations) {
         const authcodeElement = document.querySelector(".authcode.co");
         if (authcodeElement) {
-          const captchaIcon = document.querySelector(".captcha-recognition-icon");
+          const captchaIcon = document.querySelector(
+            ".captcha-recognition-icon"
+          );
           if (captchaIcon) {
             captchaIcon.parentNode.removeChild(captchaIcon);
             authcodeElement.appendChild(captchaIcon);
+            observer.disconnect();
+          }
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (window.location.host == "www.luogu.com.cn") {
+      const styleluogu = document.createElement("style");
+      styleluogu.textContent = `
+        .l-form-layout .img .captcha-recognition-icon {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(styleluogu);
+      const observer = new MutationObserver(function (mutations) {
+        const authcodeElement = document.querySelector(".l-form-layout .img");
+        if (authcodeElement) {
+          const captchaIcon = document.querySelector(
+            ".captcha-recognition-icon"
+          );
+          if (captchaIcon) {
+            captchaIcon.parentNode.removeChild(captchaIcon);
+            authcodeElement.parentNode.insertBefore(
+              captchaIcon,
+              authcodeElement.nextSibling
+            );
             observer.disconnect();
           }
         }
