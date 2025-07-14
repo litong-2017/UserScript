@@ -531,9 +531,10 @@ export default {
         inputSelectors: [
           'input[name*="captcha"]',
           'input[name*="verify"]',
-          'input[placeholder*="验证码"]',
-          'input[placeholder*="captcha"]',
+          'input[placeholder="请输入图片验证码"]',
           'input[id="authcode"]',
+          'input[placeholder*="captcha"]',
+          'input[placeholder*="验证码"]:not([placeholder*="短信"])',
         ],
       },
       // 用于在模板中访问环境变量
