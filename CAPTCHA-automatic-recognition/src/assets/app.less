@@ -160,7 +160,7 @@ body.captcha-settings-open {
 .captcha-settings-item select,
 .captcha-settings-item textarea {
   width: 100% !important;
-  padding: 8px !important;
+  padding: 0 8px !important;
   border: 1px solid #ddd !important;
   background: none !important;
   border-radius: 4px !important;
@@ -391,11 +391,21 @@ body.captcha-settings-open {
   height: 12px !important;
   left: 50% !important;
   top: 50% !important;
-  transform: translate(-50%, -50%) !important;
+  transform: translate(-50%, -50%);
   border: 2px solid #666 !important;
   border-radius: 50% !important;
   border-top-color: transparent !important;
-  animation: captcha-spin 1s linear infinite !important;
+  animation: captcha-spin-transform 1s linear infinite !important;
+}
+
+/* 需要添加额外的关键帧动画，因为位置不同 */
+@keyframes captcha-spin-transform {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 /* 成功状态 */
