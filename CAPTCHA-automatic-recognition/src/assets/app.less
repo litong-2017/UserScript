@@ -378,8 +378,6 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
   padding: 8px 0;
   font-weight: bold;
   color: #333;
-  border-top: 1px solid #eee;
-  margin-top: 10px;
 }
 
 .tutorial-link {
@@ -411,8 +409,6 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
 }
 
 .advanced-settings-content {
-  margin-top: 10px;
-  padding: 10px;
   background-color: #f9f9f9;
   border-radius: 4px;
 }
@@ -467,4 +463,77 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
 
 .remove-selector:hover {
   background-color: #ff7875;
+}
+
+.domain-textarea {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  resize: vertical;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+/* 设置卡片样式 */
+.settings-card {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.settings-card-title {
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #333;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-card-title .api-type {
+  color: #1a73e8;
+}
+
+.settings-section {
+  margin-bottom: 20px;
+}
+
+.settings-section-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+/* 调整设置内容最大高度和滚动条样式 */
+.captcha-settings-content {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 15px;
+}
+
+/* 自定义滚动条 */
+.captcha-settings-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.captcha-settings-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.captcha-settings-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.captcha-settings-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }

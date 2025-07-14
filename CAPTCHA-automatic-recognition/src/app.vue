@@ -15,244 +15,281 @@
         <h3>
           验证码识别设置 <span>{{ packageJson.version }}</span>
         </h3>
-        <div class="captcha-settings-item">
-          <label>API 类型：</label>
-          <select v-model="settings.apiType">
-            <option value="openai">OpenAI</option>
-            <option value="gemini">Google Gemini</option>
-            <option value="qwen">阿里云通义千问</option>
-          </select>
-        </div>
+        
+        <!-- AI模型设置卡片 -->
+        <div class="settings-card">
+          <div class="settings-card-title">
+            <span>AI服务商设置</span>
+            <span class="api-type">{{ getApiTypeName(settings.apiType) }}</span>
+          </div>
+          
+          <div class="captcha-settings-item">
+            <label>API 类型：</label>
+            <select v-model="settings.apiType">
+              <option value="openai">OpenAI</option>
+              <option value="gemini">Google Gemini</option>
+              <option value="qwen">阿里云通义千问</option>
+            </select>
+          </div>
 
-        <div v-if="settings.apiType === 'openai'">
-          <div class="captcha-settings-item">
-            <label>OpenAI API Key:</label>
-            <div class="input-with-button">
-              <input type="text" v-model="settings.openaiKey" placeholder="sk-..." />
-              <button
-                type="button"
-                class="test-api-button"
-                :class="{
-                  'test-loading': apiTestStatus.openai === 'loading',
-                  'test-success': apiTestStatus.openai === 'success',
-                  'test-error': apiTestStatus.openai === 'error',
-                }"
-                @click="testApiConnection('openai')"
-              >
-                <span v-if="apiTestStatus.openai === ''">测试连接</span>
-                <span v-else-if="apiTestStatus.openai === 'loading'"></span>
-                <span v-else-if="apiTestStatus.openai === 'success'">成功</span>
-                <span v-else-if="apiTestStatus.openai === 'error'">失败</span>
-              </button>
+          <div v-if="settings.apiType === 'openai'">
+            <div class="captcha-settings-item">
+              <label>OpenAI API Key:</label>
+              <div class="input-with-button">
+                <input type="text" v-model="settings.openaiKey" placeholder="sk-..." />
+                <button
+                  type="button"
+                  class="test-api-button"
+                  :class="{
+                    'test-loading': apiTestStatus.openai === 'loading',
+                    'test-success': apiTestStatus.openai === 'success',
+                    'test-error': apiTestStatus.openai === 'error',
+                  }"
+                  @click="testApiConnection('openai')"
+                >
+                  <span v-if="apiTestStatus.openai === ''">测试连接</span>
+                  <span v-else-if="apiTestStatus.openai === 'loading'"></span>
+                  <span v-else-if="apiTestStatus.openai === 'success'">成功</span>
+                  <span v-else-if="apiTestStatus.openai === 'error'">失败</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="captcha-settings-item">
-            <label>自定义 API 地址 (可选):</label>
-            <input
-              type="text"
-              v-model="settings.openaiApiUrl"
-              placeholder="https://api.openai.com/v1/chat/completions"
-            />
-            <small>留空使用默认地址</small>
-          </div>
-          <div class="captcha-settings-item">
-            <label>模型 (可选):</label>
-            <input
-              type="text"
-              v-model="settings.openaiModel"
-              placeholder="gpt-4.1-mini"
-            />
-            <small>留空使用默认模型</small>
-          </div>
-          <div class="captcha-settings-item">
-            <label>自定义提示词 (可选):</label>
-            <div class="textarea-with-button">
-              <textarea
-                v-model="settings.openaiPrompt"
-                placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
-                rows="3"
-              ></textarea>
-              <button
-                type="button"
-                class="use-default-prompt"
-                @click="settings.openaiPrompt = DEFAULT_PROMPT"
-              >
-                使用默认
-              </button>
-            </div>
-            <small>留空使用默认提示词</small>
-          </div>
-        </div>
-
-        <div v-if="settings.apiType === 'gemini'">
-          <div class="captcha-settings-item">
-            <label>Google Gemini API Key:</label>
-            <div class="input-with-button">
+            <div class="captcha-settings-item">
+              <label>自定义 API 地址 (可选):</label>
               <input
                 type="text"
-                v-model="settings.geminiKey"
-                placeholder="输入Gemini API Key"
+                v-model="settings.openaiApiUrl"
+                placeholder="https://api.openai.com/v1/chat/completions"
               />
-              <button
-                type="button"
-                class="test-api-button"
-                :class="{
-                  'test-loading': apiTestStatus.gemini === 'loading',
-                  'test-success': apiTestStatus.gemini === 'success',
-                  'test-error': apiTestStatus.gemini === 'error',
-                }"
-                @click="testApiConnection('gemini')"
-              >
-                <span v-if="apiTestStatus.gemini === ''">测试连接</span>
-                <span v-else-if="apiTestStatus.gemini === 'loading'"></span>
-                <span v-else-if="apiTestStatus.gemini === 'success'">成功</span>
-                <span v-else-if="apiTestStatus.gemini === 'error'">失败</span>
-              </button>
+              <small>留空使用默认地址</small>
+            </div>
+            <div class="captcha-settings-item">
+              <label>模型 (可选):</label>
+              <input
+                type="text"
+                v-model="settings.openaiModel"
+                placeholder="gpt-4.1-mini"
+              />
+              <small>留空使用默认模型</small>
+            </div>
+            <div class="captcha-settings-item">
+              <label>自定义提示词 (可选):</label>
+              <div class="textarea-with-button">
+                <textarea
+                  v-model="settings.openaiPrompt"
+                  placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
+                  rows="3"
+                ></textarea>
+                <button
+                  type="button"
+                  class="use-default-prompt"
+                  @click="settings.openaiPrompt = DEFAULT_PROMPT"
+                >
+                  使用默认
+                </button>
+              </div>
+              <small>留空使用默认提示词</small>
             </div>
           </div>
-          <div class="captcha-settings-item">
-            <label>自定义 API 地址 (可选):</label>
-            <input
-              type="text"
-              v-model="settings.geminiApiUrl"
-              placeholder="https://generativelanguage.googleapis.com/v1beta/models"
-            />
-            <small>留空使用默认地址</small>
-          </div>
-          <div class="captcha-settings-item">
-            <label>模型 (可选):</label>
-            <input
-              type="text"
-              v-model="settings.geminiModel"
-              placeholder="gemini-2.5-flash-lite"
-            />
-            <small>留空使用默认模型</small>
-          </div>
-          <div class="captcha-settings-item">
-            <label>自定义提示词 (可选):</label>
-            <div class="textarea-with-button">
-              <textarea
-                v-model="settings.geminiPrompt"
-                placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
-                rows="3"
-              ></textarea>
-              <button
-                type="button"
-                class="use-default-prompt"
-                @click="settings.geminiPrompt = DEFAULT_PROMPT"
-              >
-                使用默认
-              </button>
+
+          <div v-if="settings.apiType === 'gemini'">
+            <div class="captcha-settings-item">
+              <label>Google Gemini API Key:</label>
+              <div class="input-with-button">
+                <input
+                  type="text"
+                  v-model="settings.geminiKey"
+                  placeholder="输入Gemini API Key"
+                />
+                <button
+                  type="button"
+                  class="test-api-button"
+                  :class="{
+                    'test-loading': apiTestStatus.gemini === 'loading',
+                    'test-success': apiTestStatus.gemini === 'success',
+                    'test-error': apiTestStatus.gemini === 'error',
+                  }"
+                  @click="testApiConnection('gemini')"
+                >
+                  <span v-if="apiTestStatus.gemini === ''">测试连接</span>
+                  <span v-else-if="apiTestStatus.gemini === 'loading'"></span>
+                  <span v-else-if="apiTestStatus.gemini === 'success'">成功</span>
+                  <span v-else-if="apiTestStatus.gemini === 'error'">失败</span>
+                </button>
+              </div>
             </div>
-            <small>留空使用默认提示词</small>
-          </div>
-        </div>
-
-        <div v-if="settings.apiType === 'qwen'">
-          <div class="captcha-settings-item">
-            <label>阿里云通义千问 API Key:</label>
-            <div class="input-with-button">
-              <input type="text" v-model="settings.qwenKey" placeholder="API Key" />
-              <button
-                type="button"
-                class="test-api-button"
-                :class="{
-                  'test-loading': apiTestStatus.qwen === 'loading',
-                  'test-success': apiTestStatus.qwen === 'success',
-                  'test-error': apiTestStatus.qwen === 'error',
-                }"
-                @click="testApiConnection('qwen')"
-              >
-                <span v-if="apiTestStatus.qwen === ''">测试连接</span>
-                <span v-else-if="apiTestStatus.qwen === 'loading'"></span>
-                <span v-else-if="apiTestStatus.qwen === 'success'">成功</span>
-                <span v-else-if="apiTestStatus.qwen === 'error'">失败</span>
-              </button>
+            <div class="captcha-settings-item">
+              <label>自定义 API 地址 (可选):</label>
+              <input
+                type="text"
+                v-model="settings.geminiApiUrl"
+                placeholder="https://generativelanguage.googleapis.com/v1beta/models"
+              />
+              <small>留空使用默认地址</small>
+            </div>
+            <div class="captcha-settings-item">
+              <label>模型 (可选):</label>
+              <input
+                type="text"
+                v-model="settings.geminiModel"
+                placeholder="gemini-2.5-flash-lite"
+              />
+              <small>留空使用默认模型</small>
+            </div>
+            <div class="captcha-settings-item">
+              <label>自定义提示词 (可选):</label>
+              <div class="textarea-with-button">
+                <textarea
+                  v-model="settings.geminiPrompt"
+                  placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
+                  rows="3"
+                ></textarea>
+                <button
+                  type="button"
+                  class="use-default-prompt"
+                  @click="settings.geminiPrompt = DEFAULT_PROMPT"
+                >
+                  使用默认
+                </button>
+              </div>
+              <small>留空使用默认提示词</small>
             </div>
           </div>
-          <div class="captcha-settings-item">
-            <label>自定义 API 地址 (可选):</label>
-            <input
-              type="text"
-              v-model="settings.qwenApiUrl"
-              placeholder="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-            />
-            <small>留空使用默认地址</small>
-          </div>
-          <div class="captcha-settings-item">
-            <label>模型 (可选):</label>
-            <input
-              type="text"
-              v-model="settings.qwenModel"
-              placeholder="qwen-vl-max-2025-04-02"
-            />
-            <small>留空使用默认模型</small>
-          </div>
-          <div class="captcha-settings-item">
-            <label>自定义提示词 (可选):</label>
-            <div class="textarea-with-button">
-              <textarea
-                v-model="settings.qwenPrompt"
-                placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
-                rows="3"
-              ></textarea>
-              <button
-                type="button"
-                class="use-default-prompt"
-                @click="settings.qwenPrompt = DEFAULT_PROMPT"
-              >
-                使用默认
-              </button>
+
+          <div v-if="settings.apiType === 'qwen'">
+            <div class="captcha-settings-item">
+              <label>阿里云通义千问 API Key:</label>
+              <div class="input-with-button">
+                <input type="text" v-model="settings.qwenKey" placeholder="API Key" />
+                <button
+                  type="button"
+                  class="test-api-button"
+                  :class="{
+                    'test-loading': apiTestStatus.qwen === 'loading',
+                    'test-success': apiTestStatus.qwen === 'success',
+                    'test-error': apiTestStatus.qwen === 'error',
+                  }"
+                  @click="testApiConnection('qwen')"
+                >
+                  <span v-if="apiTestStatus.qwen === ''">测试连接</span>
+                  <span v-else-if="apiTestStatus.qwen === 'loading'"></span>
+                  <span v-else-if="apiTestStatus.qwen === 'success'">成功</span>
+                  <span v-else-if="apiTestStatus.qwen === 'error'">失败</span>
+                </button>
+              </div>
             </div>
-            <small>留空使用默认提示词</small>
+            <div class="captcha-settings-item">
+              <label>自定义 API 地址 (可选):</label>
+              <input
+                type="text"
+                v-model="settings.qwenApiUrl"
+                placeholder="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+              />
+              <small>留空使用默认地址</small>
+            </div>
+            <div class="captcha-settings-item">
+              <label>模型 (可选):</label>
+              <input
+                type="text"
+                v-model="settings.qwenModel"
+                placeholder="qwen-vl-max-2025-04-02"
+              />
+              <small>留空使用默认模型</small>
+            </div>
+            <div class="captcha-settings-item">
+              <label>自定义提示词 (可选):</label>
+              <div class="textarea-with-button">
+                <textarea
+                  v-model="settings.qwenPrompt"
+                  placeholder="输入自定义提示词，或点击右侧按钮使用默认提示词"
+                  rows="3"
+                ></textarea>
+                <button
+                  type="button"
+                  class="use-default-prompt"
+                  @click="settings.qwenPrompt = DEFAULT_PROMPT"
+                >
+                  使用默认
+                </button>
+              </div>
+              <small>留空使用默认提示词</small>
+            </div>
           </div>
         </div>
+        
+        <!-- 功能设置卡片 -->
+        <div class="settings-card">
+          <div class="settings-card-title">
+            <span>功能设置</span>
+          </div>
+          
+          <div class="captcha-settings-item">
+            <div style="display: flex; align-items: center">
+              <input
+                type="checkbox"
+                v-model="settings.autoRecognize"
+                id="autoRecognize"
+                style="width: auto; margin-right: 8px !important"
+              />
+              <label for="autoRecognize" style="margin-bottom: 0"
+                >验证码图片变化时自动识别</label
+              >
+            </div>
+          </div>
 
-        <div class="captcha-settings-item">
-          <label>自动识别：</label>
-          <div style="display: flex; align-items: center">
-            <input
-              type="checkbox"
-              v-model="settings.autoRecognize"
-              id="autoRecognize"
-              style="width: auto; margin-right: 8px !important"
-            />
-            <label for="autoRecognize" style="margin-bottom: 0"
-              >验证码图片变化时自动识别</label
-            >
+          <div class="captcha-settings-item">
+            <div style="display: flex; align-items: center">
+              <input
+                type="checkbox"
+                v-model="settings.copyToClipboard"
+                id="copyToClipboard"
+                style="width: auto; margin-right: 8px !important"
+              />
+              <label for="copyToClipboard" style="margin-bottom: 0">自动复制到剪贴板</label>
+            </div>
+          </div>
+
+          <div class="captcha-settings-item">
+            <div style="display: flex; align-items: center">
+              <input
+                type="checkbox"
+                v-model="settings.showNotification"
+                id="showNotification"
+                style="width: auto; margin-right: 8px !important"
+              />
+              <label for="showNotification" style="margin-bottom: 0"
+                >显示右上角通知提示</label
+              >
+            </div>
           </div>
         </div>
-
-        <div class="captcha-settings-item">
-          <label>自动复制到剪贴板：</label>
-          <div style="display: flex; align-items: center">
-            <input
-              type="checkbox"
-              v-model="settings.copyToClipboard"
-              id="copyToClipboard"
-              style="width: auto; margin-right: 8px !important"
-            />
-            <label for="copyToClipboard" style="margin-bottom: 0">自动复制到剪贴板</label>
+        
+        <!-- 禁用域名卡片 -->
+        <div class="settings-card">
+          <div class="settings-card-title">
+            <span>禁用域名列表</span>
           </div>
-        </div>
-
-        <div class="captcha-settings-item">
-          <label>右上角通知：</label>
-          <div style="display: flex; align-items: center">
-            <input
-              type="checkbox"
-              v-model="settings.showNotification"
-              id="showNotification"
-              style="width: auto; margin-right: 8px !important"
-            />
-            <label for="showNotification" style="margin-bottom: 0"
-              >显示右上角通知提示</label
-            >
+          <div class="captcha-settings-item">
+            <textarea
+              v-model="settings.disabledDomains"
+              placeholder="每行一个域名，支持正则和通配符，例如：
+example.com
+*.example.org
+example.*.com
+/^(www\.)?example\.com$/"
+              rows="5"
+              class="domain-textarea"
+            ></textarea>
+            <small>
+              在这些域名下将不启用验证码识别功能
+              <br>
+              多个配置请使用换行显示
+            </small>
           </div>
         </div>
 
         <!-- 高级设置折叠面板 -->
-        <div class="captcha-settings-item">
+        <div class="settings-card">
           <div class="advanced-settings-header" @click="toggleAdvancedSettings">
             <span
               >高级设置
@@ -385,6 +422,8 @@ export default {
         // 自定义选择器
         customCaptchaSelectors: [],
         customInputSelectors: [],
+        // 禁用域名列表
+        disabledDomains: "", // 不启用验证码功能的网站域名列表，支持正则和通配符
       },
       // 是否显示设置面板
       showSettings: false,
@@ -424,6 +463,24 @@ export default {
     };
   },
   methods: {
+    /**
+     * 获取API类型名称
+     * @param {string} apiType - API类型
+     * @returns {string} - 名称
+     */
+    getApiTypeName(apiType) {
+      switch (apiType) {
+        case "openai":
+          return "OpenAI";
+        case "gemini":
+          return "Google Gemini";
+        case "qwen":
+          return "阿里云通义千问";
+        default:
+          return "未知";
+      }
+    },
+    
     /**
      * 加载用户设置
      */
@@ -928,6 +985,11 @@ export default {
      * 在验证码图片旁添加识别图标
      */
     addIconsToCaptchas() {
+      // 检查当前网站是否在禁用列表中
+      if (this.isCurrentDomainDisabled()) {
+        return;
+      }
+      
       const elements = this.findCaptchaElements();
 
       elements.forEach(({ captchaImg, inputField }) => {
@@ -964,6 +1026,12 @@ export default {
      * @param {Object} checkedBase64 - 可选，已经预先检查过的 base64 结果
      */
     async processCaptcha(captchaImg, inputField, icon, checkedBase64) {
+      // 检查当前网站是否在禁用列表中
+      if (this.isCurrentDomainDisabled()) {
+        this.showToast("当前网站已设置为不启用验证码识别功能", "info");
+        return;
+      }
+      
       try {
         // 更新图标状态为加载中
         icon.classList.add("captcha-recognition-loading");
@@ -1051,6 +1119,11 @@ export default {
      * 监听 DOM 变化，自动为新添加的验证码添加识别图标
      */
     setupMutationObserver() {
+      // 检查当前网站是否在禁用列表中
+      if (this.isCurrentDomainDisabled()) {
+        return;
+      }
+      
       const observer = new MutationObserver((mutations) => {
         let hasNewCaptcha = false;
         let newCaptchaElements = [];
@@ -1191,6 +1264,12 @@ export default {
     init() {
       this.registerMenuCommands();
       this.loadSettings();
+
+      // 检查当前网站是否在禁用列表中
+      if (this.isCurrentDomainDisabled()) {
+        return;
+      }
+      
       setTimeout(() => {
         this.addIconsToCaptchas(); // 步骤 1: 确保所有图标都已创建
         this.setupMutationObserver();
@@ -1558,6 +1637,60 @@ export default {
       } else if (type === "input") {
         this.settings.customInputSelectors.splice(index, 1);
       }
+    },
+
+    /**
+     * 检查当前网站是否在禁用域名列表中
+     * @returns {boolean} - 如果当前网站在禁用列表中，则返回 true
+     */
+    isCurrentDomainDisabled() {
+      if (!this.settings.disabledDomains) {
+        return false;
+      }
+
+      const currentDomain = window.location.hostname;
+      const disabledDomainsList = this.settings.disabledDomains.split("\n")
+        .map(line => line.trim())
+        .filter(line => line !== "");
+
+      for (const domain of disabledDomainsList) {
+        // 检查是否是正则表达式格式 /pattern/
+        if (domain.startsWith('/') && domain.endsWith('/')) {
+          try {
+            const regexPattern = domain.substring(1, domain.length - 1);
+            const regex = new RegExp(regexPattern);
+            if (regex.test(currentDomain)) {
+              return true;
+            }
+          } catch (e) {
+            console.error("无效的正则表达式:", domain, e);
+          }
+          continue;
+        }
+
+        // 处理通配符 * (转换为正则表达式)
+        if (domain.includes('*')) {
+          const regexPattern = domain
+            .replace(/\./g, '\\.')
+            .replace(/\*/g, '.*');
+          try {
+            const regex = new RegExp(`^${regexPattern}$`);
+            if (regex.test(currentDomain)) {
+              return true;
+            }
+          } catch (e) {
+            console.error("无效的通配符模式:", domain, e);
+          }
+          continue;
+        }
+
+        // 精确匹配
+        if (domain === currentDomain) {
+          return true;
+        }
+      }
+
+      return false;
     },
   },
   mounted() {
