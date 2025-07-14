@@ -185,7 +185,7 @@
                   <input
                     type="text"
                     v-model="settings.geminiModel"
-                    placeholder="gemini-2.5-flash-lite"
+                    placeholder="gemini-2.5-flash-lite-preview-06-17"
                   />
                   <small>留空使用默认模型</small>
                 </div>
@@ -856,7 +856,7 @@ export default {
      */
     async recognizeWithGemini(base64Image) {
       // 使用自定义模型或默认模型
-      const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
+      const model = this.settings.geminiModel || "gemini-2.5-flash-lite-preview-06-17";
       // 使用自定义API地址或默认地址
       const baseApiUrl =
         this.settings.geminiApiUrl ||
@@ -1634,7 +1634,7 @@ export default {
           }
         } else if (apiType === "gemini") {
           // 测试 Google Gemini API
-          const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
+          const model = this.settings.geminiModel || "gemini-2.5-flash-lite-preview-06-17";
           const baseApiUrl =
             this.settings.geminiApiUrl ||
             "https://generativelanguage.googleapis.com/v1beta/models";

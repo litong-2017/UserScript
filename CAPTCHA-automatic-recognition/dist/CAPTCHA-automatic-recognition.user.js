@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      1.0.1
+// @version      1.0.2
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -21,7 +21,7 @@
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "1.0.1";
+  const version = "1.0.2";
   const author = "ezyshu";
   const description = "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.";
   const type = "module";
@@ -2821,7 +2821,7 @@
        * 使用Google Gemini API识别验证码
        */
       async recognizeWithGemini(base64Image) {
-        const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
+        const model = this.settings.geminiModel || "gemini-2.5-flash-lite-preview-06-17";
         const baseApiUrl = this.settings.geminiApiUrl || "https://generativelanguage.googleapis.com/v1beta/models";
         const apiUrl = `${baseApiUrl}/${model}:generateContent`;
         const prompt = this.settings.geminiPrompt || DEFAULT_PROMPT;
@@ -3407,7 +3407,7 @@
               this.apiTestStatus[apiType] = "success";
             }
           } else if (apiType === "gemini") {
-            const model = this.settings.geminiModel || "gemini-2.5-flash-lite";
+            const model = this.settings.geminiModel || "gemini-2.5-flash-lite-preview-06-17";
             const baseApiUrl = this.settings.geminiApiUrl || "https://generativelanguage.googleapis.com/v1beta/models";
             const apiUrl = `${baseApiUrl}/${model}:generateContent`;
             const response = await this.request({
@@ -3902,7 +3902,7 @@
                     vue.withDirectives(vue.createElementVNode("input", {
                       type: "text",
                       "onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => $data.settings.geminiModel = $event),
-                      placeholder: "gemini-2.5-flash-lite"
+                      placeholder: "gemini-2.5-flash-lite-preview-06-17"
                     }, null, 512), [
                       [vue.vModelText, $data.settings.geminiModel]
                     ]),
