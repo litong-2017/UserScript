@@ -848,9 +848,9 @@ export default {
         },
       });
 
-      // 提取结果并移除所有非字母数字字符（包括空格）
+      // 提取结果并移除所有非字母数字和负号字符（包括空格）
       const content = response.data.choices[0].message.content.trim();
-      return content.replace(/[^a-zA-Z0-9]/g, "");
+      return content.replace(/[^a-zA-Z0-9\-]/g, "");
     },
 
     /**
@@ -904,8 +904,8 @@ export default {
           candidate.content.parts.length > 0
         ) {
           const text = candidate.content.parts[0].text || "";
-          // 只保留数字和字母
-          return text.replace(/[^a-zA-Z0-9]/g, "");
+          // 只保留数字、字母和负号
+          return text.replace(/[^a-zA-Z0-9\-]/g, "");
         }
       }
 
@@ -956,8 +956,8 @@ export default {
         response.data.choices.length > 0
       ) {
         const text = response.data.choices[0].message.content;
-        // 只保留数字和字母
-        return text.replace(/[^a-zA-Z0-9]/g, "");
+        // 只保留数字、字母和负号
+        return text.replace(/[^a-zA-Z0-9\-]/g, "");
       }
       return "";
     },

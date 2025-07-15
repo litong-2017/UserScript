@@ -2817,7 +2817,7 @@
           }
         });
         const content = response.data.choices[0].message.content.trim();
-        return content.replace(/[^a-zA-Z0-9]/g, "");
+        return content.replace(/[^a-zA-Z0-9\-]/g, "");
       },
       /**
        * 使用Google Gemini API识别验证码
@@ -2858,7 +2858,7 @@
           const candidate = response.data.candidates[0];
           if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
             const text = candidate.content.parts[0].text || "";
-            return text.replace(/[^a-zA-Z0-9]/g, "");
+            return text.replace(/[^a-zA-Z0-9\-]/g, "");
           }
         }
         return "";
@@ -2898,7 +2898,7 @@
         });
         if (response.data && response.data.choices && response.data.choices.length > 0) {
           const text = response.data.choices[0].message.content;
-          return text.replace(/[^a-zA-Z0-9]/g, "");
+          return text.replace(/[^a-zA-Z0-9\-]/g, "");
         }
         return "";
       },
