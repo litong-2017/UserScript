@@ -6,13 +6,18 @@
   line-height: 1.5 !important;
   color: #333 !important;
   box-sizing: border-box !important;
-  
-  & *, & *::before, & *::after {
+
+  & *,
+  & *::before,
+  & *::after {
     box-sizing: border-box !important;
     font-family: inherit !important;
   }
-  
-  & input, & textarea, & select, & button {
+
+  & input,
+  & textarea,
+  & select,
+  & button {
     font-family: inherit !important;
     font-size: inherit !important;
     line-height: inherit !important;
@@ -128,7 +133,8 @@ body.captcha-settings-open {
 .settings-card::-webkit-scrollbar-thumb,
 .domain-textarea::-webkit-scrollbar-thumb,
 .captcha-settings-content textarea::-webkit-scrollbar-thumb {
-  background: #ccc !important; /* 统一使用主题蓝色 */
+  background: #ccc !important;
+  /* 统一使用主题蓝色 */
   border-radius: 4px !important;
 }
 
@@ -147,6 +153,8 @@ body.captcha-settings-open {
 
 .captcha-settings-item {
   margin-bottom: 12px !important;
+  display: flex !important;
+  flex-direction: column;
 }
 
 .captcha-settings-item label {
@@ -403,6 +411,7 @@ body.captcha-settings-open {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
+
   100% {
     transform: translate(-50%, -50%) rotate(360deg);
   }
@@ -435,15 +444,12 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
   display: flex !important;
   border-bottom: 1px solid #eee !important;
   margin-bottom: 20px !important;
-  overflow-x: auto !important;
-  white-space: nowrap !important;
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
   padding-bottom: 2px !important;
 }
 
 .settings-nav::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Opera */
+  display: none !important;
+  /* Chrome, Safari, Opera */
 }
 
 .settings-nav-item {
@@ -478,7 +484,8 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
 
 /* 设置内容区域 */
 .settings-content {
-  min-height: 420px !important; /* 增加最小高度 */
+  min-height: 420px !important;
+  /* 增加最小高度 */
   position: relative !important;
 }
 
@@ -496,6 +503,7 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -513,8 +521,10 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
   height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
-  overflow-y: auto !important;  /* 添加滚动条，防止内容过多时溢出 */
-  max-height: 400px !important; /* 设置最大高度，与内容区域最小高度一致 */
+  overflow-y: auto !important;
+  /* 添加滚动条，防止内容过多时溢出 */
+  max-height: 400px !important;
+  /* 设置最大高度，与内容区域最小高度一致 */
 }
 
 .settings-card-title {
