@@ -1,5 +1,7 @@
 ## CAPTCHA-automatic-recognition（AI 验证码自动识别填充）
 
+> 如果有网站没有适配，或者不触发等问题，请联系我手动适配，在 [Issue](https://github.com/ezyshu/UserScript/issues) 中反馈。
+
 [GitHub](https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition) |
 [Greasyfork](https://greasyfork.org/scripts/540822) |
 [更新日志](https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition/version-log.md)
