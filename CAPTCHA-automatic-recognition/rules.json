@@ -1,0 +1,7 @@
+[
+  {
+    "url_pattern": "127.0.0.1:5502",
+    "captcha_image_selector": "img[alt='demo']",
+    "captcha_input_selector": ""
+  }
+] 
