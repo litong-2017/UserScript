@@ -571,7 +571,6 @@ export default {
           'input[id="authcode"]',
           'input[placeholder*="captcha"]',
           'input[placeholder*="验证码"]:not([placeholder*="短信"])',
-          'input[name="imagestring"]',
         ],
       },
       // 用于在模板中访问环境变量
