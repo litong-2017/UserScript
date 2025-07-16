@@ -1,7 +1,12 @@
 [
   {
-    "url_pattern": "127.0.0.1:5502",
-    "captcha_image_selector": "img[alt='demo']",
+    "url_pattern": "bbs.nga.cn",
+    "captcha_image_selector": "img[src*='/login_check_code.php']",
+    "captcha_input_selector": ""
+  },
+  {
+    "url_pattern": "open.cd",
+    "captcha_image_selector": "img[alt='CAPTCHA']",
     "captcha_input_selector": ""
   }
 ] 

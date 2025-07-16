@@ -447,6 +447,36 @@ example.*.com
                   </button>
                 </div>
               </div>
+              
+              <div class="captcha-settings-item">
+                <label>验证码规则管理：</label>
+                <div class="rules-management">
+                  <div class="rules-url-input">
+                    <input
+                      type="text"
+                      v-model="settings.rulesUrl"
+                      placeholder="https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json"
+                    />
+                    <small>规则文件URL，留空则使用默认URL：https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json</small>
+                  </div>
+                  <button
+                    type="button"
+                    class="reload-rules-button"
+                    :class="{
+                      'test-loading': rulesLoadStatus === 'loading',
+                      'test-success': rulesLoadStatus === 'success',
+                      'test-error': rulesLoadStatus === 'error',
+                    }"
+                    @click="reloadRules"
+                  >
+                    <span v-if="rulesLoadStatus === ''">重新加载规则</span>
+                    <span v-else-if="rulesLoadStatus === 'loading'"></span>
+                    <span v-else-if="rulesLoadStatus === 'success'">加载成功</span>
+                    <span v-else-if="rulesLoadStatus === 'error'">加载失败</span>
+                  </button>
+                  <small>从远程加载最新的验证码识别规则</small>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -477,6 +507,10 @@ export default {
         gemini: "", // 可能的值：'', 'loading', 'success', 'error'
         qwen: "", // 可能的值：'', 'loading', 'success', 'error'
       },
+      // 验证码规则配置
+      rules: [],
+      // 规则加载状态
+      rulesLoadStatus: "", // 可能的值：'', 'loading', 'success', 'error'
       // 设置项
       settings: {
         apiType: "openai", // openai, gemini, qwen
@@ -506,6 +540,8 @@ export default {
         customInputSelectors: [],
         // 禁用域名列表
         disabledDomains: "", // 不启用验证码功能的网站域名列表，支持正则和通配符
+        // 规则URL
+        rulesUrl: "https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json", // 规则文件URL
       },
       // 是否显示设置面板
       showSettings: false,
@@ -522,12 +558,10 @@ export default {
           'img[alt*="captcha"]',
           'img[id="captchaPic"]',
           ".validate-code img",
-          'img[src*="/login_check_code.php"]',
           'img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]',
           '.authcode img[id="authImage"]',
           'img[class="verification-img"]',
           'img[name="imgCaptcha"]',
-          'img[alt="CAPTCHA"]',
         ],
         // 相关输入框选择器 (通常在验证码图片附近的输入框)
         inputSelectors: [
@@ -580,6 +614,14 @@ export default {
             // 合并设置，确保新增字段也有默认值
             this.settings = { ...this.settings, ...parsedSettings };
           }
+          
+          // 加载规则
+          const savedRules = GM_getValue("captchaRules");
+          if (savedRules) {
+            this.rules = JSON.parse(savedRules);
+          } else {
+            this.loadRules();
+          }
         } else {
           // console.log('未检测到油猴环境，无法加载设置');
           // 尝试从 localStorage 加载设置（开发环境使用）
@@ -589,10 +631,67 @@ export default {
             // 合并设置，确保新增字段也有默认值
             this.settings = { ...this.settings, ...parsedSettings };
           }
+          
+          // 从 localStorage 加载规则
+          const localRules = localStorage.getItem("captchaRules");
+          if (localRules) {
+            this.rules = JSON.parse(localRules);
+          } else {
+            this.loadRules();
+          }
         }
       } catch (error) {
         console.error("加载设置失败：", error);
       }
+    },
+
+    /**
+     * 加载验证码规则
+     */
+    async loadRules() {
+      try {
+        this.rulesLoadStatus = "loading";
+        let rulesData;
+        
+        // 获取规则URL，如果为空则使用默认URL
+        const rulesUrl = this.settings.rulesUrl || "https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json";
+        
+        // 从rules.json文件加载规则
+        const response = await this.request({
+          method: "GET",
+          url: rulesUrl,
+          responseType: "json"
+        });
+        
+        if (response && response.data) {
+          rulesData = response.data;
+          
+          // 保存规则到存储
+          if (typeof GM_setValue !== "undefined") {
+            GM_setValue("captchaRules", JSON.stringify(rulesData));
+          } else {
+            localStorage.setItem("captchaRules", JSON.stringify(rulesData));
+          }
+          
+          this.rules = rulesData;
+          this.rulesLoadStatus = "success";
+          this.showToast("规则加载成功！", "success");
+        } else {
+          this.rulesLoadStatus = "error";
+          this.showToast("规则加载失败，请稍后重试", "error");
+        }
+      } catch (error) {
+        console.error("加载规则失败：", error);
+        this.rulesLoadStatus = "error";
+        this.showToast("规则加载失败：" + (error.message || "未知错误"), "error");
+      }
+    },
+    
+    /**
+     * 重新加载验证码规则
+     */
+    async reloadRules() {
+      await this.loadRules();
     },
 
     /**
@@ -999,69 +1098,158 @@ export default {
     },
 
     /**
-     * 查找页面上的验证码图片和相关输入框
+     * 检测页面上的验证码图片
      */
-    findCaptchaElements() {
-      const captchaSelector = this.getCombinedSelector(
-        this.config.captchaSelectors
-      );
-      const captchaImages = document.querySelectorAll(captchaSelector);
-      if (captchaImages.length === 0) {
-        // console.log('未找到验证码图片');
-        return [];
-      }
+    detectCaptchas() {
+      // 验证码检测定时器，防止频繁执行
+      this.captchaCheckInterval = setInterval(() => {
+        // 获取当前页面URL
+        const currentUrl = window.location.href;
 
-      const elements = [];
-      captchaImages.forEach((img) => {
-        // 查找最近的输入框
-        let inputField = null;
+        // 检查当前域名是否在禁用列表中
+        if (this.isCurrentDomainDisabled()) {
+          return;
+        }
 
-        // 方法 1：尝试通过选择器查找相关输入框
-        const inputSelector = this.getCombinedSelector(
-          this.config.inputSelectors
-        );
-        const inputs = document.querySelectorAll(inputSelector);
-        if (inputs.length > 0) {
-          // 找到距离验证码图片最近的输入框
-          let minDistance = Infinity;
-          let closestInput = null;
-
-          inputs.forEach((input) => {
-            const distance = this.getDistance(img, input);
-            if (distance < minDistance) {
-              minDistance = distance;
-              closestInput = input;
+        // 创建所有可能的验证码图片选择器列表
+        let captchaSelectors = [...this.config.captchaSelectors];
+        
+        // 添加用户自定义的验证码选择器
+        if (Array.isArray(this.settings.customCaptchaSelectors)) {
+          captchaSelectors = captchaSelectors.concat(
+            this.settings.customCaptchaSelectors
+          );
+        }
+        
+        // 创建所有可能的输入框选择器列表
+        let inputSelectors = [...this.config.inputSelectors];
+        
+        // 添加用户自定义的输入框选择器
+        if (Array.isArray(this.settings.customInputSelectors)) {
+          inputSelectors = inputSelectors.concat(
+            this.settings.customInputSelectors
+          );
+        }
+        
+        // 应用规则匹配逻辑
+        if (Array.isArray(this.rules) && this.rules.length > 0) {
+          // 遍历规则列表
+          for (const rule of this.rules) {
+            // 跳过没有验证码选择器的规则
+            if (!rule.captcha_image_selector) {
+              continue;
             }
-          });
-
-          // 如果找到的输入框距离验证码图片不太远，则认为它是相关的
-          if (minDistance < 300) {
-            inputField = closestInput;
+            
+            // 检查URL是否匹配
+            let isUrlMatch = false;
+            if (!rule.url_pattern || rule.url_pattern === '*') {
+              // 空或星号表示对所有网站生效
+              isUrlMatch = true;
+            } else if (rule.url_pattern.startsWith('/') && rule.url_pattern.endsWith('/')) {
+              // 正则表达式匹配
+              try {
+                const regexPattern = rule.url_pattern.substring(1, rule.url_pattern.length - 1);
+                const regex = new RegExp(regexPattern);
+                isUrlMatch = regex.test(currentUrl);
+              } catch (e) {
+                console.error('Invalid regex pattern:', rule.url_pattern);
+              }
+            } else if (rule.url_pattern.includes('*')) {
+              // 通配符匹配
+              const escapedPattern = rule.url_pattern
+                .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 转义特殊字符
+                .replace(/\*/g, '.*'); // 替换 * 为 .*
+              const regex = new RegExp(`^${escapedPattern}$`);
+              isUrlMatch = regex.test(currentUrl);
+            } else {
+              // 精确匹配
+              isUrlMatch = currentUrl.includes(rule.url_pattern);
+            }
+            
+            // 如果URL匹配，应用此规则的选择器
+            if (isUrlMatch) {
+              // 添加验证码图片选择器
+              if (rule.captcha_image_selector && !captchaSelectors.includes(rule.captcha_image_selector)) {
+                captchaSelectors.push(rule.captcha_image_selector);
+              }
+              
+              // 添加输入框选择器（如果有）
+              if (rule.captcha_input_selector && !inputSelectors.includes(rule.captcha_input_selector)) {
+                inputSelectors.push(rule.captcha_input_selector);
+              }
+            }
           }
         }
 
-        // 方法2：如果方法1未找到，尝试检查验证码图片附近的输入框
-        if (!inputField) {
-          // 向上查找
-          let parent = img.parentElement;
-          let level = 0;
-          while (parent && level < 5) {
-            const nearInputs = parent.querySelectorAll('input[type="text"]');
-            if (nearInputs.length > 0) {
-              inputField = nearInputs[0];
-              break;
-            }
-            parent = parent.parentElement;
-            level++;
+        // 使用组合后的选择器查找验证码
+        let elements = [];
+        
+        captchaSelectors.forEach((selector) => {
+          try {
+            // 查找所有匹配的验证码图片
+            const captchaImgs = document.querySelectorAll(selector);
+            
+            // 为每个验证码图片查找对应的输入框
+            captchaImgs.forEach((captchaImg) => {
+              // 避免重复添加已处理的图片
+              if (
+                captchaImg.nextElementSibling &&
+                captchaImg.nextElementSibling.classList.contains(
+                  "captcha-recognition-icon"
+                )
+              ) {
+                return;
+              }
+
+              // 寻找最近的输入框
+              let inputField = null;
+
+              // 首先尝试查找父元素下的所有输入框
+              const parentElement = captchaImg.parentElement;
+              if (parentElement) {
+                for (const selector of inputSelectors) {
+                  const inputs = parentElement.querySelectorAll(selector);
+                  if (inputs.length > 0) {
+                    inputField = inputs[0];
+                    break;
+                  }
+                }
+
+                // 如果在父元素中没找到，尝试在整个文档中查找
+                if (!inputField) {
+                  for (const selector of inputSelectors) {
+                    const inputs = document.querySelectorAll(selector);
+                    if (inputs.length > 0) {
+                      inputField = inputs[0];
+                      break;
+                    }
+                  }
+                }
+              }
+
+              // 为验证码图片添加识别按钮
+              this.addRecognitionIcon(captchaImg, inputField);
+
+              // 收集验证码元素信息
+              elements.push({
+                captchaImg,
+                inputField,
+              });
+            });
+          } catch (error) {
+            console.error(`选择器 '${selector}' 执行出错:`, error);
           }
-        }
+        });
 
-        if (inputField) {
-          elements.push({ captchaImg: img, inputField });
+        // 如果找到验证码图片
+        if (elements.length > 0) {
+          // 显示提示信息
+          this.showToast(
+            `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
+            "info"
+          );
         }
-      });
-
-      return elements;
+      }, 500); // 延迟 500ms，确保图片已经加载完成
     },
 
     /**
@@ -1169,6 +1357,45 @@ export default {
             icon.classList.remove("captcha-recognition-error");
           }, 2000);
           return;
+        }
+
+        // 检查是否找到了输入框
+        if (!inputField) {
+          // 尝试再次查找输入框
+          inputField = this.findInputFieldForCaptcha(captchaImg);
+          
+          if (!inputField) {
+            console.error("未找到验证码输入框");
+            this.showToast(`验证码已识别：${text}，但未找到输入框`, "warning");
+            
+            // 将识别结果复制到剪贴板，即使没有输入框
+            if (this.settings.copyToClipboard) {
+              try {
+                await navigator.clipboard.writeText(text);
+                this.showToast(`已将验证码复制到剪贴板: ${text}`, "success");
+              } catch (clipboardError) {
+                // 如果剪贴板 API 不可用，使用传统方法
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+                this.showToast(`验证码已识别：${text} (已复制到剪贴板)`, "success");
+              }
+            }
+            
+            // 更新图标状态为成功，即使没找到输入框
+            icon.classList.remove("captcha-recognition-loading");
+            icon.classList.add("captcha-recognition-success");
+            setTimeout(() => {
+              icon.classList.remove("captcha-recognition-success");
+            }, 2000);
+            
+            return;
+          }
         }
 
         // 填充结果到输入框
@@ -1597,7 +1824,7 @@ export default {
 
         // 测试图片base64
         const testBase64Image =
-          "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAmCAYAAAAycj4zAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPNSURBVGhD7ZgxbuswDIZ9r1zAx8ghfICX+Q0d28EIeoACRYcOAQpkKdDuWQp0yQGKXkEvSuSYIimKsqU4Md4HCEFkiqL4W5SSarfbGdtunbmsQy1IiQVrfGrn1dpdiqHxVO4zSokFa3yGbDRjp2RofDdbsm417hizOUPmgrpk5WLKF+AWXj4iSOmgU/3njEfrK+ecqYwWhLNP9SGR6ivH3CEfOXzHEAXRBMDZ+H3fpqn+mgq35ts9p2yfK1P96Vvz5R4QtqYBdtV9azYoHi4+Ddw4+329BvPB9rx1VjzaOJIF4fp4fk1bM0Kg1nDr+GlNrVnsV+MlpX7fuwc9Urwpz/bvtTdXqNkYOL+4j7OxJB/qIUeY9ZIXgGtUlL1p7+FCm8NeoPg7qTbtj3ugRFoLfKYVw7aQIJjOBtsmC6Ji++onnZQnVMbqz4MEPjgJtGzRckX3RxwuKZZzH96tx9aYtTemj4XbpRJ4bvF3SOiZNMaybfpk1+2v68X4JY3skljZipUrNpGwnXZUt5bQesjucMJzY6xtqiCYUYLA1gPf/le21JwBO4kKJ5etaLlSCLL64NfXg2OQLhhp0LydUJWsbjB2wPbvP03dCSLcpI5EbMNla0i5QsllbmQUNA96KcjaEwiNHSUIC0zy8k0eExMvVLZQudK8tb642guAXhB1fiLkP9Rhkhcvx7cwiGI3+aXplBC/b+kliWWAgCdkQSDXK4h0hhzPjL5v3z46O+HwJ8lESVqvnWEIZO92mSaBu93GrO7AWGZn6fzoxRIFSXEECd2yvP66F6OqHk2LDoF+bvyW+i32tnM7zKJZm32+eVqA8Yd2t/J2PfQTumVp5uoYJUjwufA7BIpybszvEOjbTypscrnCl4LlRpeUjmMMHyt6WzuI4sfbvzRFr70xpLFs4tn2QHYHAZWtc5PKFboQLJ42yevs1oeFldqkgsjo/ss6NVqyfPiyJZUrTRK1ybP5IaUr0EYL4j4LEvi3d/liVgvYJ/+IpGUrfOOx5Bake2mD5TPyb68WIki5HRPAXX3Df7HMH5jzYoLk8pOTHDGVWBf0WaxkpQaeaj8EzRwxG42PMVzgDNFReqFaLhVHaJ7sglxqQddOLA/dc2zzX5BCaPLA2VxNybo1NAkfwqwFKZU0C+dbM1/MZjJBNMGP5RJzQDTzxWxEQTQTDKWkby05Y0j1FbIngkDD0KC5kHN9qb44e/tdFCQH0F9u3ykMmTtXvFo/1qb4GQKD0QbGMWasJWV8Z5syRiLFz2SHeiq5kqPhknNhJhFkygVfN8b8A/Cu2G5QVhydAAAAAElFTkSuQmCC";
+          "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAmCAYAAAAycj4zAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPNSURBVGhD7ZgxbuswDIZ9r1zAx8ghfICX+Q0d28EIeoACRYcOAQpkKdDuWQp0yQGKXkEvSuSYIimKsqU4Md4HCEFkiqL4W5SSarfbGdtunbmsQy1IiQVrfGrn1dpdiqHxVO4zSokFa3yGbDRjp2RofDdbsm417hizOUPmgrpk5WLKF+AWXj4iSOmgU/3njEfrK+ecqYwWhLNP9SGR6ivH3CEfOXzHEAXRBMDZ+H3fpqn+mgq35ts9p2yfK1P96Vvz5R4QtqYBdtV9azYoHi4+Ddw4+329BvPB9rx1VjzaOJIF4fp4fk1bM0Kg1nDr+GlNrVnsV+MlpX7fuwc9Urwpz/bvtTdXqNkYOL+4j7OxJB/qIUeY9ZIXgGtUlL1p7+FCm8NeoPg7qTbtj3ugRFoLfKYVw7aQIJjOBtsmC6Ji++onnZQnVMbqz4MEPjgJtGzRckX3RxwuKZZzH96tx9aYtTemj4XbpRJ4bvF3SOiZNMybfpk1+2v68X4JY3skljZipUrNpGwnXZUt5bQesjucMJzY6xtqiCYUYLA1gPf/le21JwBO4kKJ5etaLlSCLL64NfXg2OQLhhp0LydUJWsbjB2wPbvP03dCSLcpI5EbMNla0i5QsllbmQUNA96KcjaEwiNHSUIC0zy8k0eExMvVLZQudK8tb642guAXhB1fiLkP9Rhkhcvx7cwiGI3+aXplBC/b+kliWWAgCdkQSDXK4h0hhzPjL5v3z46O+HwJ8lESVqvnWEIZO92mSaBu93GrO7AWGZn6fzoxRIFSXEECd2yvP66F6OqHk2LDoF+bvyW+i32tnM7zKJZm32+eVqA8Yd2t/J2PfQTumVp5uoYJUjwufA7BIpybszvEOjbTypscrnCl4LlRpeUjmMMHyt6WzuI4sfbvzRFr70xpLFs4tn2QHYHAZWtc5PKFboQLJ42yevs1oeFldqkgsjo/ss6NVqyfPiyJZUrTRK1ybP5IaUr0EYL4j4LEvi3d/liVgvYJ/+IpGUrfOOx5Bake2mD5TPyb68WIki5HRPAXX3Df7HMH5jzYoLk8pOTHDGVWBf0WaxkpQaeaj8EzRwxG42PMVzgDNFReqFaLhVHaJ7sglxqQddOLA/dc2zzX5BCaPLA2VxNybo1NAkfwqwFKZU0C+dbM1/MZjJBNMGP5RJzQDTzxWxEQTQTDKWkby05Y0j1FbIngkDD0KC5kHN9qb44e/tdFCQH0F9u3ykMmTtXvFo/1qb4GQKD0QbGMWasJWV8Z5syRiLFz2SHeiq5kqPhknNhJhFkygVfN8b8A/Cu2G5QVhydAAAAAElFTkSuQmCC";
 
         if (apiType === "openai") {
           // 测试 OpenAI API
@@ -1663,9 +1890,6 @@ export default {
                   ],
                 },
               ],
-              generationConfig: {
-                temperature: 0,
-              },
             },
             headers: {
               "Content-Type": "application/json",
@@ -1676,7 +1900,7 @@ export default {
             this.apiTestStatus[apiType] = "success";
           }
         } else if (apiType === "qwen") {
-          // 测试通义千问 API（新版API格式）
+          // 测试阿里云通义千问 API
           const apiUrl =
             this.settings.qwenApiUrl ||
             "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
@@ -1696,7 +1920,7 @@ export default {
                       text: "这是一个验证码图片，请识别其中的字符",
                     },
                     {
-                      type: "image_url",
+                      type: "image",
                       image_url: {
                         url: `data:image/png;base64,${testBase64Image}`,
                       },
@@ -1704,9 +1928,6 @@ export default {
                   ],
                 },
               ],
-              temperature: 0.1,
-              top_p: 1,
-              stream: false,
             },
             headers: {
               "Content-Type": "application/json",
@@ -1719,21 +1940,69 @@ export default {
           }
         }
 
-        // 3 秒后重置成功状态
+        // 3 秒后重置状态
         setTimeout(() => {
-          if (this.apiTestStatus[apiType] === "success") {
-            this.apiTestStatus[apiType] = "";
-          }
+          this.apiTestStatus[apiType] = "";
         }, 3000);
       } catch (error) {
         console.error("API 连接测试失败：", error);
         this.apiTestStatus[apiType] = "error";
 
-        // 3 秒后重置错误状态
+        // 3 秒后重置状态
         setTimeout(() => {
           this.apiTestStatus[apiType] = "";
         }, 3000);
       }
+    },
+
+    /**
+     * 检查域名是否在禁用列表中
+     * @param {string} domain - 要检查的域名
+     * @returns {boolean} - 如果域名在禁用列表中返回 true，否则返回 false
+     */
+    isDisabledDomain(domain) {
+      // 如果禁用域名列表为空，则所有域名都启用
+      if (!this.settings.disabledDomains) {
+        return false;
+      }
+
+      // 分割并清理禁用域名列表
+      const disabledDomainsList = this.settings.disabledDomains
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line !== "");
+
+      // 遍历禁用域名列表，检查当前域名是否匹配
+      for (const disabledDomain of disabledDomainsList) {
+        try {
+          // 检查是否为正则表达式格式 (以 / 开头和结尾)
+          if (disabledDomain.startsWith('/') && disabledDomain.endsWith('/')) {
+            const regexPattern = disabledDomain.substring(1, disabledDomain.length - 1);
+            const regex = new RegExp(regexPattern);
+            if (regex.test(domain)) {
+              return true;
+            }
+          }
+          // 检查是否包含通配符 *
+          else if (disabledDomain.includes('*')) {
+            const escapedPattern = disabledDomain
+              .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 转义特殊字符
+              .replace(/\*/g, '.*'); // 替换 * 为 .*
+            const regex = new RegExp(`^${escapedPattern}$`);
+            if (regex.test(domain)) {
+              return true;
+            }
+          }
+          // 简单的字符串匹配
+          else if (domain.includes(disabledDomain)) {
+            return true;
+          }
+        } catch (error) {
+          console.error(`检查禁用域名时出错 (${disabledDomain}):`, error);
+        }
+      }
+
+      return false;
     },
 
     /**
@@ -1815,9 +2084,297 @@ export default {
 
       return false;
     },
+    
+    /**
+     * 为验证码图片添加识别图标
+     * @param {HTMLImageElement} captchaImg - 验证码图片元素
+     * @param {HTMLInputElement} inputField - 输入框元素
+     */
+    addRecognitionIcon(captchaImg, inputField) {
+      // 检查是否已经添加过图标
+      const existingIcon = captchaImg.nextElementSibling;
+      if (
+        existingIcon &&
+        existingIcon.classList.contains("captcha-recognition-icon")
+      ) {
+        return;
+      }
+
+      // 创建识别图标
+      const icon = document.createElement("div");
+      icon.classList.add("captcha-recognition-icon");
+      icon.title = "点击识别验证码";
+
+      // 将图标放在验证码图片后面（紧邻其后）
+      if (captchaImg.nextSibling) {
+        captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
+      } else {
+        captchaImg.parentNode.appendChild(icon);
+      }
+
+      // 添加点击事件
+      icon.addEventListener("click", async () => {
+        this.processCaptcha(captchaImg, inputField, icon);
+      });
+    },
+    
+    /**
+     * 查找页面上的验证码图片和相关输入框
+     * @returns {Array} - 包含验证码图片和相关输入框的对象数组
+     */
+    findCaptchaElements() {
+      // 创建所有可能的验证码图片选择器列表
+      let captchaSelectors = [...this.config.captchaSelectors];
+      
+      // 添加用户自定义的验证码选择器
+      if (Array.isArray(this.settings.customCaptchaSelectors)) {
+        captchaSelectors = captchaSelectors.concat(
+          this.settings.customCaptchaSelectors
+        );
+      }
+      
+      // 创建所有可能的输入框选择器列表
+      let inputSelectors = [...this.config.inputSelectors];
+      
+      // 添加用户自定义的输入框选择器
+      if (Array.isArray(this.settings.customInputSelectors)) {
+        inputSelectors = inputSelectors.concat(
+          this.settings.customInputSelectors
+        );
+      }
+      
+      // 应用规则匹配逻辑
+      const currentUrl = window.location.href;
+      if (Array.isArray(this.rules) && this.rules.length > 0) {
+        // 遍历规则列表
+        for (const rule of this.rules) {
+          // 跳过没有验证码选择器的规则
+          if (!rule.captcha_image_selector) {
+            continue;
+          }
+          
+          // 检查URL是否匹配
+          let isUrlMatch = false;
+          if (!rule.url_pattern || rule.url_pattern === '*') {
+            // 空或星号表示对所有网站生效
+            isUrlMatch = true;
+          } else if (rule.url_pattern.startsWith('/') && rule.url_pattern.endsWith('/')) {
+            // 正则表达式匹配
+            try {
+              const regexPattern = rule.url_pattern.substring(1, rule.url_pattern.length - 1);
+              const regex = new RegExp(regexPattern);
+              isUrlMatch = regex.test(currentUrl);
+            } catch (e) {
+              console.error('Invalid regex pattern:', rule.url_pattern);
+            }
+          } else if (rule.url_pattern.includes('*')) {
+            // 通配符匹配
+            const escapedPattern = rule.url_pattern
+              .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 转义特殊字符
+              .replace(/\*/g, '.*'); // 替换 * 为 .*
+            const regex = new RegExp(`^${escapedPattern}$`);
+            isUrlMatch = regex.test(currentUrl);
+          } else {
+            // 精确匹配
+            isUrlMatch = currentUrl.includes(rule.url_pattern);
+          }
+          
+          // 如果URL匹配，应用此规则的选择器
+          if (isUrlMatch) {
+            // 添加验证码图片选择器
+            if (rule.captcha_image_selector && !captchaSelectors.includes(rule.captcha_image_selector)) {
+              captchaSelectors.push(rule.captcha_image_selector);
+            }
+            
+            // 添加输入框选择器（如果有）
+            if (rule.captcha_input_selector && !inputSelectors.includes(rule.captcha_input_selector)) {
+              inputSelectors.push(rule.captcha_input_selector);
+            }
+          }
+        }
+      }
+
+      // 使用选择器查找验证码和输入框
+      const elements = [];
+      
+      captchaSelectors.forEach(selector => {
+        try {
+          // 查找所有匹配的验证码图片
+          const captchaImgs = document.querySelectorAll(selector);
+          
+          // 为每个验证码图片查找对应的输入框
+          captchaImgs.forEach(captchaImg => {
+            // 寻找最近的输入框
+            let inputField = this.findInputFieldForCaptcha(captchaImg, inputSelectors);
+
+            // 收集验证码元素信息
+            elements.push({
+              captchaImg,
+              inputField,
+            });
+          });
+        } catch (error) {
+          console.error(`选择器 '${selector}' 执行出错:`, error);
+        }
+      });
+
+      return elements;
+    },
+    
+    /**
+     * 为验证码图片查找对应的输入框
+     * @param {HTMLImageElement} captchaImg - 验证码图片元素
+     * @param {Array} [customSelectors] - 自定义输入框选择器列表，可选
+     * @returns {HTMLInputElement|null} - 找到的输入框元素，或null
+     */
+    findInputFieldForCaptcha(captchaImg, customSelectors) {
+      // 确定使用的选择器列表
+      let inputSelectors = customSelectors || [...this.config.inputSelectors];
+      
+      // 如果没有提供自定义选择器，则添加用户自定义的输入框选择器
+      if (!customSelectors && Array.isArray(this.settings.customInputSelectors)) {
+        inputSelectors = inputSelectors.concat(
+          this.settings.customInputSelectors
+        );
+      }
+      
+      // 添加规则中的选择器
+      const currentUrl = window.location.href;
+      if (Array.isArray(this.rules) && this.rules.length > 0) {
+        // 遍历规则列表
+        for (const rule of this.rules) {
+          // 跳过没有输入框选择器的规则
+          if (!rule.captcha_input_selector) {
+            continue;
+          }
+          
+          // 检查URL是否匹配
+          let isUrlMatch = false;
+          if (!rule.url_pattern || rule.url_pattern === '*') {
+            // 空或星号表示对所有网站生效
+            isUrlMatch = true;
+          } else if (rule.url_pattern.startsWith('/') && rule.url_pattern.endsWith('/')) {
+            // 正则表达式匹配
+            try {
+              const regexPattern = rule.url_pattern.substring(1, rule.url_pattern.length - 1);
+              const regex = new RegExp(regexPattern);
+              isUrlMatch = regex.test(currentUrl);
+            } catch (e) {
+              console.error('Invalid regex pattern:', rule.url_pattern);
+            }
+          } else if (rule.url_pattern.includes('*')) {
+            // 通配符匹配
+            const escapedPattern = rule.url_pattern
+              .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 转义特殊字符
+              .replace(/\*/g, '.*'); // 替换 * 为 .*
+            const regex = new RegExp(`^${escapedPattern}$`);
+            isUrlMatch = regex.test(currentUrl);
+          } else {
+            // 精确匹配
+            isUrlMatch = currentUrl.includes(rule.url_pattern);
+          }
+          
+          // 如果URL匹配，应用此规则的选择器
+          if (isUrlMatch && rule.captcha_input_selector && !inputSelectors.includes(rule.captcha_input_selector)) {
+            inputSelectors.push(rule.captcha_input_selector);
+          }
+        }
+      }
+      
+      let inputField = null;
+      
+      // 方法1: 先检查最近的父元素
+      const parentElement = captchaImg.parentElement;
+      if (parentElement) {
+        for (const selector of inputSelectors) {
+          try {
+            const inputs = parentElement.querySelectorAll(selector);
+            if (inputs.length > 0) {
+              inputField = inputs[0];
+              break;
+            }
+          } catch (e) {
+            console.error(`选择器 ${selector} 执行出错:`, e);
+          }
+        }
+      }
+      
+      // 方法2: 如果在父元素中没找到，检查整个表单
+      if (!inputField && parentElement) {
+        // 向上查找表单元素
+        let form = parentElement;
+        while (form && form.tagName !== 'FORM' && form !== document.body) {
+          form = form.parentElement;
+        }
+        
+        if (form && form.tagName === 'FORM') {
+          for (const selector of inputSelectors) {
+            try {
+              const inputs = form.querySelectorAll(selector);
+              if (inputs.length > 0) {
+                inputField = inputs[0];
+                break;
+              }
+            } catch (e) {
+              console.error(`选择器 ${selector} 执行出错:`, e);
+            }
+          }
+        }
+      }
+      
+      // 方法3: 如果仍然没有找到，检查整个文档
+      if (!inputField) {
+        for (const selector of inputSelectors) {
+          try {
+            const inputs = document.querySelectorAll(selector);
+            if (inputs.length > 0) {
+              inputField = inputs[0];
+              break;
+            }
+          } catch (e) {
+            console.error(`选择器 ${selector} 执行出错:`, e);
+          }
+        }
+      }
+      
+      // 方法4: 如果还没找到，尝试通过更一般的选择器查找
+      if (!inputField) {
+        // 尝试查找任何类型为text的输入框
+        const inputs = document.querySelectorAll('input[type="text"]');
+        if (inputs.length > 0) {
+          // 寻找名称或属性与验证码相关的输入框
+          for (const input of inputs) {
+            const name = input.name ? input.name.toLowerCase() : '';
+            const id = input.id ? input.id.toLowerCase() : '';
+            const placeholder = input.placeholder ? input.placeholder.toLowerCase() : '';
+            
+            if (name.includes('captcha') || name.includes('verif') || 
+                id.includes('captcha') || id.includes('verif') || 
+                placeholder.includes('captcha') || placeholder.includes('验证码')) {
+              inputField = input;
+              break;
+            }
+          }
+          
+          // 如果仍然没有找到，使用第一个文本输入框
+          if (!inputField) {
+            inputField = inputs[0];
+          }
+        }
+      }
+      
+      return inputField;
+    },
   },
   mounted() {
-    this.init();
+    // 加载用户设置
+    this.loadSettings();
+
+    // 默认关闭设置面板
+    this.showSettings = false;
+
+    // 油猴环境下，检测验证码
+    this.detectCaptchas();
   },
   created() {
     // Website Compatibility Handling
