@@ -260,22 +260,30 @@ body.captcha-settings-open {
 }
 
 .dev-settings-button {
+  width: 50px !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   position: fixed !important;
   bottom: 20px !important;
   right: 20px !important;
-  padding: 10px 15px !important;
-  background-color: #1a73e8 !important;
+  background-color: #fff !important;
   color: white !important;
-  border-radius: 4px !important;
+  border-radius: 50% !important;
   cursor: pointer !important;
   z-index: 9999 !important;
   font-size: 14px !important;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
   transition: background-color 0.2s !important;
+
+  svg {
+    color: #1557b0;
+  }
 }
 
 .dev-settings-button:hover {
-  background-color: #1557b0 !important;
+  opacity: 0.9;
 }
 
 /* Toast 提示样式 */
@@ -640,78 +648,78 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
 }
 
 .reload-rules-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px;
-  height: 34px;
-  font-size: 14px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  background-color: #f7f7f7;
-  cursor: pointer;
-  transition: all 0.3s;
-  min-width: 120px;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 6px 12px !important;
+  height: 34px !important;
+  font-size: 14px !important;
+  border-radius: 4px !important;
+  border: 1px solid #ddd !important;
+  background-color: #f7f7f7 !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+  min-width: 120px !important;
 
   &:hover {
-    background-color: #e7e7e7;
+    background-color: #e7e7e7 !important;
   }
 
   &.test-loading {
-    background-color: #f5f5f5;
-    position: relative;
-    color: transparent;
+    background-color: #f5f5f5 !important;
+    position: relative !important;
+    color: transparent !important;
 
     &::after {
-      content: '';
-      width: 16px;
-      height: 16px;
-      border: 2px solid #666;
-      border-top-color: transparent;
-      border-radius: 50%;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      margin-left: -8px;
-      margin-top: -8px;
-      animation: spin 1s linear infinite;
+      content: '' !important;
+      width: 16px !important;
+      height: 16px !important;
+      border: 2px solid #666 !important;
+      border-top-color: transparent !important;
+      border-radius: 50% !important;
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      margin-left: -8px !important;
+      margin-top: -8px !important;
+      animation: captcha-spin 1s linear infinite !important;
     }
   }
 
   &.test-success {
-    background-color: #eaf7ea;
-    border-color: #c3e6c3;
-    color: #2a862a;
+    background-color: #eaf7ea !important;
+    border-color: #c3e6c3 !important;
+    color: #2a862a !important;
   }
 
   &.test-error {
-    background-color: #fce7e7;
-    border-color: #f5c2c2;
-    color: #d63030;
+    background-color: #fce7e7 !important;
+    border-color: #f5c2c2 !important;
+    color: #d63030 !important;
   }
 }
 
 .rules-management {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
 }
 
 .rules-url-input {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+
   input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
+    width: 100% !important;
+    padding: 8px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
   }
-  
+
   small {
-    color: #666;
-    font-size: 12px;
+    color: #666 !important;
+    font-size: 12px !important;
   }
 }
