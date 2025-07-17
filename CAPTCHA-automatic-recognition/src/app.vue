@@ -757,30 +757,30 @@ export default {
       // 根据 API 类型调用不同的识别方法
       let result = "";
       try {
-        console.log("开始识别验证码，使用API类型:", this.settings.apiType);
+        // console.log("开始识别验证码，使用API类型:", this.settings.apiType);
         this.showToast("正在识别验证码...", "info");
 
         switch (this.settings.apiType) {
           case "openai":
-            console.log("使用OpenAI API识别验证码");
+            // console.log("使用OpenAI API识别验证码");
             result = await this.recognizeWithOpenAI(base64Image);
             break;
           case "gemini":
-            console.log("使用Google Gemini API识别验证码");
+            // console.log("使用Google Gemini API识别验证码");
             result = await this.recognizeWithGemini(base64Image);
             break;
           case "qwen":
-            console.log("使用阿里云通义千问API识别验证码");
+            // console.log("使用阿里云通义千问API识别验证码");
             result = await this.recognizeWithQwen(base64Image);
             break;
           default:
-            console.error("未知的API类型:", this.settings.apiType);
+            // console.error("未知的API类型:", this.settings.apiType);
             this.showToast(`未知的API类型: ${this.settings.apiType}`, "error");
             return "";
         }
 
         if (result) {
-          console.log("验证码识别成功:", result);
+          // console.log("验证码识别成功:", result);
           this.showToast(`识别成功：${result}`, "success");
         } else {
           console.error("验证码识别结果为空");
@@ -823,11 +823,11 @@ export default {
       try {
         // 检查图片来源
         const imgSrc = imgElement.src;
-        console.log("处理图片:", imgSrc);
+        // console.log("处理图片:", imgSrc);
 
         // 检查图片是否已加载完成
         if (!imgElement.complete || !imgElement.naturalWidth) {
-          console.log("图片尚未加载完成，等待加载");
+          // console.log("图片尚未加载完成，等待加载");
           return {
             success: false,
             message: "图片尚未加载完成，请稍后重试"
@@ -839,11 +839,11 @@ export default {
           !imgSrc.startsWith("data:image") &&
           !this.isSameOrigin(imgSrc)
         ) {
-          console.log("检测到跨域图片");
+          // console.log("检测到跨域图片");
           
           // 如果还没有设置crossOrigin属性，设置并重新加载
           if (imgElement.crossOrigin !== "anonymous") {
-            console.log("设置crossOrigin=anonymous并重新加载图片");
+            // console.log("设置crossOrigin=anonymous并重新加载图片");
             imgElement.crossOrigin = "anonymous";
             // 通过添加时间戳或随机参数强制重新加载
             const timestamp = new Date().getTime();
@@ -862,7 +862,7 @@ export default {
         canvas.width = imgElement.naturalWidth || imgElement.width;
         canvas.height = imgElement.naturalHeight || imgElement.height;
         
-        console.log("Canvas尺寸:", canvas.width, "x", canvas.height);
+        // console.log("Canvas尺寸:", canvas.width, "x", canvas.height);
 
         // 在 canvas 上绘制图片
         const ctx = canvas.getContext("2d");
@@ -893,7 +893,7 @@ export default {
           };
         }
 
-        console.log("图片成功转换为base64");
+        // console.log("图片成功转换为base64");
         return {
           success: true,
           data: base64Data,
@@ -1136,7 +1136,7 @@ export default {
      * 检测页面上的验证码图片
      */
     detectCaptchas() {
-      console.log("开始检测验证码图片");
+      // console.log("开始检测验证码图片");
       // 验证码检测定时器，防止频繁执行
       if (this.captchaCheckInterval) {
         clearInterval(this.captchaCheckInterval);
@@ -1148,7 +1148,7 @@ export default {
 
         // 检查当前域名是否在禁用列表中
         if (this.isCurrentDomainDisabled()) {
-          console.log("当前网站在禁用列表中，跳过验证码检测");
+          // console.log("当前网站在禁用列表中，跳过验证码检测");
           return;
         }
 
@@ -1274,7 +1274,7 @@ export default {
 
           // 如果找到验证码图片
           if (elements.length > 0) {
-            console.log(`检测到 ${elements.length} 个新验证码图片`);
+            // console.log(`检测到 ${elements.length} 个新验证码图片`);
             // 显示提示信息
             this.showToast(
               `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
@@ -1283,7 +1283,7 @@ export default {
             
             // 如果启用了自动识别，处理所有验证码
             if (this.settings.autoRecognize) {
-              console.log("自动识别功能已开启，准备自动识别验证码");
+              // console.log("自动识别功能已开启，准备自动识别验证码");
               elements.forEach(({ captchaImg, inputField }) => {
                 // 查找或创建识别图标
                 let icon = captchaImg.nextElementSibling;
@@ -1333,14 +1333,14 @@ export default {
     addIconsToCaptchas() {
       // 检查当前网站是否在禁用列表中
       if (this.isCurrentDomainDisabled()) {
-        console.log("当前网站在禁用列表中，不添加验证码识别图标");
+        // console.log("当前网站在禁用列表中，不添加验证码识别图标");
         return;
       }
 
-      console.log("开始为验证码图片添加识别图标");
+      // console.log("开始为验证码图片添加识别图标");
       try {
         const elements = this.findCaptchaElements();
-        console.log(`找到 ${elements.length} 个验证码元素，准备添加识别图标`);
+        // console.log(`找到 ${elements.length} 个验证码元素，准备添加识别图标`);
 
         elements.forEach(({ captchaImg, inputField }) => {
           // 检查是否已经添加过图标
@@ -1349,11 +1349,11 @@ export default {
             existingIcon &&
             existingIcon.classList.contains("captcha-recognition-icon")
           ) {
-            console.log("图片已有识别图标，跳过", captchaImg.src);
+            // console.log("图片已有识别图标，跳过", captchaImg.src);
             return;
           }
 
-          console.log("为验证码图片添加识别图标", captchaImg.src);
+          // console.log("为验证码图片添加识别图标", captchaImg.src);
           // 创建识别图标
           const icon = document.createElement("div");
           icon.classList.add("captcha-recognition-icon");
@@ -1371,11 +1371,11 @@ export default {
             // 阻止事件冒泡，避免触发其他点击事件
             event.preventDefault();
             event.stopPropagation();
-            console.log("验证码识别图标被点击");
+            // console.log("验证码识别图标被点击");
             this.processCaptcha(captchaImg, inputField, icon);
           });
           
-          console.log("成功添加验证码识别图标");
+          // console.log("成功添加验证码识别图标");
         });
       } catch (error) {
         console.error("添加验证码识别图标时出错:", error);
@@ -1397,7 +1397,7 @@ export default {
       }
 
       try {
-        console.log("开始处理验证码识别", captchaImg.src);
+        // console.log("开始处理验证码识别", captchaImg.src);
         
         // 更新图标状态为加载中
         icon.classList.add("captcha-recognition-loading");
@@ -1407,10 +1407,10 @@ export default {
         if (checkedBase64) {
           // 如果已经有检查过的结果，直接使用
           base64Result = checkedBase64;
-          console.log("使用预先检查的base64结果");
+          // console.log("使用预先检查的base64结果");
         } else {
           // 否则转换图片为 base64
-          console.log("开始转换图片为base64");
+          // console.log("开始转换图片为base64");
           base64Result = this.imageToBase64(captchaImg);
 
           // 如果图片转换失败，显示错误并终止识别
@@ -1427,9 +1427,9 @@ export default {
         }
 
         // 识别验证码
-        console.log("开始调用AI识别验证码");
+        // console.log("开始调用AI识别验证码");
         const text = await this.recognizeCaptcha(base64Result.data);
-        console.log("验证码识别结果:", text);
+        // console.log("验证码识别结果:", text);
 
         // 如果识别结果为空，显示错误
         if (!text) {
@@ -1444,7 +1444,7 @@ export default {
 
         // 检查是否找到了输入框
         if (!inputField) {
-          console.log("未找到输入框，尝试再次查找");
+          // console.log("未找到输入框，尝试再次查找");
           // 尝试再次查找输入框
           inputField = this.findInputFieldForCaptcha(captchaImg);
           
@@ -1456,7 +1456,7 @@ export default {
             if (this.settings.copyToClipboard) {
               try {
                 await navigator.clipboard.writeText(text);
-                console.log("已将验证码复制到剪贴板");
+                // console.log("已将验证码复制到剪贴板");
                 this.showToast(`已将验证码复制到剪贴板: ${text}`, "success");
               } catch (clipboardError) {
                 console.error("使用Clipboard API失败，尝试传统方法", clipboardError);
@@ -1484,19 +1484,19 @@ export default {
           }
         }
 
-        console.log("找到输入框，准备填充验证码结果");
+        // console.log("找到输入框，准备填充验证码结果");
         // 填充结果到输入框
         inputField.value = text;
         // 触发输入事件，以便触发表单验证
         inputField.dispatchEvent(new Event("input", { bubbles: true }));
         inputField.dispatchEvent(new Event("change", { bubbles: true }));
-        console.log("已填充验证码结果到输入框");
+        // console.log("已填充验证码结果到输入框");
 
         // 将识别结果复制到剪贴板
         if (this.settings.copyToClipboard) {
           try {
             await navigator.clipboard.writeText(text);
-            console.log("已将验证码复制到剪贴板");
+            // console.log("已将验证码复制到剪贴板");
             this.showToast(`已将验证码复制到剪贴板`, "success");
           } catch (clipboardError) {
             console.error("使用Clipboard API失败，尝试传统方法", clipboardError);
@@ -1585,7 +1585,7 @@ export default {
             newCaptchaElements.push(mutation.target);
             
             // 记录日志，帮助调试
-            console.log("检测到验证码图片src变化:", mutation.target.src);
+            // console.log("检测到验证码图片src变化:", mutation.target.src);
           }
         });
 
@@ -1634,7 +1634,7 @@ export default {
 
               // 处理可识别的图片
               if (recognizableElements.length > 0) {
-                console.log("准备自动识别验证码:", recognizableElements.length);
+                // console.log("准备自动识别验证码:", recognizableElements.length);
                 recognizableElements.forEach(({ captchaImg, inputField }) => {
                   // 查找或创建识别图标
                   let icon;
@@ -1705,25 +1705,25 @@ export default {
      * 初始化插件
      */
     init() {
-      console.log("初始化验证码识别插件");
+      // console.log("初始化验证码识别插件");
       this.registerMenuCommands();
       this.loadSettings();
 
       // 检查当前网站是否在禁用列表中
       if (this.isCurrentDomainDisabled()) {
-        console.log("当前网站在禁用列表中，不启用验证码识别功能");
+        // console.log("当前网站在禁用列表中，不启用验证码识别功能");
         return;
       }
 
       // 确保页面完全加载后再初始化
       const initPlugin = () => {
-        console.log("开始初始化验证码识别功能");
+        // console.log("开始初始化验证码识别功能");
         try {
           this.addIconsToCaptchas(); // 步骤 1: 确保所有图标都已创建
           this.setupMutationObserver();
           this.detectCaptchas(); // 启动定时检测
           const elements = this.findCaptchaElements();
-          console.log(`检测到 ${elements.length} 个验证码元素`);
+          // console.log(`检测到 ${elements.length} 个验证码元素`);
 
           if (elements.length > 0) {
             // 新增逻辑：预先检测验证码图片是否可以识别
@@ -1750,7 +1750,7 @@ export default {
 
             // 检查初始加载时的自动识别设置
             if (this.settings.autoRecognize) {
-              console.log("自动识别功能已开启，准备识别验证码");
+              // console.log("自动识别功能已开启，准备识别验证码");
               // 只识别可识别的图片
               const recognizableElements = elements.filter(({ captchaImg }) => {
                 const base64Result = this.imageToBase64(captchaImg);
@@ -1758,7 +1758,7 @@ export default {
               });
 
               if (recognizableElements.length > 0) {
-                console.log(`开始自动识别 ${recognizableElements.length} 个验证码`);
+                // console.log(`开始自动识别 ${recognizableElements.length} 个验证码`);
                 this.showToast(
                   `检测到 ${recognizableElements.length} 个可识别的验证码，正在自动识别...`,
                   "info"
@@ -1805,7 +1805,7 @@ export default {
               }
             } else {
               // 保留原始行为：如果未开启自动识别，则提示用户点击
-              console.log("自动识别功能未开启，提示用户手动点击识别");
+              // console.log("自动识别功能未开启，提示用户手动点击识别");
               this.showToast(
                 `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
                 "info"
@@ -2264,7 +2264,7 @@ export default {
      * @returns {Array} - 包含验证码图片和相关输入框的对象数组
      */
     findCaptchaElements() {
-      console.log("开始查找验证码元素");
+      // console.log("开始查找验证码元素");
       // 创建所有可能的验证码图片选择器列表
       let captchaSelectors = [...this.config.captchaSelectors];
       
@@ -2285,13 +2285,13 @@ export default {
         );
       }
       
-      console.log("验证码选择器:", captchaSelectors);
-      console.log("输入框选择器:", inputSelectors);
+      // console.log("验证码选择器:", captchaSelectors);
+      // console.log("输入框选择器:", inputSelectors);
       
       // 应用规则匹配逻辑
       const currentUrl = window.location.href;
       if (Array.isArray(this.rules) && this.rules.length > 0) {
-        console.log(`应用 ${this.rules.length} 条规则进行匹配`);
+        // console.log(`应用 ${this.rules.length} 条规则进行匹配`);
         // 遍历规则列表
         for (const rule of this.rules) {
           // 跳过没有验证码选择器的规则
@@ -2327,16 +2327,16 @@ export default {
           
           // 如果URL匹配，应用此规则的选择器
           if (isUrlMatch) {
-            console.log(`匹配到规则: ${rule.url_pattern || '*'}`);
+            // console.log(`匹配到规则: ${rule.url_pattern || '*'}`);
             // 添加验证码图片选择器
             if (rule.captcha_image_selector && !captchaSelectors.includes(rule.captcha_image_selector)) {
-              console.log(`添加验证码选择器: ${rule.captcha_image_selector}`);
+              // console.log(`添加验证码选择器: ${rule.captcha_image_selector}`);
               captchaSelectors.push(rule.captcha_image_selector);
             }
             
             // 添加输入框选择器（如果有）
             if (rule.captcha_input_selector && !inputSelectors.includes(rule.captcha_input_selector)) {
-              console.log(`添加输入框选择器: ${rule.captcha_input_selector}`);
+              // console.log(`添加输入框选择器: ${rule.captcha_input_selector}`);
               inputSelectors.push(rule.captcha_input_selector);
             }
           }
@@ -2352,28 +2352,28 @@ export default {
         try {
           // 查找所有匹配的验证码图片
           const captchaImgs = document.querySelectorAll(selector);
-          console.log(`选择器 '${selector}' 找到 ${captchaImgs.length} 个匹配元素`);
+          // console.log(`选择器 '${selector}' 找到 ${captchaImgs.length} 个匹配元素`);
           
           // 为每个验证码图片查找对应的输入框
           captchaImgs.forEach(captchaImg => {
             // 确保是图片元素
             if (captchaImg.tagName !== 'IMG') {
-              console.log(`跳过非图片元素:`, captchaImg);
+              // console.log(`跳过非图片元素:`, captchaImg);
               return;
             }
             
             // 确保图片有src属性
             if (!captchaImg.src) {
-              console.log(`跳过没有src属性的图片元素`);
+              // console.log(`跳过没有src属性的图片元素`);
               return;
             }
             
             // 寻找最近的输入框
             let inputField = this.findInputFieldForCaptcha(captchaImg, inputSelectors);
             if (inputField) {
-              console.log(`为验证码图片 ${captchaImg.src} 找到输入框:`, inputField);
+              // console.log(`为验证码图片 ${captchaImg.src} 找到输入框:`, inputField);
             } else {
-              console.log(`未找到验证码图片 ${captchaImg.src} 对应的输入框`);
+              // console.log(`未找到验证码图片 ${captchaImg.src} 对应的输入框`);
             }
 
             // 收集验证码元素信息
@@ -2387,7 +2387,7 @@ export default {
         }
       });
 
-      console.log(`总共找到 ${elements.length} 个验证码元素`);
+      // console.log(`总共找到 ${elements.length} 个验证码元素`);
       return elements;
     },
     
@@ -2537,7 +2537,7 @@ export default {
     },
   },
   mounted() {
-    console.log("验证码识别插件已挂载");
+    // console.log("验证码识别插件已挂载");
     try {
       // 加载用户设置
       this.loadSettings();
@@ -2547,12 +2547,12 @@ export default {
 
       // 注册油猴菜单
       if (typeof GM_registerMenuCommand !== 'undefined') {
-        console.log("注册油猴菜单");
+        // console.log("注册油猴菜单");
         GM_registerMenuCommand('验证码识别设置', () => {
           this.openSettings();
         });
       } else {
-        console.log("未检测到油猴环境，跳过菜单注册");
+        // console.log("未检测到油猴环境，跳过菜单注册");
       }
 
       // 初始化验证码识别功能
@@ -2562,11 +2562,11 @@ export default {
     }
   },
   created() {
-    console.log("验证码识别插件已创建");
+    // console.log("验证码识别插件已创建");
     try {
       // Website Compatibility Handling
       if (window.location.host == "nportal.ntut.edu.tw") {
-        console.log("检测到特殊网站: nportal.ntut.edu.tw，应用兼容性处理");
+        // console.log("检测到特殊网站: nportal.ntut.edu.tw，应用兼容性处理");
         const observer = new MutationObserver(function (mutations) {
           const authcodeElement = document.querySelector(".authcode.co");
           if (authcodeElement) {
@@ -2574,7 +2574,7 @@ export default {
               ".captcha-recognition-icon"
             );
             if (captchaIcon) {
-              console.log("应用nportal.ntut.edu.tw网站的特殊处理");
+              // console.log("应用nportal.ntut.edu.tw网站的特殊处理");
               captchaIcon.parentNode.removeChild(captchaIcon);
               authcodeElement.appendChild(captchaIcon);
               observer.disconnect();
@@ -2585,7 +2585,7 @@ export default {
       }
 
       if (window.location.host == "www.luogu.com.cn") {
-        console.log("检测到特殊网站: www.luogu.com.cn，应用兼容性处理");
+        // console.log("检测到特殊网站: www.luogu.com.cn，应用兼容性处理");
         const styleluogu = document.createElement("style");
         styleluogu.textContent = `
           .l-form-layout .img .captcha-recognition-icon {
@@ -2600,7 +2600,7 @@ export default {
               ".captcha-recognition-icon"
             );
             if (captchaIcon) {
-              console.log("应用www.luogu.com.cn网站的特殊处理");
+              // console.log("应用www.luogu.com.cn网站的特殊处理");
               captchaIcon.parentNode.removeChild(captchaIcon);
               authcodeElement.parentNode.insertBefore(
                 captchaIcon,
