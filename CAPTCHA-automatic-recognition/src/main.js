@@ -7,7 +7,7 @@ import "./assets/app.less";
 app.mount(
   (() => {
     const appDiv = document.createElement('div');
-    document.body.append(appDiv);
+    document.documentElement.append(appDiv);
     return appDiv;
   })(),
 );

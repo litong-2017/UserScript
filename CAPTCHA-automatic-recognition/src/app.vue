@@ -1465,10 +1465,10 @@ export default {
                 textarea.value = text;
                 textarea.style.position = "fixed";
                 textarea.style.opacity = "0";
-                document.body.appendChild(textarea);
+                document.documentElement.appendChild(textarea);
                 textarea.select();
                 document.execCommand("copy");
-                document.body.removeChild(textarea);
+                document.documentElement.removeChild(textarea);
                 this.showToast(`验证码已识别：${text} (已复制到剪贴板)`, "success");
               }
             }
@@ -1505,10 +1505,10 @@ export default {
             textarea.value = text;
             textarea.style.position = "fixed";
             textarea.style.opacity = "0";
-            document.body.appendChild(textarea);
+            document.documentElement.appendChild(textarea);
             textarea.select();
             document.execCommand("copy");
-            document.body.removeChild(textarea);
+            document.documentElement.removeChild(textarea);
             this.showToast(`验证码已识别：${text} (已复制到剪贴板)`, "success");
           }
         } else {
@@ -1911,7 +1911,7 @@ export default {
       if (!toastContainer) {
         toastContainer = document.createElement("div");
         toastContainer.id = "captcha-toast-container";
-        document.body.appendChild(toastContainer);
+        document.documentElement.appendChild(toastContainer);
       }
 
       // 创建新的 toast 元素

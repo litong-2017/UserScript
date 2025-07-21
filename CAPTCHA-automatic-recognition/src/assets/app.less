@@ -468,6 +468,7 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
   position: relative !important;
   transition: all 0.3s !important;
   user-select: none !important;
+  white-space: nowrap !important;
 }
 
 .settings-nav-item:hover {
@@ -721,5 +722,10 @@ img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88
   small {
     color: #666 !important;
     font-size: 12px !important;
+  }
+}
+@media(max-width:768px) {
+  .settings-nav-item {
+    padding: 10px 10px !important;
   }
 }
