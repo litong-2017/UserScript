@@ -1,6 +1,6 @@
 ## CAPTCHA-automatic-recognition（AI 验证码自动识别填充）
 
-> 如果有网站没有适配，或者不触发等问题，请联系我手动适配，在 [Issue](https://github.com/ezyshu/UserScript/issues) 中反馈。
+> 如果有网站没有适配，或者不触发等问题，请联系我手动适配，在 [Issue](https://github.com/ezyshu/UserScript/issues) 中反馈，尽可能携带网站域名。
 
 [GitHub](https://github.com/ezyshu/UserScript/tree/main/CAPTCHA-automatic-recognition) |
 [Greasyfork](https://greasyfork.org/scripts/540822) |
@@ -22,11 +22,11 @@ AI 自动识别网页验证码，支持各大主流厂商，限制视觉模型�
 - 支持通过云端规则库文件批量配置多个网站的验证码选择器（支持自定义）
 - 自动识别网页验证码（支持图片变化自动识别）
 - 验证码图片后出现识别按钮，一键识别并填充
-- 支持主流AI服务商（OpenAI / Gemini / 通义千问），可自定义API地址和模型
+- 支持主流 AI 服务商（OpenAI / Gemini / 通义千问），可自定义 API 地址和模型
 - 全局配置一次，所有网站通用
 - 可设置禁用特定网站的验证码识别（支持通配符/正则）
 - 高级设置支持自定义验证码标签
-- 适配各种网站UI，界面自适应且不被网站样式影响
+- 适配各种网站 UI，界面自适应且不被网站样式影响
 
 ### 2. 安装方法
 
