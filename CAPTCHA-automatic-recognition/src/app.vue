@@ -7,10 +7,12 @@
       @click="openSettings"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-        <path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+        <path
+          fill="currentColor"
+          d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"
+        />
       </svg>
     </div>
-    
 
     <!-- 设置弹窗 -->
     <div v-if="showSettings" class="captcha-settings-modal">
@@ -58,9 +60,7 @@
             <div class="settings-card">
               <div class="settings-card-title">
                 <span>AI服务商设置</span>
-                <span class="api-type">{{
-                  getApiTypeName(settings.apiType)
-                }}</span>
+                <span class="api-type">{{ getApiTypeName(settings.apiType) }}</span>
               </div>
 
               <div class="captcha-settings-item">
@@ -92,15 +92,9 @@
                       @click="testApiConnection('openai')"
                     >
                       <span v-if="apiTestStatus.openai === ''">测试连接</span>
-                      <span
-                        v-else-if="apiTestStatus.openai === 'loading'"
-                      ></span>
-                      <span v-else-if="apiTestStatus.openai === 'success'"
-                        >成功</span
-                      >
-                      <span v-else-if="apiTestStatus.openai === 'error'"
-                        >失败</span
-                      >
+                      <span v-else-if="apiTestStatus.openai === 'loading'"></span>
+                      <span v-else-if="apiTestStatus.openai === 'success'">成功</span>
+                      <span v-else-if="apiTestStatus.openai === 'error'">失败</span>
                     </button>
                   </div>
                 </div>
@@ -162,15 +156,9 @@
                       @click="testApiConnection('gemini')"
                     >
                       <span v-if="apiTestStatus.gemini === ''">测试连接</span>
-                      <span
-                        v-else-if="apiTestStatus.gemini === 'loading'"
-                      ></span>
-                      <span v-else-if="apiTestStatus.gemini === 'success'"
-                        >成功</span
-                      >
-                      <span v-else-if="apiTestStatus.gemini === 'error'"
-                        >失败</span
-                      >
+                      <span v-else-if="apiTestStatus.gemini === 'loading'"></span>
+                      <span v-else-if="apiTestStatus.gemini === 'success'">成功</span>
+                      <span v-else-if="apiTestStatus.gemini === 'error'">失败</span>
                     </button>
                   </div>
                 </div>
@@ -216,11 +204,7 @@
                 <div class="captcha-settings-item">
                   <label>阿里云通义千问 API Key:</label>
                   <div class="input-with-button">
-                    <input
-                      type="text"
-                      v-model="settings.qwenKey"
-                      placeholder="API Key"
-                    />
+                    <input type="text" v-model="settings.qwenKey" placeholder="API Key" />
                     <button
                       type="button"
                       class="test-api-button"
@@ -233,12 +217,8 @@
                     >
                       <span v-if="apiTestStatus.qwen === ''">测试连接</span>
                       <span v-else-if="apiTestStatus.qwen === 'loading'"></span>
-                      <span v-else-if="apiTestStatus.qwen === 'success'"
-                        >成功</span
-                      >
-                      <span v-else-if="apiTestStatus.qwen === 'error'"
-                        >失败</span
-                      >
+                      <span v-else-if="apiTestStatus.qwen === 'success'">成功</span>
+                      <span v-else-if="apiTestStatus.qwen === 'error'">失败</span>
                     </button>
                   </div>
                 </div>
@@ -283,10 +263,7 @@
           </div>
 
           <!-- 功能设置 -->
-          <div
-            v-if="activeSettingTab === 'function'"
-            class="settings-content-tab"
-          >
+          <div v-if="activeSettingTab === 'function'" class="settings-content-tab">
             <div class="settings-card">
               <div class="settings-card-title">
                 <span>功能设置</span>
@@ -337,10 +314,7 @@
           </div>
 
           <!-- 禁用域名列表 -->
-          <div
-            v-if="activeSettingTab === 'domain'"
-            class="settings-content-tab"
-          >
+          <div v-if="activeSettingTab === 'domain'" class="settings-content-tab">
             <div class="settings-card">
               <div class="settings-card-title">
                 <span>禁用域名列表</span>
@@ -367,10 +341,7 @@ example.*.com
           </div>
 
           <!-- 高级设置 -->
-          <div
-            v-if="activeSettingTab === 'advanced'"
-            class="settings-content-tab"
-          >
+          <div v-if="activeSettingTab === 'advanced'" class="settings-content-tab">
             <div class="settings-card">
               <div class="settings-card-title">
                 <span
@@ -385,8 +356,7 @@ example.*.com
               </div>
 
               <div class="advanced-settings-warning">
-                ⚠️
-                警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效
+                ⚠️ 警告：如果您不了解CSS选择器，请不要修改这些设置，可能导致识别功能失效
               </div>
 
               <div class="captcha-settings-item">
@@ -450,7 +420,7 @@ example.*.com
                   </button>
                 </div>
               </div>
-              
+
               <div class="captcha-settings-item">
                 <label>验证码规则管理：</label>
                 <div class="rules-management">
@@ -460,7 +430,9 @@ example.*.com
                       v-model="settings.rulesUrl"
                       placeholder="https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json"
                     />
-                    <small>规则文件URL，留空则使用默认URL：https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json</small>
+                    <small
+                      >规则文件URL，留空则使用默认URL：https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json</small
+                    >
                   </div>
                   <button
                     type="button"
@@ -544,7 +516,8 @@ export default {
         // 禁用域名列表
         disabledDomains: "", // 不启用验证码功能的网站域名列表，支持正则和通配符
         // 规则URL
-        rulesUrl: "https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json", // 规则文件URL
+        rulesUrl:
+          "https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json", // 规则文件URL
       },
       // 是否显示设置面板
       showSettings: false,
@@ -616,7 +589,7 @@ export default {
             // 合并设置，确保新增字段也有默认值
             this.settings = { ...this.settings, ...parsedSettings };
           }
-          
+
           // 加载规则
           const savedRules = GM_getValue("captchaRules");
           if (savedRules) {
@@ -633,7 +606,7 @@ export default {
             // 合并设置，确保新增字段也有默认值
             this.settings = { ...this.settings, ...parsedSettings };
           }
-          
+
           // 从 localStorage 加载规则
           const localRules = localStorage.getItem("captchaRules");
           if (localRules) {
@@ -654,27 +627,29 @@ export default {
       try {
         this.rulesLoadStatus = "loading";
         let rulesData;
-        
+
         // 获取规则URL，如果为空则使用默认URL
-        const rulesUrl = this.settings.rulesUrl || "https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json";
-        
+        const rulesUrl =
+          this.settings.rulesUrl ||
+          "https://raw.githubusercontent.com/ezyshu/UserScript/main/CAPTCHA-automatic-recognition/rules.json";
+
         // 从rules.json文件加载规则
         const response = await this.request({
           method: "GET",
           url: rulesUrl,
-          responseType: "json"
+          responseType: "json",
         });
-        
+
         if (response && response.data) {
           rulesData = response.data;
-          
+
           // 保存规则到存储
           if (typeof GM_setValue !== "undefined") {
             GM_setValue("captchaRules", JSON.stringify(rulesData));
           } else {
             localStorage.setItem("captchaRules", JSON.stringify(rulesData));
           }
-          
+
           this.rules = rulesData;
           this.rulesLoadStatus = "success";
           this.showToast("规则加载成功！", "success");
@@ -688,7 +663,7 @@ export default {
         this.showToast("规则加载失败：" + (error.message || "未知错误"), "error");
       }
     },
-    
+
     /**
      * 重新加载验证码规则
      */
@@ -727,10 +702,7 @@ export default {
         } else {
           // console.log('未检测到油猴环境，将设置保存到 localStorage');
           // 保存到 localStorage（开发环境使用）
-          localStorage.setItem(
-            "captchaSettings",
-            JSON.stringify(this.settings)
-          );
+          localStorage.setItem("captchaSettings", JSON.stringify(this.settings));
         }
         this.closeSettings();
         this.showToast("设置已保存！", "success");
@@ -830,29 +802,26 @@ export default {
           // console.log("图片尚未加载完成，等待加载");
           return {
             success: false,
-            message: "图片尚未加载完成，请稍后重试"
+            message: "图片尚未加载完成，请稍后重试",
           };
         }
 
         // 如果图片来源是外部链接且跨域（非 data:image 开头，且不是同域）
-        if (
-          !imgSrc.startsWith("data:image") &&
-          !this.isSameOrigin(imgSrc)
-        ) {
+        if (!imgSrc.startsWith("data:image") && !this.isSameOrigin(imgSrc)) {
           // console.log("检测到跨域图片");
-          
+
           // 如果还没有设置crossOrigin属性，设置并重新加载
           if (imgElement.crossOrigin !== "anonymous") {
             // console.log("设置crossOrigin=anonymous并重新加载图片");
             imgElement.crossOrigin = "anonymous";
             // 通过添加时间戳或随机参数强制重新加载
             const timestamp = new Date().getTime();
-            const separator = imgSrc.includes('?') ? '&' : '?';
+            const separator = imgSrc.includes("?") ? "&" : "?";
             imgElement.src = `${imgSrc}${separator}_t=${timestamp}`;
-            
+
             return {
               success: false,
-              message: "正在处理跨域图片，请稍后重试"
+              message: "正在处理跨域图片，请稍后重试",
             };
           }
         }
@@ -861,7 +830,7 @@ export default {
         const canvas = document.createElement("canvas");
         canvas.width = imgElement.naturalWidth || imgElement.width;
         canvas.height = imgElement.naturalHeight || imgElement.height;
-        
+
         // console.log("Canvas尺寸:", canvas.width, "x", canvas.height);
 
         // 在 canvas 上绘制图片
@@ -876,8 +845,7 @@ export default {
           console.error("绘制图片到Canvas失败:", e);
           return {
             success: false,
-            message:
-              "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
+            message: "无法读取图片数据，可能是跨域限制。请尝试手动下载验证码图片后识别。",
           };
         }
 
@@ -1086,11 +1054,7 @@ export default {
       });
 
       // 提取结果
-      if (
-        response.data &&
-        response.data.choices &&
-        response.data.choices.length > 0
-      ) {
+      if (response.data && response.data.choices && response.data.choices.length > 0) {
         const text = response.data.choices[0].message.content;
         // 只保留数字、字母和负号
         return text.replace(/[^a-zA-Z0-9\-]/g, "");
@@ -1141,7 +1105,7 @@ export default {
       if (this.captchaCheckInterval) {
         clearInterval(this.captchaCheckInterval);
       }
-      
+
       this.captchaCheckInterval = setInterval(() => {
         // 获取当前页面URL
         const currentUrl = window.location.href;
@@ -1154,24 +1118,24 @@ export default {
 
         // 创建所有可能的验证码图片选择器列表
         let captchaSelectors = [...this.config.captchaSelectors];
-        
+
         // 添加用户自定义的验证码选择器
         if (Array.isArray(this.settings.customCaptchaSelectors)) {
           captchaSelectors = captchaSelectors.concat(
-            this.settings.customCaptchaSelectors.filter(s => s && s.trim())
+            this.settings.customCaptchaSelectors.filter((s) => s && s.trim())
           );
         }
-        
+
         // 创建所有可能的输入框选择器列表
         let inputSelectors = [...this.config.inputSelectors];
-        
+
         // 添加用户自定义的输入框选择器
         if (Array.isArray(this.settings.customInputSelectors)) {
           inputSelectors = inputSelectors.concat(
-            this.settings.customInputSelectors.filter(s => s && s.trim())
+            this.settings.customInputSelectors.filter((s) => s && s.trim())
           );
         }
-        
+
         // 应用规则匹配逻辑
         if (Array.isArray(this.rules) && this.rules.length > 0) {
           // 遍历规则列表
@@ -1180,42 +1144,54 @@ export default {
             if (!rule.captcha_image_selector) {
               continue;
             }
-            
+
             // 检查URL是否匹配
             let isUrlMatch = false;
-            if (!rule.url_pattern || rule.url_pattern === '*') {
+            if (!rule.url_pattern || rule.url_pattern === "*") {
               // 空或星号表示对所有网站生效
               isUrlMatch = true;
-            } else if (rule.url_pattern.startsWith('/') && rule.url_pattern.endsWith('/')) {
+            } else if (
+              rule.url_pattern.startsWith("/") &&
+              rule.url_pattern.endsWith("/")
+            ) {
               // 正则表达式匹配
               try {
-                const regexPattern = rule.url_pattern.substring(1, rule.url_pattern.length - 1);
+                const regexPattern = rule.url_pattern.substring(
+                  1,
+                  rule.url_pattern.length - 1
+                );
                 const regex = new RegExp(regexPattern);
                 isUrlMatch = regex.test(currentUrl);
               } catch (e) {
-                console.error('无效的正则表达式规则:', rule.url_pattern, e);
+                console.error("无效的正则表达式规则:", rule.url_pattern, e);
               }
-            } else if (rule.url_pattern.includes('*')) {
+            } else if (rule.url_pattern.includes("*")) {
               // 通配符匹配
               const escapedPattern = rule.url_pattern
-                .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 转义特殊字符
-                .replace(/\*/g, '.*'); // 替换 * 为 .*
+                .replace(/[.+?^${}()|[\]\\]/g, "\\$&") // 转义特殊字符
+                .replace(/\*/g, ".*"); // 替换 * 为 .*
               const regex = new RegExp(`^${escapedPattern}$`);
               isUrlMatch = regex.test(currentUrl);
             } else {
               // 精确匹配
               isUrlMatch = currentUrl.includes(rule.url_pattern);
             }
-            
+
             // 如果URL匹配，应用此规则的选择器
             if (isUrlMatch) {
               // 添加验证码图片选择器
-              if (rule.captcha_image_selector && !captchaSelectors.includes(rule.captcha_image_selector)) {
+              if (
+                rule.captcha_image_selector &&
+                !captchaSelectors.includes(rule.captcha_image_selector)
+              ) {
                 captchaSelectors.push(rule.captcha_image_selector);
               }
-              
+
               // 添加输入框选择器（如果有）
-              if (rule.captcha_input_selector && !inputSelectors.includes(rule.captcha_input_selector)) {
+              if (
+                rule.captcha_input_selector &&
+                !inputSelectors.includes(rule.captcha_input_selector)
+              ) {
                 inputSelectors.push(rule.captcha_input_selector);
               }
             }
@@ -1225,26 +1201,26 @@ export default {
         try {
           // 使用组合后的选择器查找验证码
           let elements = [];
-          
+
           captchaSelectors.forEach((selector) => {
             if (!selector || !selector.trim()) return;
-            
+
             try {
               // 查找所有匹配的验证码图片
               const captchaImgs = document.querySelectorAll(selector);
-              
+
               // 为每个验证码图片查找对应的输入框
               captchaImgs.forEach((captchaImg) => {
                 // 确保是图片元素
-                if (captchaImg.tagName !== 'IMG') {
+                if (captchaImg.tagName !== "IMG") {
                   return;
                 }
-                
+
                 // 确保图片有src属性
                 if (!captchaImg.src) {
                   return;
                 }
-                
+
                 // 避免重复添加已处理的图片
                 if (
                   captchaImg.nextElementSibling &&
@@ -1256,7 +1232,10 @@ export default {
                 }
 
                 // 寻找最近的输入框
-                let inputField = this.findInputFieldForCaptcha(captchaImg, inputSelectors);
+                let inputField = this.findInputFieldForCaptcha(
+                  captchaImg,
+                  inputSelectors
+                );
 
                 // 为验证码图片添加识别按钮
                 this.addRecognitionIcon(captchaImg, inputField);
@@ -1280,27 +1259,19 @@ export default {
               `检测到 ${elements.length} 个验证码，点击识别图标开始识别`,
               "info"
             );
-            
+
             // 如果启用了自动识别，处理所有验证码
             if (this.settings.autoRecognize) {
               // console.log("自动识别功能已开启，准备自动识别验证码");
               elements.forEach(({ captchaImg, inputField }) => {
                 // 查找或创建识别图标
                 let icon = captchaImg.nextElementSibling;
-                if (
-                  icon &&
-                  icon.classList.contains("captcha-recognition-icon")
-                ) {
+                if (icon && icon.classList.contains("captcha-recognition-icon")) {
                   // 获取 base64 结果
                   const base64Result = this.imageToBase64(captchaImg);
                   if (base64Result.success) {
                     // 自动进行识别
-                    this.processCaptcha(
-                      captchaImg,
-                      inputField,
-                      icon,
-                      base64Result
-                    );
+                    this.processCaptcha(captchaImg, inputField, icon, base64Result);
                   }
                 }
               });
@@ -1374,7 +1345,7 @@ export default {
             // console.log("验证码识别图标被点击");
             this.processCaptcha(captchaImg, inputField, icon);
           });
-          
+
           // console.log("成功添加验证码识别图标");
         });
       } catch (error) {
@@ -1398,7 +1369,7 @@ export default {
 
       try {
         // console.log("开始处理验证码识别", captchaImg.src);
-        
+
         // 更新图标状态为加载中
         icon.classList.add("captcha-recognition-loading");
 
@@ -1447,11 +1418,11 @@ export default {
           // console.log("未找到输入框，尝试再次查找");
           // 尝试再次查找输入框
           inputField = this.findInputFieldForCaptcha(captchaImg);
-          
+
           if (!inputField) {
             console.warn("仍未找到验证码输入框");
             this.showToast(`验证码已识别：${text}，但未找到输入框`, "warning");
-            
+
             // 将识别结果复制到剪贴板，即使没有输入框
             if (this.settings.copyToClipboard) {
               try {
@@ -1472,14 +1443,14 @@ export default {
                 this.showToast(`验证码已识别：${text} (已复制到剪贴板)`, "success");
               }
             }
-            
+
             // 更新图标状态为成功，即使没找到输入框
             icon.classList.remove("captcha-recognition-loading");
             icon.classList.add("captcha-recognition-success");
             setTimeout(() => {
               icon.classList.remove("captcha-recognition-success");
             }, 2000);
-            
+
             return;
           }
         }
@@ -1529,10 +1500,7 @@ export default {
           icon.classList.remove("captcha-recognition-error");
         }, 2000);
 
-        this.showToast(
-          "处理验证码失败：" + (error.message || "未知错误"),
-          "error"
-        );
+        this.showToast("处理验证码失败：" + (error.message || "未知错误"), "error");
       }
     },
 
@@ -1548,9 +1516,7 @@ export default {
       const observer = new MutationObserver((mutations) => {
         let hasNewCaptcha = false;
         let newCaptchaElements = [];
-        const captchaSelector = this.getCombinedSelector(
-          this.config.captchaSelectors
-        );
+        const captchaSelector = this.getCombinedSelector(this.config.captchaSelectors);
 
         mutations.forEach((mutation) => {
           // 检查新增节点
@@ -1564,7 +1530,7 @@ export default {
                     newCaptchaElements.push(captcha);
                   });
                 }
-                
+
                 // 检查节点本身是否为验证码图片
                 if (node.matches && node.matches(captchaSelector)) {
                   hasNewCaptcha = true;
@@ -1583,7 +1549,7 @@ export default {
           ) {
             hasNewCaptcha = true;
             newCaptchaElements.push(mutation.target);
-            
+
             // 记录日志，帮助调试
             // console.log("检测到验证码图片src变化:", mutation.target.src);
           }
@@ -1625,12 +1591,10 @@ export default {
               }
 
               // 只识别可识别的图片
-              const recognizableElements = newElements.filter(
-                ({ captchaImg }) => {
-                  const base64Result = this.imageToBase64(captchaImg);
-                  return base64Result.success;
-                }
-              );
+              const recognizableElements = newElements.filter(({ captchaImg }) => {
+                const base64Result = this.imageToBase64(captchaImg);
+                return base64Result.success;
+              });
 
               // 处理可识别的图片
               if (recognizableElements.length > 0) {
@@ -1648,10 +1612,7 @@ export default {
                     icon = document.createElement("div");
                     icon.classList.add("captcha-recognition-icon");
                     if (captchaImg.nextSibling) {
-                      captchaImg.parentNode.insertBefore(
-                        icon,
-                        captchaImg.nextSibling
-                      );
+                      captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
                     } else {
                       captchaImg.parentNode.appendChild(icon);
                     }
@@ -1660,12 +1621,7 @@ export default {
                   // 获取 base64 结果，避免重复转换
                   const base64Result = this.imageToBase64(captchaImg);
                   // 自动进行识别，传入已检查的 base64 结果
-                  this.processCaptcha(
-                    captchaImg,
-                    inputField,
-                    icon,
-                    base64Result
-                  );
+                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
                 });
               } else if (newElements.length > 0) {
                 this.showToast(
@@ -1741,7 +1697,9 @@ export default {
 
             // 如果有不可识别的图片，显示提示
             if (unrecognizableImages.length > 0) {
-              console.warn(`${unrecognizableImages.length} 个验证码图片无法识别：${unrecognizableImages[0].message}`);
+              console.warn(
+                `${unrecognizableImages.length} 个验证码图片无法识别：${unrecognizableImages[0].message}`
+              );
               this.showToast(
                 `检测到 ${unrecognizableImages.length} 个验证码图片无法识别：${unrecognizableImages[0].message}`,
                 "error"
@@ -1777,24 +1735,16 @@ export default {
                     icon = document.createElement("div");
                     icon.classList.add("captcha-recognition-icon");
                     if (captchaImg.nextSibling) {
-                      captchaImg.parentNode.insertBefore(
-                        icon,
-                        captchaImg.nextSibling
-                      );
+                      captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
                     } else {
                       captchaImg.parentNode.appendChild(icon);
                     }
                   }
-                  
+
                   // 获取 base64 结果，避免重复转换
                   const base64Result = this.imageToBase64(captchaImg);
                   // 直接调用处理函数，传入已检查的 base64 结果
-                  this.processCaptcha(
-                    captchaImg,
-                    inputField,
-                    icon,
-                    base64Result
-                  );
+                  this.processCaptcha(captchaImg, inputField, icon, base64Result);
                 });
               } else if (elements.length > 0) {
                 console.warn(`检测到 ${elements.length} 个验证码，但均无法自动识别`);
@@ -1822,10 +1772,10 @@ export default {
       };
 
       // 在页面完全加载后执行初始化
-      if (document.readyState === 'complete') {
+      if (document.readyState === "complete") {
         setTimeout(initPlugin, 1000);
       } else {
-        window.addEventListener('load', () => {
+        window.addEventListener("load", () => {
           setTimeout(initPlugin, 1000);
         });
       }
@@ -1965,7 +1915,7 @@ export default {
 
         // 测试图片base64
         const testBase64Image =
-          "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAmCAYAAAAycj4zAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPNSURBVGhD7ZgxbuswDIZ9r1zAx8ghfICX+Q0d28EIeoACRYcOAQpkKdDuWQp0yQGKXkEvSuSYIimKsqU4Md4HCEFkiqL4W5SSarfbGdtunbmsQy1IiQVrfGrn1dpdiqHxVO4zSokFa3yGbDRjp2RofDdbsm417hizOUPmgrpk5WLKF+AWXj4iSOmgU/3njEfrK+ecqYwWhLNP9SGR6ivH3CEfOXzHEAXRBMDZ+H3fpqn+mgq35ts9p2yfK1P96Vvz5R4QtqYBdtV9azYoHi4+Ddw4+329BvPB9rx1VjzaOJIF4fp4fk1bM0Kg1nDr+GlNrVnsV+MlpX7fuwc9Urwpz/bvtTdXqNkYOL+4j7OxJB/qIUeY9ZIXgGtUlL1p7+FCm8NeoPg7qTbtj3ugRFoLfKYVw7aQIJjOBtsmC6Ji++onnZQnVMbqz4MEPjgJtGzRckX3RxwuKZZzH96tx9aYtTemj4XbpRJ4bvF3SOiZNMybfpk1+2v68X4JY3skljZipUrNpGwnXZUt5bQesjucMJzY6xtqiCYUYLA1gPf/le21JwBO4kKJ5etaLlSCLL64NfXg2OQLhhp0LydUJWsbjB2wPbvP03dCSLcpI5EbMNla0i5QsllbmQUNA96KcjaEwiNHSUIC0zy8k0eExMvVLZQudK8tb642guAXhB1fiLkP9Rhkhcvx7cwiGI3+aXplBC/b+kliWWAgCdkQSDXK4h0hhzPjL5v3z46O+HwJ8lESVqvnWEIZO92mSaBu93GrO7AWGZn6fzoxRIFSXEECd2yvP66F6OqHk2LDoF+bvyW+i32tnM7zKJZm32+eVqA8Yd2t/J2PfQTumVp5uoYJUjwufA7BIpybszvEOjbTypscrnCl4LlRpeUjmMMHyt6WzuI4sfbvzRFr70xpLFs4tn2QHYHAZWtc5PKFboQLJ42yevs1oeFldqkgsjo/ss6NVqyfPiyJZUrTRK1ybP5IaUr0EYL4j4LEvi3d/liVgvYJ/+IpGUrfOOx5Bake2mD5TPyb68WIki5HRPAXX3Df7HMH5jzYoLk8pOTHDGVWBf0WaxkpQaeaj8EzRwxG42PMVzgDNFReqFaLhVHaJ7sglxqQddOLA/dc2zzX5BCaPLA2VxNybo1NAkfwqwFKZU0C+dbM1/MZjJBNMGP5RJzQDTzxWxEQTQTDKWkby05Y0j1FbIngkDD0KC5kHN9qb44e/tdFCQH0F9u3ykMmTtXvFo/1qb4GQKD0QbGMWasJWV8Z5syRiLFz2SHeiq5kqPhknNhJhFkygVfN8b8A/Cu2G5QVhydAAAAAElFTkSuQmCC";
+          "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";
 
         if (apiType === "openai") {
           // 测试 OpenAI API
@@ -2006,7 +1956,8 @@ export default {
           }
         } else if (apiType === "gemini") {
           // 测试 Google Gemini API
-          const model = this.settings.geminiModel || "gemini-2.5-flash-lite-preview-06-17";
+          const model =
+            this.settings.geminiModel || "gemini-2.5-flash-lite-preview-06-17";
           const baseApiUrl =
             this.settings.geminiApiUrl ||
             "https://generativelanguage.googleapis.com/v1beta/models";
@@ -2061,7 +2012,7 @@ export default {
                       text: "这是一个验证码图片，请识别其中的字符",
                     },
                     {
-                      type: "image",
+                      type: "image_url",
                       image_url: {
                         url: `data:image/png;base64,${testBase64Image}`,
                       },
@@ -2110,14 +2061,14 @@ export default {
       // 分割并清理禁用域名列表
       const disabledDomainsList = this.settings.disabledDomains
         .split("\n")
-        .map(line => line.trim())
-        .filter(line => line !== "");
+        .map((line) => line.trim())
+        .filter((line) => line !== "");
 
       // 遍历禁用域名列表，检查当前域名是否匹配
       for (const disabledDomain of disabledDomainsList) {
         try {
           // 检查是否为正则表达式格式 (以 / 开头和结尾)
-          if (disabledDomain.startsWith('/') && disabledDomain.endsWith('/')) {
+          if (disabledDomain.startsWith("/") && disabledDomain.endsWith("/")) {
             const regexPattern = disabledDomain.substring(1, disabledDomain.length - 1);
             const regex = new RegExp(regexPattern);
             if (regex.test(domain)) {
@@ -2125,10 +2076,10 @@ export default {
             }
           }
           // 检查是否包含通配符 *
-          else if (disabledDomain.includes('*')) {
+          else if (disabledDomain.includes("*")) {
             const escapedPattern = disabledDomain
-              .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 转义特殊字符
-              .replace(/\*/g, '.*'); // 替换 * 为 .*
+              .replace(/[.+?^${}()|[\]\\]/g, "\\$&") // 转义特殊字符
+              .replace(/\*/g, ".*"); // 替换 * 为 .*
             const regex = new RegExp(`^${escapedPattern}$`);
             if (regex.test(domain)) {
               return true;
@@ -2203,9 +2154,7 @@ export default {
 
         // 处理通配符 * (转换为正则表达式)
         if (domain.includes("*")) {
-          const regexPattern = domain
-            .replace(/\./g, "\\.")
-            .replace(/\*/g, ".*");
+          const regexPattern = domain.replace(/\./g, "\\.").replace(/\*/g, ".*");
           try {
             const regex = new RegExp(`^${regexPattern}$`);
             if (regex.test(currentDomain)) {
@@ -2225,7 +2174,7 @@ export default {
 
       return false;
     },
-    
+
     /**
      * 为验证码图片添加识别图标
      * @param {HTMLImageElement} captchaImg - 验证码图片元素
@@ -2234,10 +2183,7 @@ export default {
     addRecognitionIcon(captchaImg, inputField) {
       // 检查是否已经添加过图标
       const existingIcon = captchaImg.nextElementSibling;
-      if (
-        existingIcon &&
-        existingIcon.classList.contains("captcha-recognition-icon")
-      ) {
+      if (existingIcon && existingIcon.classList.contains("captcha-recognition-icon")) {
         return;
       }
 
@@ -2258,7 +2204,7 @@ export default {
         this.processCaptcha(captchaImg, inputField, icon);
       });
     },
-    
+
     /**
      * 查找页面上的验证码图片和相关输入框
      * @returns {Array} - 包含验证码图片和相关输入框的对象数组
@@ -2267,27 +2213,27 @@ export default {
       // console.log("开始查找验证码元素");
       // 创建所有可能的验证码图片选择器列表
       let captchaSelectors = [...this.config.captchaSelectors];
-      
+
       // 添加用户自定义的验证码选择器
       if (Array.isArray(this.settings.customCaptchaSelectors)) {
         captchaSelectors = captchaSelectors.concat(
-          this.settings.customCaptchaSelectors.filter(s => s && s.trim())
+          this.settings.customCaptchaSelectors.filter((s) => s && s.trim())
         );
       }
-      
+
       // 创建所有可能的输入框选择器列表
       let inputSelectors = [...this.config.inputSelectors];
-      
+
       // 添加用户自定义的输入框选择器
       if (Array.isArray(this.settings.customInputSelectors)) {
         inputSelectors = inputSelectors.concat(
-          this.settings.customInputSelectors.filter(s => s && s.trim())
+          this.settings.customInputSelectors.filter((s) => s && s.trim())
         );
       }
-      
+
       // console.log("验证码选择器:", captchaSelectors);
       // console.log("输入框选择器:", inputSelectors);
-      
+
       // 应用规则匹配逻辑
       const currentUrl = window.location.href;
       if (Array.isArray(this.rules) && this.rules.length > 0) {
@@ -2298,44 +2244,53 @@ export default {
           if (!rule.captcha_image_selector) {
             continue;
           }
-          
+
           // 检查URL是否匹配
           let isUrlMatch = false;
-          if (!rule.url_pattern || rule.url_pattern === '*') {
+          if (!rule.url_pattern || rule.url_pattern === "*") {
             // 空或星号表示对所有网站生效
             isUrlMatch = true;
-          } else if (rule.url_pattern.startsWith('/') && rule.url_pattern.endsWith('/')) {
+          } else if (rule.url_pattern.startsWith("/") && rule.url_pattern.endsWith("/")) {
             // 正则表达式匹配
             try {
-              const regexPattern = rule.url_pattern.substring(1, rule.url_pattern.length - 1);
+              const regexPattern = rule.url_pattern.substring(
+                1,
+                rule.url_pattern.length - 1
+              );
               const regex = new RegExp(regexPattern);
               isUrlMatch = regex.test(currentUrl);
             } catch (e) {
-              console.error('无效的正则表达式规则:', rule.url_pattern, e);
+              console.error("无效的正则表达式规则:", rule.url_pattern, e);
             }
-          } else if (rule.url_pattern.includes('*')) {
+          } else if (rule.url_pattern.includes("*")) {
             // 通配符匹配
             const escapedPattern = rule.url_pattern
-              .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 转义特殊字符
-              .replace(/\*/g, '.*'); // 替换 * 为 .*
+              .replace(/[.+?^${}()|[\]\\]/g, "\\$&") // 转义特殊字符
+              .replace(/\*/g, ".*"); // 替换 * 为 .*
             const regex = new RegExp(`^${escapedPattern}$`);
             isUrlMatch = regex.test(currentUrl);
           } else {
             // 精确匹配
             isUrlMatch = currentUrl.includes(rule.url_pattern);
           }
-          
+
           // 如果URL匹配，应用此规则的选择器
           if (isUrlMatch) {
             // console.log(`匹配到规则: ${rule.url_pattern || '*'}`);
             // 添加验证码图片选择器
-            if (rule.captcha_image_selector && !captchaSelectors.includes(rule.captcha_image_selector)) {
+            if (
+              rule.captcha_image_selector &&
+              !captchaSelectors.includes(rule.captcha_image_selector)
+            ) {
               // console.log(`添加验证码选择器: ${rule.captcha_image_selector}`);
               captchaSelectors.push(rule.captcha_image_selector);
             }
-            
+
             // 添加输入框选择器（如果有）
-            if (rule.captcha_input_selector && !inputSelectors.includes(rule.captcha_input_selector)) {
+            if (
+              rule.captcha_input_selector &&
+              !inputSelectors.includes(rule.captcha_input_selector)
+            ) {
               // console.log(`添加输入框选择器: ${rule.captcha_input_selector}`);
               inputSelectors.push(rule.captcha_input_selector);
             }
@@ -2345,29 +2300,29 @@ export default {
 
       // 使用组合后的选择器查找验证码
       const elements = [];
-      
-      captchaSelectors.forEach(selector => {
+
+      captchaSelectors.forEach((selector) => {
         if (!selector || !selector.trim()) return;
-        
+
         try {
           // 查找所有匹配的验证码图片
           const captchaImgs = document.querySelectorAll(selector);
           // console.log(`选择器 '${selector}' 找到 ${captchaImgs.length} 个匹配元素`);
-          
+
           // 为每个验证码图片查找对应的输入框
-          captchaImgs.forEach(captchaImg => {
+          captchaImgs.forEach((captchaImg) => {
             // 确保是图片元素
-            if (captchaImg.tagName !== 'IMG') {
+            if (captchaImg.tagName !== "IMG") {
               // console.log(`跳过非图片元素:`, captchaImg);
               return;
             }
-            
+
             // 确保图片有src属性
             if (!captchaImg.src) {
               // console.log(`跳过没有src属性的图片元素`);
               return;
             }
-            
+
             // 寻找最近的输入框
             let inputField = this.findInputFieldForCaptcha(captchaImg, inputSelectors);
             if (inputField) {
@@ -2390,7 +2345,7 @@ export default {
       // console.log(`总共找到 ${elements.length} 个验证码元素`);
       return elements;
     },
-    
+
     /**
      * 为验证码图片查找对应的输入框
      * @param {HTMLImageElement} captchaImg - 验证码图片元素
@@ -2400,14 +2355,12 @@ export default {
     findInputFieldForCaptcha(captchaImg, customSelectors) {
       // 确定使用的选择器列表
       let inputSelectors = customSelectors || [...this.config.inputSelectors];
-      
+
       // 如果没有提供自定义选择器，则添加用户自定义的输入框选择器
       if (!customSelectors && Array.isArray(this.settings.customInputSelectors)) {
-        inputSelectors = inputSelectors.concat(
-          this.settings.customInputSelectors
-        );
+        inputSelectors = inputSelectors.concat(this.settings.customInputSelectors);
       }
-      
+
       // 添加规则中的选择器
       const currentUrl = window.location.href;
       if (Array.isArray(this.rules) && this.rules.length > 0) {
@@ -2417,42 +2370,49 @@ export default {
           if (!rule.captcha_input_selector) {
             continue;
           }
-          
+
           // 检查URL是否匹配
           let isUrlMatch = false;
-          if (!rule.url_pattern || rule.url_pattern === '*') {
+          if (!rule.url_pattern || rule.url_pattern === "*") {
             // 空或星号表示对所有网站生效
             isUrlMatch = true;
-          } else if (rule.url_pattern.startsWith('/') && rule.url_pattern.endsWith('/')) {
+          } else if (rule.url_pattern.startsWith("/") && rule.url_pattern.endsWith("/")) {
             // 正则表达式匹配
             try {
-              const regexPattern = rule.url_pattern.substring(1, rule.url_pattern.length - 1);
+              const regexPattern = rule.url_pattern.substring(
+                1,
+                rule.url_pattern.length - 1
+              );
               const regex = new RegExp(regexPattern);
               isUrlMatch = regex.test(currentUrl);
             } catch (e) {
-              console.error('Invalid regex pattern:', rule.url_pattern);
+              console.error("Invalid regex pattern:", rule.url_pattern);
             }
-          } else if (rule.url_pattern.includes('*')) {
+          } else if (rule.url_pattern.includes("*")) {
             // 通配符匹配
             const escapedPattern = rule.url_pattern
-              .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 转义特殊字符
-              .replace(/\*/g, '.*'); // 替换 * 为 .*
+              .replace(/[.+?^${}()|[\]\\]/g, "\\$&") // 转义特殊字符
+              .replace(/\*/g, ".*"); // 替换 * 为 .*
             const regex = new RegExp(`^${escapedPattern}$`);
             isUrlMatch = regex.test(currentUrl);
           } else {
             // 精确匹配
             isUrlMatch = currentUrl.includes(rule.url_pattern);
           }
-          
+
           // 如果URL匹配，应用此规则的选择器
-          if (isUrlMatch && rule.captcha_input_selector && !inputSelectors.includes(rule.captcha_input_selector)) {
+          if (
+            isUrlMatch &&
+            rule.captcha_input_selector &&
+            !inputSelectors.includes(rule.captcha_input_selector)
+          ) {
             inputSelectors.push(rule.captcha_input_selector);
           }
         }
       }
-      
+
       let inputField = null;
-      
+
       // 方法1: 先检查最近的父元素
       const parentElement = captchaImg.parentElement;
       if (parentElement) {
@@ -2468,16 +2428,16 @@ export default {
           }
         }
       }
-      
+
       // 方法2: 如果在父元素中没找到，检查整个表单
       if (!inputField && parentElement) {
         // 向上查找表单元素
         let form = parentElement;
-        while (form && form.tagName !== 'FORM' && form !== document.body) {
+        while (form && form.tagName !== "FORM" && form !== document.body) {
           form = form.parentElement;
         }
-        
-        if (form && form.tagName === 'FORM') {
+
+        if (form && form.tagName === "FORM") {
           for (const selector of inputSelectors) {
             try {
               const inputs = form.querySelectorAll(selector);
@@ -2491,7 +2451,7 @@ export default {
           }
         }
       }
-      
+
       // 方法3: 如果仍然没有找到，检查整个文档
       if (!inputField) {
         for (const selector of inputSelectors) {
@@ -2506,7 +2466,7 @@ export default {
           }
         }
       }
-      
+
       // 方法4: 如果还没找到，尝试通过更一般的选择器查找
       if (!inputField) {
         // 尝试查找任何类型为text的输入框
@@ -2514,25 +2474,30 @@ export default {
         if (inputs.length > 0) {
           // 寻找名称或属性与验证码相关的输入框
           for (const input of inputs) {
-            const name = input.name ? input.name.toLowerCase() : '';
-            const id = input.id ? input.id.toLowerCase() : '';
-            const placeholder = input.placeholder ? input.placeholder.toLowerCase() : '';
-            
-            if (name.includes('captcha') || name.includes('verif') || 
-                id.includes('captcha') || id.includes('verif') || 
-                placeholder.includes('captcha') || placeholder.includes('验证码')) {
+            const name = input.name ? input.name.toLowerCase() : "";
+            const id = input.id ? input.id.toLowerCase() : "";
+            const placeholder = input.placeholder ? input.placeholder.toLowerCase() : "";
+
+            if (
+              name.includes("captcha") ||
+              name.includes("verif") ||
+              id.includes("captcha") ||
+              id.includes("verif") ||
+              placeholder.includes("captcha") ||
+              placeholder.includes("验证码")
+            ) {
               inputField = input;
               break;
             }
           }
-          
+
           // 如果仍然没有找到，使用第一个文本输入框
           if (!inputField) {
             inputField = inputs[0];
           }
         }
       }
-      
+
       return inputField;
     },
   },
@@ -2546,9 +2511,9 @@ export default {
       this.showSettings = false;
 
       // 注册油猴菜单
-      if (typeof GM_registerMenuCommand !== 'undefined') {
+      if (typeof GM_registerMenuCommand !== "undefined") {
         // console.log("注册油猴菜单");
-        GM_registerMenuCommand('验证码识别设置', () => {
+        GM_registerMenuCommand("验证码识别设置", () => {
           this.openSettings();
         });
       } else {
@@ -2570,9 +2535,7 @@ export default {
         const observer = new MutationObserver(function (mutations) {
           const authcodeElement = document.querySelector(".authcode.co");
           if (authcodeElement) {
-            const captchaIcon = document.querySelector(
-              ".captcha-recognition-icon"
-            );
+            const captchaIcon = document.querySelector(".captcha-recognition-icon");
             if (captchaIcon) {
               // console.log("应用nportal.ntut.edu.tw网站的特殊处理");
               captchaIcon.parentNode.removeChild(captchaIcon);
@@ -2596,9 +2559,7 @@ export default {
         const observer = new MutationObserver(function (mutations) {
           const authcodeElement = document.querySelector(".l-form-layout .img");
           if (authcodeElement) {
-            const captchaIcon = document.querySelector(
-              ".captcha-recognition-icon"
-            );
+            const captchaIcon = document.querySelector(".captcha-recognition-icon");
             if (captchaIcon) {
               // console.log("应用www.luogu.com.cn网站的特殊处理");
               captchaIcon.parentNode.removeChild(captchaIcon);
