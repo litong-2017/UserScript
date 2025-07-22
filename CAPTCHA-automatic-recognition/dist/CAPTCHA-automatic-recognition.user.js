@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      1.1.4
+// @version      1.1.5
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -21,7 +21,7 @@
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "1.1.4";
+  const version = "1.1.5";
   const author = "ezyshu";
   const description = "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.";
   const type = "module";
@@ -3883,9 +3883,23 @@
        * @returns {HTMLInputElement|null} - 找到的输入框元素，或null
        */
       findInputFieldForCaptcha(captchaImg, customSelectors) {
+        const baseFilter = ':not([type="hidden"])';
         let inputSelectors = customSelectors || [...this.config.inputSelectors];
+        inputSelectors = inputSelectors.map((selector) => {
+          if (selector.includes(':not([type="hidden"])')) {
+            return selector;
+          }
+          return `${selector}${baseFilter}`;
+        });
         if (!customSelectors && Array.isArray(this.settings.customInputSelectors)) {
-          inputSelectors = inputSelectors.concat(this.settings.customInputSelectors);
+          const filteredCustomSelectors = this.settings.customInputSelectors.map((selector) => {
+            if (!selector) return "";
+            if (selector.includes(':not([type="hidden"])')) {
+              return selector;
+            }
+            return `${selector}${baseFilter}`;
+          });
+          inputSelectors = inputSelectors.concat(filteredCustomSelectors.filter((s) => s));
         }
         const currentUrl = window.location.href;
         if (Array.isArray(this.rules) && this.rules.length > 0) {
@@ -3967,7 +3981,7 @@
           }
         }
         if (!inputField) {
-          const inputs = document.querySelectorAll('input[type="text"]');
+          const inputs = document.querySelectorAll('input:not([type="hidden"])');
           if (inputs.length > 0) {
             for (const input of inputs) {
               const name2 = input.name ? input.name.toLowerCase() : "";
@@ -3979,7 +3993,12 @@
               }
             }
             if (!inputField) {
-              inputField = inputs[0];
+              for (const input of inputs) {
+                if (input.type !== "hidden") {
+                  inputField = input;
+                  break;
+                }
+              }
             }
           }
         }

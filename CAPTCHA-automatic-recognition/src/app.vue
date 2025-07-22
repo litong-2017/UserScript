@@ -2353,12 +2353,33 @@ export default {
      * @returns {HTMLInputElement|null} - 找到的输入框元素，或null
      */
     findInputFieldForCaptcha(captchaImg, customSelectors) {
+      // 定义基础过滤条件，排除hidden类型的输入框
+      const baseFilter = ':not([type="hidden"])';
+      
       // 确定使用的选择器列表
       let inputSelectors = customSelectors || [...this.config.inputSelectors];
+      
+      // 处理每个选择器，确保都应用了基础过滤条件
+      inputSelectors = inputSelectors.map(selector => {
+        // 如果选择器已经包含:not([type="hidden"])，则不重复添加
+        if (selector.includes(':not([type="hidden"])')) {
+          return selector;
+        }
+        return `${selector}${baseFilter}`;
+      });
 
       // 如果没有提供自定义选择器，则添加用户自定义的输入框选择器
       if (!customSelectors && Array.isArray(this.settings.customInputSelectors)) {
-        inputSelectors = inputSelectors.concat(this.settings.customInputSelectors);
+        // 同样对自定义选择器应用过滤
+        const filteredCustomSelectors = this.settings.customInputSelectors.map(selector => {
+          if (!selector) return '';
+          if (selector.includes(':not([type="hidden"])')) {
+            return selector;
+          }
+          return `${selector}${baseFilter}`;
+        });
+        
+        inputSelectors = inputSelectors.concat(filteredCustomSelectors.filter(s => s));
       }
 
       // 添加规则中的选择器
@@ -2469,8 +2490,8 @@ export default {
 
       // 方法4: 如果还没找到，尝试通过更一般的选择器查找
       if (!inputField) {
-        // 尝试查找任何类型为text的输入框
-        const inputs = document.querySelectorAll('input[type="text"]');
+        // 尝试查找任何非hidden类型的输入框
+        const inputs = document.querySelectorAll('input:not([type="hidden"])');
         if (inputs.length > 0) {
           // 寻找名称或属性与验证码相关的输入框
           for (const input of inputs) {
@@ -2491,9 +2512,15 @@ export default {
             }
           }
 
-          // 如果仍然没有找到，使用第一个文本输入框
+          // 如果仍然没有找到，使用第一个非hidden的输入框
           if (!inputField) {
-            inputField = inputs[0];
+            // 确保找到的第一个输入框不是hidden类型
+            for (const input of inputs) {
+              if (input.type !== "hidden") {
+                inputField = input;
+                break;
+              }
+            }
           }
         }
       }
