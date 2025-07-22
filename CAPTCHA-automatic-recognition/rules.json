@@ -17,6 +17,6 @@
   {
     "url_pattern": "login.gientech.com",
     "captcha_image_selector": "img[id='random-code-img']",
-    "captcha_input_selector": ""
+    "captcha_input_selector": "input[class='authcode_ie']"
   }
 ]
