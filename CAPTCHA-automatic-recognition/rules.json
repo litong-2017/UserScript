@@ -8,5 +8,15 @@
     "url_pattern": "open.cd",
     "captcha_image_selector": "img[alt='CAPTCHA']",
     "captcha_input_selector": "input[name='imagestring']"
+  },
+  {
+    "url_pattern": "sms.gientech.com",
+    "captcha_image_selector": "img[id='vCodeImg']",
+    "captcha_input_selector": "input[name='qrcode']"
+  },
+  {
+    "url_pattern": "login.gientech.com",
+    "captcha_image_selector": "img[id='random-code-img']",
+    "captcha_input_selector": "input[name='captcha']"
   }
 ]
