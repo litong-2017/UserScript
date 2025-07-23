@@ -538,6 +538,7 @@ export default {
           '.authcode img[id="authImage"]',
           'img[class="verification-img"]',
           'img[name="imgCaptcha"]',
+          '',
         ],
         // 相关输入框选择器 (通常在验证码图片附近的输入框)
         inputSelectors: [
@@ -787,18 +788,48 @@ export default {
     },
 
     /**
-     * 将图片转换为 base64 格式
-     * @param {HTMLImageElement} imgElement - 图片元素
+     * 将图片或canvas转换为 base64 格式
+     * @param {HTMLImageElement|HTMLCanvasElement} element - 图片或canvas元素
      * @returns {Object} - 返回包含成功状态和数据的对象
      */
-    imageToBase64(imgElement) {
+    imageToBase64(element) {
       try {
+        // 检查元素类型
+        if (element.tagName === 'CANVAS') {
+          // 直接从canvas获取base64数据
+          try {
+            const base64Data = element.toDataURL("image/png").split(",")[1];
+            
+            // 检查 base64 数据是否有效
+            if (!base64Data || base64Data.length < 100) {
+              console.error("生成的canvas base64数据无效或过短");
+              return {
+                success: false,
+                message: "Canvas数据转换失败或内容为空。请刷新验证码后重试。",
+              };
+            }
+            
+            // console.log("Canvas成功转换为base64");
+            return {
+              success: true,
+              data: base64Data,
+            };
+          } catch (e) {
+            console.error("从Canvas获取数据失败:", e);
+            return {
+              success: false,
+              message: "无法从Canvas获取数据，可能是跨域限制。" + (e.message || ""),
+            };
+          }
+        }
+        
+        // 以下是处理img元素的逻辑
         // 检查图片来源
-        const imgSrc = imgElement.src;
+        const imgSrc = element.src;
         // console.log("处理图片:", imgSrc);
 
         // 检查图片是否已加载完成
-        if (!imgElement.complete || !imgElement.naturalWidth) {
+        if (!element.complete || !element.naturalWidth) {
           // console.log("图片尚未加载完成，等待加载");
           return {
             success: false,
@@ -811,13 +842,13 @@ export default {
           // console.log("检测到跨域图片");
 
           // 如果还没有设置crossOrigin属性，设置并重新加载
-          if (imgElement.crossOrigin !== "anonymous") {
+          if (element.crossOrigin !== "anonymous") {
             // console.log("设置crossOrigin=anonymous并重新加载图片");
-            imgElement.crossOrigin = "anonymous";
+            element.crossOrigin = "anonymous";
             // 通过添加时间戳或随机参数强制重新加载
             const timestamp = new Date().getTime();
             const separator = imgSrc.includes("?") ? "&" : "?";
-            imgElement.src = `${imgSrc}${separator}_t=${timestamp}`;
+            element.src = `${imgSrc}${separator}_t=${timestamp}`;
 
             return {
               success: false,
@@ -828,8 +859,8 @@ export default {
 
         // 创建 canvas
         const canvas = document.createElement("canvas");
-        canvas.width = imgElement.naturalWidth || imgElement.width;
-        canvas.height = imgElement.naturalHeight || imgElement.height;
+        canvas.width = element.naturalWidth || element.width;
+        canvas.height = element.naturalHeight || element.height;
 
         // console.log("Canvas尺寸:", canvas.width, "x", canvas.height);
 
@@ -838,7 +869,7 @@ export default {
 
         // 尝试绘制图片
         try {
-          ctx.drawImage(imgElement, 0, 0);
+          ctx.drawImage(element, 0, 0);
           // 测试能否访问图片数据（如果是跨域图片会抛出错误）
           ctx.getImageData(0, 0, 1, 1);
         } catch (e) {
@@ -1209,43 +1240,43 @@ export default {
               // 查找所有匹配的验证码图片
               const captchaImgs = document.querySelectorAll(selector);
 
-              // 为每个验证码图片查找对应的输入框
-              captchaImgs.forEach((captchaImg) => {
-                // 确保是图片元素
-                if (captchaImg.tagName !== "IMG") {
-                  return;
-                }
+                        // 为每个验证码图片或canvas查找对应的输入框
+          captchaImgs.forEach((captchaElement) => {
+            // 检查元素类型，支持img和canvas两种类型
+            if (captchaElement.tagName !== "IMG" && captchaElement.tagName !== "CANVAS") {
+              return;
+            }
 
-                // 确保图片有src属性
-                if (!captchaImg.src) {
-                  return;
-                }
+            // 对于img元素，确保有src属性
+            if (captchaElement.tagName === "IMG" && !captchaElement.src) {
+              return;
+            }
 
-                // 避免重复添加已处理的图片
-                if (
-                  captchaImg.nextElementSibling &&
-                  captchaImg.nextElementSibling.classList.contains(
-                    "captcha-recognition-icon"
-                  )
-                ) {
-                  return;
-                }
+            // 避免重复添加已处理的元素
+            if (
+              captchaElement.nextElementSibling &&
+              captchaElement.nextElementSibling.classList.contains(
+                "captcha-recognition-icon"
+              )
+            ) {
+              return;
+            }
 
-                // 寻找最近的输入框
-                let inputField = this.findInputFieldForCaptcha(
-                  captchaImg,
-                  inputSelectors
-                );
+            // 寻找最近的输入框
+            let inputField = this.findInputFieldForCaptcha(
+              captchaElement,
+              inputSelectors
+            );
 
-                // 为验证码图片添加识别按钮
-                this.addRecognitionIcon(captchaImg, inputField);
+            // 为验证码元素添加识别按钮
+            this.addRecognitionIcon(captchaElement, inputField);
 
-                // 收集验证码元素信息
-                elements.push({
-                  captchaImg,
-                  inputField,
-                });
-              });
+            // 收集验证码元素信息
+            elements.push({
+              captchaImg: captchaElement,
+              inputField,
+            });
+          });
             } catch (error) {
               console.error(`选择器 '${selector}' 执行出错:`, error);
             }
@@ -1373,20 +1404,30 @@ export default {
         // 更新图标状态为加载中
         icon.classList.add("captcha-recognition-loading");
 
-        // 获取 base64 编码的图片
+        // 获取 base64 编码的图片或canvas
         let base64Result;
         if (checkedBase64) {
           // 如果已经有检查过的结果，直接使用
           base64Result = checkedBase64;
           // console.log("使用预先检查的base64结果");
         } else {
-          // 否则转换图片为 base64
-          // console.log("开始转换图片为base64");
-          base64Result = this.imageToBase64(captchaImg);
+          // 根据元素类型进行不同的处理
+          if (captchaImg.tagName === 'CANVAS') {
+            // 使用专门的canvas优化函数
+            base64Result = this.optimizeCanvasImage(captchaImg);
+            // 如果优化失败，回退到普通的转换
+            if (!base64Result.success) {
+              base64Result = this.imageToBase64(captchaImg);
+            }
+          } else {
+            // 否则转换图片为 base64
+            // console.log("开始转换图片为base64");
+            base64Result = this.imageToBase64(captchaImg);
+          }
 
-          // 如果图片转换失败，显示错误并终止识别
+          // 如果转换失败，显示错误并终止识别
           if (!base64Result.success) {
-            console.error("图片转换失败:", base64Result.message);
+            console.error("验证码转换失败:", base64Result.message);
             this.showToast(base64Result.message, "error");
             icon.classList.remove("captcha-recognition-loading");
             icon.classList.add("captcha-recognition-error");
@@ -2176,13 +2217,13 @@ export default {
     },
 
     /**
-     * 为验证码图片添加识别图标
-     * @param {HTMLImageElement} captchaImg - 验证码图片元素
+     * 为验证码元素(图片或canvas)添加识别图标
+     * @param {HTMLImageElement|HTMLCanvasElement} captchaElement - 验证码元素(图片或canvas)
      * @param {HTMLInputElement} inputField - 输入框元素
      */
-    addRecognitionIcon(captchaImg, inputField) {
+    addRecognitionIcon(captchaElement, inputField) {
       // 检查是否已经添加过图标
-      const existingIcon = captchaImg.nextElementSibling;
+      const existingIcon = captchaElement.nextElementSibling;
       if (existingIcon && existingIcon.classList.contains("captcha-recognition-icon")) {
         return;
       }
@@ -2192,16 +2233,16 @@ export default {
       icon.classList.add("captcha-recognition-icon");
       icon.title = "点击识别验证码";
 
-      // 将图标放在验证码图片后面（紧邻其后）
-      if (captchaImg.nextSibling) {
-        captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
+      // 将图标放在验证码元素后面（紧邻其后）
+      if (captchaElement.nextSibling) {
+        captchaElement.parentNode.insertBefore(icon, captchaElement.nextSibling);
       } else {
-        captchaImg.parentNode.appendChild(icon);
+        captchaElement.parentNode.appendChild(icon);
       }
 
       // 添加点击事件
       icon.addEventListener("click", async () => {
-        this.processCaptcha(captchaImg, inputField, icon);
+        this.processCaptcha(captchaElement, inputField, icon);
       });
     },
 
@@ -2310,30 +2351,30 @@ export default {
           // console.log(`选择器 '${selector}' 找到 ${captchaImgs.length} 个匹配元素`);
 
           // 为每个验证码图片查找对应的输入框
-          captchaImgs.forEach((captchaImg) => {
-            // 确保是图片元素
-            if (captchaImg.tagName !== "IMG") {
-              // console.log(`跳过非图片元素:`, captchaImg);
+          captchaImgs.forEach((captchaElement) => {
+            // 支持img和canvas两种类型
+            if (captchaElement.tagName !== "IMG" && captchaElement.tagName !== "CANVAS") {
+              // console.log(`跳过非图片/canvas元素:`, captchaElement);
               return;
             }
 
-            // 确保图片有src属性
-            if (!captchaImg.src) {
+            // 对于img元素，确保有src属性
+            if (captchaElement.tagName === "IMG" && !captchaElement.src) {
               // console.log(`跳过没有src属性的图片元素`);
               return;
             }
 
             // 寻找最近的输入框
-            let inputField = this.findInputFieldForCaptcha(captchaImg, inputSelectors);
+            let inputField = this.findInputFieldForCaptcha(captchaElement, inputSelectors);
             if (inputField) {
-              // console.log(`为验证码图片 ${captchaImg.src} 找到输入框:`, inputField);
+              // console.log(`为验证码元素找到输入框:`, inputField);
             } else {
-              // console.log(`未找到验证码图片 ${captchaImg.src} 对应的输入框`);
+              // console.log(`未找到验证码元素对应的输入框`);
             }
 
             // 收集验证码元素信息
             elements.push({
-              captchaImg,
+              captchaImg: captchaElement,
               inputField,
             });
           });
@@ -2526,6 +2567,59 @@ export default {
       }
 
       return inputField;
+    },
+
+    /**
+     * 优化Canvas验证码图像
+     * @param {HTMLCanvasElement} canvasElement - canvas元素
+     * @returns {Object} - 返回包含成功状态和数据的对象
+     */
+    optimizeCanvasImage(canvasElement) {
+      try {
+        // 获取canvas上下文
+        const ctx = canvasElement.getContext('2d');
+        if (!ctx) {
+          return {
+            success: false,
+            message: "无法获取Canvas上下文",
+          };
+        }
+
+        // 获取图像数据
+        const imageData = ctx.getImageData(0, 0, canvasElement.width, canvasElement.height);
+        const data = imageData.data;
+
+        // 创建一个新的canvas用于保存优化后的图像
+        const optimizedCanvas = document.createElement('canvas');
+        optimizedCanvas.width = canvasElement.width;
+        optimizedCanvas.height = canvasElement.height;
+        const optimizedCtx = optimizedCanvas.getContext('2d');
+
+        // 复制原始图像数据
+        optimizedCtx.putImageData(imageData, 0, 0);
+
+        // 转换为base64
+        const base64Data = optimizedCanvas.toDataURL("image/png").split(",")[1];
+
+        // 检查base64数据是否有效
+        if (!base64Data || base64Data.length < 100) {
+          return {
+            success: false,
+            message: "优化Canvas数据失败或内容为空",
+          };
+        }
+
+        return {
+          success: true,
+          data: base64Data,
+        };
+      } catch (error) {
+        console.error("优化Canvas图像失败:", error);
+        return {
+          success: false,
+          message: "优化Canvas图像失败: " + (error.message || "未知错误"),
+        };
+      }
     },
   },
   mounted() {

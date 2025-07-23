@@ -19,9 +19,14 @@
     "captcha_image_selector": "img[id='random-code-img']",
     "captcha_input_selector": "input[class='authcode_ie']"
   },
-    {
+  {
     "url_pattern": "*",
     "captcha_image_selector": "img[alt*='CAPTCHA']",
     "captcha_input_selector": "input[name='imagestring']"
+  },
+  {
+    "url_pattern": "chaoxing.com",
+    "captcha_image_selector": "canvas[id='verifyCanvas']",
+    "captcha_input_selector": "input[id='LogCode']"
   }
 ]

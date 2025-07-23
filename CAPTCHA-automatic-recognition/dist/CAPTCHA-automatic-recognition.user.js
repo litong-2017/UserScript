@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      1.1.5
+// @version      1.1.6
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -15,13 +15,13 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-container{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol!important;font-size:14px!important;line-height:1.5!important;color:#333!important;box-sizing:border-box!important}.captcha-recognition-container *,.captcha-recognition-container *:before,.captcha-recognition-container *:after{box-sizing:border-box!important;font-family:inherit!important}.captcha-recognition-container input,.captcha-recognition-container textarea,.captcha-recognition-container select,.captcha-recognition-container button{font-family:inherit!important;font-size:inherit!important;line-height:inherit!important}.captcha-recognition-icon{display:inline-block!important;width:20px!important;height:20px!important;vertical-align:middle!important;margin-left:5px!important;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>')!important;background-size:contain!important;cursor:pointer!important;position:relative!important;z-index:999!important;opacity:.7!important;transition:opacity .2s!important}.captcha-recognition-icon:hover{opacity:1!important}.input-group-append{position:relative!important}.input-group-append .captcha-recognition-icon{position:absolute!important;left:100%!important}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>')!important;animation:captcha-spin 1s linear infinite!important}@keyframes captcha-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')!important}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')!important}body.captcha-settings-open{overflow:hidden!important}.captcha-settings-modal{position:fixed!important;top:0!important;left:0!important;width:100%!important;height:100%!important;background-color:#00000080!important;display:flex!important;justify-content:center!important;align-items:center!important;z-index:2147483647!important;text-align:left!important}.captcha-settings-content{background-color:#fff!important;color:#333!important;padding:20px 15px 20px 20px!important;border-radius:8px!important;width:450px!important;max-width:90%!important;max-height:90vh!important;overflow-y:auto!important;box-shadow:0 4px 12px #00000026!important;height:auto!important;display:flex!important;flex-direction:column!important}.captcha-settings-content::-webkit-scrollbar,.settings-card::-webkit-scrollbar,.domain-textarea::-webkit-scrollbar,.captcha-settings-content textarea::-webkit-scrollbar{width:4px!important;height:8px!important}.captcha-settings-content::-webkit-scrollbar-track,.settings-card::-webkit-scrollbar-track,.domain-textarea::-webkit-scrollbar-track,.captcha-settings-content textarea::-webkit-scrollbar-track{background:#f1f1f1!important;border-radius:4px!important}.captcha-settings-content::-webkit-scrollbar-thumb,.settings-card::-webkit-scrollbar-thumb,.domain-textarea::-webkit-scrollbar-thumb,.captcha-settings-content textarea::-webkit-scrollbar-thumb{background:#ccc!important;border-radius:4px!important}.captcha-settings-content h3{margin-top:0!important;color:#333!important;font-size:18px!important;margin-bottom:16px!important;text-align:center!important;font-weight:700!important}.captcha-settings-content h3 span{font-size:14px!important}.captcha-settings-item{margin-bottom:12px!important;display:flex!important;flex-direction:column}.captcha-settings-item label{display:block!important;margin-bottom:4px!important;color:#555!important;font-size:14px!important}.captcha-settings-item input[type=text],.captcha-settings-item select,.captcha-settings-item textarea{width:100%!important;padding:0 8px!important;border:1px solid #ddd!important;background:none!important;border-radius:4px!important;font-size:14px!important;box-sizing:border-box!important;background:#fff!important;color:#333!important;margin:0!important}.captcha-settings-item input[type=text],.captcha-settings-item select{height:33px!important}.captcha-settings-item textarea{resize:vertical!important;min-height:80px!important}.captcha-settings-item small{font-size:12px!important;color:#777!important;display:block!important;margin-top:4px!important}.textarea-with-button{position:relative!important;display:flex!important;flex-direction:column!important}.use-default-prompt{position:absolute!important;top:5px!important;right:5px!important;background-color:#f1f1f1!important;border:1px solid #ddd!important;border-radius:4px!important;padding:4px 8px!important;font-size:12px!important;cursor:pointer!important;color:#333!important;transition:background-color .2s!important}.use-default-prompt:hover{background-color:#e4e4e4!important}.captcha-settings-buttons{display:flex!important;justify-content:flex-end!important;margin-top:20px!important;gap:10px!important;position:relative!important;z-index:10!important}.captcha-settings-buttons button{padding:8px 16px!important;border:none!important;border-radius:4px!important;cursor:pointer!important;font-size:14px!important;transition:background-color .2s!important}.captcha-settings-buttons button:first-child{background-color:#1a73e8!important;color:#fff!important}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0!important}.captcha-settings-buttons button:last-child{background-color:#f1f1f1!important;color:#333!important}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4!important}.dev-settings-button{width:50px!important;height:50px!important;display:flex!important;align-items:center!important;justify-content:center!important;position:fixed!important;bottom:20px!important;right:20px!important;background-color:#fff!important;color:#fff!important;border-radius:50%!important;cursor:pointer!important;z-index:9999!important;font-size:14px!important;box-shadow:0 2px 5px #0003!important;transition:background-color .2s!important}.dev-settings-button svg{color:#1557b0}.dev-settings-button:hover{opacity:.9}#captcha-toast-container{position:fixed!important;top:20px!important;right:20px!important;z-index:9999!important;display:flex!important;flex-direction:column!important;gap:10px!important;pointer-events:none!important;text-align:left!important}.captcha-toast{width:280px!important;padding:12px 16px!important;border-radius:4px!important;box-shadow:0 4px 12px #00000026!important;color:#fff!important;font-size:14px!important;opacity:0!important;transform:translateY(-20px)!important;transition:all .3s ease!important;pointer-events:auto!important;word-break:break-word!important;text-align:left!important}.captcha-toast-show{opacity:1!important;transform:translateY(0)!important}.captcha-toast-hide{opacity:0!important;transform:translateY(-20px)!important}.captcha-toast-info{background-color:#1a73e8!important}.captcha-toast-success{background-color:#4caf50!important}.captcha-toast-error{background-color:#f44336!important}.input-with-button{position:relative!important;display:flex!important;align-items:center!important}.input-with-button input{flex:1!important}.test-api-button{background-color:#1a73e8!important;color:#fff!important;border:none!important;border-radius:4px!important;padding:8px 12px!important;font-size:14px!important;cursor:pointer!important;transition:background-color .2s,color .2s!important;min-width:80px!important;display:flex!important;justify-content:center!important;align-items:center!important;height:33px!important;margin-left:10px!important}.captcha-settings-tip{margin:16px 0!important;padding:12px!important;background-color:#f8f9fa!important;border-left:4px solid #1a73e8!important;border-radius:4px!important;font-size:13px!important;color:#333!important}.captcha-settings-tip p{margin:0 0 8px!important}.captcha-settings-tip ol{margin:8px 0 0!important;padding-left:24px!important}.captcha-settings-tip li{margin-bottom:4px!important}.test-api-button:hover{background-color:#1557b0!important}.test-api-button.test-loading{background-color:#f1f1f1!important;color:#666!important;position:relative!important}.test-api-button.test-loading:after{content:""!important;position:absolute!important;width:12px!important;height:12px!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%);border:2px solid #666!important;border-radius:50%!important;border-top-color:transparent!important;animation:captcha-spin-transform 1s linear infinite!important}@keyframes captcha-spin-transform{0%{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}.test-api-button.test-success{background-color:#4caf50!important;color:#fff!important}.test-api-button.test-error{background-color:#f44336!important;color:#fff!important}img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon{position:absolute!important;left:270px!important}.authcode.co>a:nth-child(2)>#authImage+.captcha-recognition-icon{display:none!important}.settings-nav{display:flex!important;border-bottom:1px solid #eee!important;margin-bottom:20px!important;padding-bottom:2px!important}.settings-nav::-webkit-scrollbar{display:none!important}.settings-nav-item{padding:10px 15px!important;cursor:pointer!important;font-size:14px!important;color:#666!important;position:relative!important;transition:all .3s!important;-webkit-user-select:none!important;user-select:none!important;white-space:nowrap!important}.settings-nav-item:hover{color:#1a73e8!important}.settings-nav-item.active{color:#1a73e8!important;font-weight:700!important}.settings-nav-item.active:after{content:""!important;position:absolute!important;bottom:-2px!important;left:0!important;width:100%!important;height:2px!important;background-color:#1a73e8!important;border-radius:2px!important}.settings-content{min-height:420px!important;position:relative!important}.settings-content-tab{animation:captcha-fadeIn .3s ease!important;position:absolute!important;top:0!important;left:0!important;width:100%!important}@keyframes captcha-fadeIn{0%{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.settings-card{background-color:#f9f9f9!important;border-radius:8px!important;padding:15px!important;margin-bottom:15px!important;border:1px solid #eee!important;box-shadow:0 2px 4px #0000000d!important;height:100%!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;max-height:400px!important}.settings-card-title{font-weight:700!important;margin-bottom:12px!important;color:#333!important;font-size:15px!important;display:flex!important;align-items:center!important;justify-content:space-between!important}.settings-card-title .api-type{color:#1a73e8!important}.settings-section{margin-bottom:20px!important}.settings-section-title{font-weight:700!important;margin-bottom:10px!important;color:#333!important;font-size:15px!important;border-bottom:1px solid #eee!important;padding-bottom:5px!important}.advanced-settings-warning{font-size:12px!important;color:#ff4d4f!important;margin-bottom:10px!important;font-weight:700!important;padding:8px!important;background-color:#fff2f0!important;border-radius:4px!important;border:1px solid #ffccc7!important}.tutorial-link{font-size:12px!important;color:#1890ff!important;margin-left:8px!important;text-decoration:none!important;font-weight:400!important}.tutorial-link:hover{text-decoration:underline!important}.custom-selectors{display:flex!important;flex-direction:column!important;gap:8px!important}.selector-item{display:flex!important;align-items:center!important;gap:8px!important}.selector-item input{flex:1!important}.remove-selector{background-color:#ff4d4f!important;color:#fff!important;border:none!important;border-radius:50%!important;width:24px!important;height:24px!important;font-size:16px!important;line-height:1!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important}.add-selector{margin-top:8px!important;background-color:#1890ff!important;color:#fff!important;border:none!important;border-radius:4px!important;padding:4px 12px!important;font-size:14px!important;cursor:pointer!important;align-self:flex-start!important}.add-selector:hover{background-color:#40a9ff!important}.remove-selector:hover{background-color:#ff7875!important}.domain-textarea{width:100%!important;border:1px solid #ddd!important;border-radius:4px!important;padding:8px!important;resize:vertical!important;font-family:monospace!important;font-size:14px!important}.reload-rules-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:6px 12px!important;height:34px!important;font-size:14px!important;border-radius:4px!important;border:1px solid #ddd!important;background-color:#f7f7f7!important;cursor:pointer!important;transition:all .3s!important;min-width:120px!important}.reload-rules-button:hover{background-color:#e7e7e7!important}.reload-rules-button.test-loading{background-color:#f5f5f5!important;position:relative!important;color:transparent!important}.reload-rules-button.test-loading:after{content:""!important;width:16px!important;height:16px!important;border:2px solid #666!important;border-top-color:transparent!important;border-radius:50%!important;position:absolute!important;left:50%!important;top:50%!important;margin-left:-8px!important;margin-top:-8px!important;animation:captcha-spin 1s linear infinite!important}.reload-rules-button.test-success{background-color:#eaf7ea!important;border-color:#c3e6c3!important;color:#2a862a!important}.reload-rules-button.test-error{background-color:#fce7e7!important;border-color:#f5c2c2!important;color:#d63030!important}.rules-management{display:flex!important;flex-direction:column!important;gap:10px!important}.rules-url-input{display:flex!important;flex-direction:column!important;gap:5px!important}.rules-url-input input{width:100%!important;padding:8px!important;border:1px solid #ddd!important;border-radius:4px!important;font-size:14px!important}.rules-url-input small{color:#666!important;font-size:12px!important}@media (max-width: 768px){.settings-nav-item{padding:10px!important}} `);
+(t=>{if(typeof GM_addStyle=="function"){GM_addStyle(t);return}const o=document.createElement("style");o.textContent=t,document.head.append(o)})(` .captcha-recognition-container{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol!important;font-size:14px!important;line-height:1.5!important;color:#333!important;box-sizing:border-box!important}.captcha-recognition-container *,.captcha-recognition-container *:before,.captcha-recognition-container *:after{box-sizing:border-box!important;font-family:inherit!important}.captcha-recognition-container input,.captcha-recognition-container textarea,.captcha-recognition-container select,.captcha-recognition-container button{font-family:inherit!important;font-size:inherit!important;line-height:inherit!important}.captcha-recognition-icon{display:inline-block!important;width:20px!important;height:20px!important;vertical-align:middle!important;margin-left:5px!important;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>')!important;background-size:contain!important;cursor:pointer!important;position:relative!important;z-index:999!important;opacity:.7!important;transition:opacity .2s!important}.captcha-recognition-icon:hover{opacity:1!important}.input-group-append{position:relative!important}.input-group-append .captcha-recognition-icon{position:absolute!important;left:100%!important}.captcha-recognition-loading{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>')!important;animation:captcha-spin 1s linear infinite!important}@keyframes captcha-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.captcha-recognition-success{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')!important}.captcha-recognition-error{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>')!important}body.captcha-settings-open{overflow:hidden!important}.captcha-settings-modal{position:fixed!important;top:0!important;left:0!important;width:100%!important;height:100%!important;background-color:#00000080!important;display:flex!important;justify-content:center!important;align-items:center!important;z-index:2147483647!important;text-align:left!important}.captcha-settings-content{background-color:#fff!important;color:#333!important;padding:20px 15px 20px 20px!important;border-radius:8px!important;width:450px!important;max-width:90%!important;max-height:90vh!important;overflow-y:auto!important;box-shadow:0 4px 12px #00000026!important;height:auto!important;display:flex!important;flex-direction:column!important}.captcha-settings-content::-webkit-scrollbar,.settings-card::-webkit-scrollbar,.domain-textarea::-webkit-scrollbar,.captcha-settings-content textarea::-webkit-scrollbar{width:4px!important;height:8px!important}.captcha-settings-content::-webkit-scrollbar-track,.settings-card::-webkit-scrollbar-track,.domain-textarea::-webkit-scrollbar-track,.captcha-settings-content textarea::-webkit-scrollbar-track{background:#f1f1f1!important;border-radius:4px!important}.captcha-settings-content::-webkit-scrollbar-thumb,.settings-card::-webkit-scrollbar-thumb,.domain-textarea::-webkit-scrollbar-thumb,.captcha-settings-content textarea::-webkit-scrollbar-thumb{background:#ccc!important;border-radius:4px!important}.captcha-settings-content h3{margin-top:0!important;color:#333!important;font-size:18px!important;margin-bottom:16px!important;text-align:center!important;font-weight:700!important}.captcha-settings-content h3 span{font-size:14px!important}.captcha-settings-item{margin-bottom:12px!important;display:flex!important;flex-direction:column}.captcha-settings-item label{display:block!important;margin-bottom:4px!important;color:#555!important;font-size:14px!important}.captcha-settings-item input[type=text],.captcha-settings-item select,.captcha-settings-item textarea{width:100%!important;padding:0 8px!important;border:1px solid #ddd!important;background:none!important;border-radius:4px!important;font-size:14px!important;box-sizing:border-box!important;background:#fff!important;color:#333!important;margin:0!important}.captcha-settings-item input[type=text],.captcha-settings-item select{height:33px!important}.captcha-settings-item textarea{resize:vertical!important;min-height:80px!important}.captcha-settings-item small{font-size:12px!important;color:#777!important;display:block!important;margin-top:4px!important}.textarea-with-button{position:relative!important;display:flex!important;flex-direction:column!important}.use-default-prompt{position:absolute!important;top:5px!important;right:5px!important;background-color:#f1f1f1!important;border:1px solid #ddd!important;border-radius:4px!important;padding:4px 8px!important;font-size:12px!important;cursor:pointer!important;color:#333!important;transition:background-color .2s!important}.use-default-prompt:hover{background-color:#e4e4e4!important}.captcha-settings-buttons{display:flex!important;justify-content:flex-end!important;margin-top:20px!important;gap:10px!important;position:relative!important;z-index:10!important}.captcha-settings-buttons button{padding:8px 16px!important;border:none!important;border-radius:4px!important;cursor:pointer!important;font-size:14px!important;transition:background-color .2s!important}.captcha-settings-buttons button:first-child{background-color:#1a73e8!important;color:#fff!important}.captcha-settings-buttons button:first-child:hover{background-color:#1557b0!important}.captcha-settings-buttons button:last-child{background-color:#f1f1f1!important;color:#333!important}.captcha-settings-buttons button:last-child:hover{background-color:#e4e4e4!important}.dev-settings-button{width:50px!important;height:50px!important;display:flex!important;align-items:center!important;justify-content:center!important;position:fixed!important;bottom:20px!important;right:20px!important;background-color:#fff!important;color:#fff!important;border-radius:50%!important;cursor:pointer!important;z-index:9999!important;font-size:14px!important;box-shadow:0 2px 5px #0003!important;transition:background-color .2s!important}.dev-settings-button svg{color:#1557b0}.dev-settings-button:hover{opacity:.9}#captcha-toast-container{position:fixed!important;top:20px!important;right:20px!important;z-index:9999!important;display:flex!important;flex-direction:column!important;gap:10px!important;pointer-events:none!important;text-align:left!important}.captcha-toast{width:280px!important;padding:12px 16px!important;border-radius:4px!important;box-shadow:0 4px 12px #00000026!important;color:#fff!important;font-size:14px!important;opacity:0!important;transform:translateY(-20px)!important;transition:all .3s ease!important;pointer-events:auto!important;word-break:break-word!important;text-align:left!important}.captcha-toast-show{opacity:1!important;transform:translateY(0)!important}.captcha-toast-hide{opacity:0!important;transform:translateY(-20px)!important}.captcha-toast-info{background-color:#1a73e8!important}.captcha-toast-success{background-color:#4caf50!important}.captcha-toast-error{background-color:#f44336!important}.input-with-button{position:relative!important;display:flex!important;align-items:center!important}.input-with-button input{flex:1!important}.test-api-button{background-color:#1a73e8!important;color:#fff!important;border:none!important;border-radius:4px!important;padding:8px 12px!important;font-size:14px!important;cursor:pointer!important;transition:background-color .2s,color .2s!important;min-width:80px!important;display:flex!important;justify-content:center!important;align-items:center!important;height:33px!important;margin-left:10px!important}.captcha-settings-tip{margin:16px 0!important;padding:12px!important;background-color:#f8f9fa!important;border-left:4px solid #1a73e8!important;border-radius:4px!important;font-size:13px!important;color:#333!important}.captcha-settings-tip p{margin:0 0 8px!important}.captcha-settings-tip ol{margin:8px 0 0!important;padding-left:24px!important}.captcha-settings-tip li{margin-bottom:4px!important}.test-api-button:hover{background-color:#1557b0!important}.test-api-button.test-loading{background-color:#f1f1f1!important;color:#666!important;position:relative!important}.test-api-button.test-loading:after{content:""!important;position:absolute!important;width:12px!important;height:12px!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%);border:2px solid #666!important;border-radius:50%!important;border-top-color:transparent!important;animation:captcha-spin-transform 1s linear infinite!important}@keyframes captcha-spin-transform{0%{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}.test-api-button.test-success{background-color:#4caf50!important;color:#fff!important}.test-api-button.test-error{background-color:#f44336!important;color:#fff!important}img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]+.captcha-recognition-icon{position:absolute!important;left:270px!important}.authcode.co>a:nth-child(2)>#authImage+.captcha-recognition-icon{display:none!important}#yzCode{position:relative}#yzCode>.captcha-recognition-icon{position:absolute!important;right:0!important}.settings-nav{display:flex!important;border-bottom:1px solid #eee!important;margin-bottom:20px!important;padding-bottom:2px!important}.settings-nav::-webkit-scrollbar{display:none!important}.settings-nav-item{padding:10px 15px!important;cursor:pointer!important;font-size:14px!important;color:#666!important;position:relative!important;transition:all .3s!important;-webkit-user-select:none!important;user-select:none!important;white-space:nowrap!important}.settings-nav-item:hover{color:#1a73e8!important}.settings-nav-item.active{color:#1a73e8!important;font-weight:700!important}.settings-nav-item.active:after{content:""!important;position:absolute!important;bottom:-2px!important;left:0!important;width:100%!important;height:2px!important;background-color:#1a73e8!important;border-radius:2px!important}.settings-content{min-height:420px!important;position:relative!important}.settings-content-tab{animation:captcha-fadeIn .3s ease!important;position:absolute!important;top:0!important;left:0!important;width:100%!important}@keyframes captcha-fadeIn{0%{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.settings-card{background-color:#f9f9f9!important;border-radius:8px!important;padding:15px!important;margin-bottom:15px!important;border:1px solid #eee!important;box-shadow:0 2px 4px #0000000d!important;height:100%!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;max-height:400px!important}.settings-card-title{font-weight:700!important;margin-bottom:12px!important;color:#333!important;font-size:15px!important;display:flex!important;align-items:center!important;justify-content:space-between!important}.settings-card-title .api-type{color:#1a73e8!important}.settings-section{margin-bottom:20px!important}.settings-section-title{font-weight:700!important;margin-bottom:10px!important;color:#333!important;font-size:15px!important;border-bottom:1px solid #eee!important;padding-bottom:5px!important}.advanced-settings-warning{font-size:12px!important;color:#ff4d4f!important;margin-bottom:10px!important;font-weight:700!important;padding:8px!important;background-color:#fff2f0!important;border-radius:4px!important;border:1px solid #ffccc7!important}.tutorial-link{font-size:12px!important;color:#1890ff!important;margin-left:8px!important;text-decoration:none!important;font-weight:400!important}.tutorial-link:hover{text-decoration:underline!important}.custom-selectors{display:flex!important;flex-direction:column!important;gap:8px!important}.selector-item{display:flex!important;align-items:center!important;gap:8px!important}.selector-item input{flex:1!important}.remove-selector{background-color:#ff4d4f!important;color:#fff!important;border:none!important;border-radius:50%!important;width:24px!important;height:24px!important;font-size:16px!important;line-height:1!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important}.add-selector{margin-top:8px!important;background-color:#1890ff!important;color:#fff!important;border:none!important;border-radius:4px!important;padding:4px 12px!important;font-size:14px!important;cursor:pointer!important;align-self:flex-start!important}.add-selector:hover{background-color:#40a9ff!important}.remove-selector:hover{background-color:#ff7875!important}.domain-textarea{width:100%!important;border:1px solid #ddd!important;border-radius:4px!important;padding:8px!important;resize:vertical!important;font-family:monospace!important;font-size:14px!important}.reload-rules-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:6px 12px!important;height:34px!important;font-size:14px!important;border-radius:4px!important;border:1px solid #ddd!important;background-color:#f7f7f7!important;cursor:pointer!important;transition:all .3s!important;min-width:120px!important}.reload-rules-button:hover{background-color:#e7e7e7!important}.reload-rules-button.test-loading{background-color:#f5f5f5!important;position:relative!important;color:transparent!important}.reload-rules-button.test-loading:after{content:""!important;width:16px!important;height:16px!important;border:2px solid #666!important;border-top-color:transparent!important;border-radius:50%!important;position:absolute!important;left:50%!important;top:50%!important;margin-left:-8px!important;margin-top:-8px!important;animation:captcha-spin 1s linear infinite!important}.reload-rules-button.test-success{background-color:#eaf7ea!important;border-color:#c3e6c3!important;color:#2a862a!important}.reload-rules-button.test-error{background-color:#fce7e7!important;border-color:#f5c2c2!important;color:#d63030!important}.rules-management{display:flex!important;flex-direction:column!important;gap:10px!important}.rules-url-input{display:flex!important;flex-direction:column!important;gap:5px!important}.rules-url-input input{width:100%!important;padding:8px!important;border:1px solid #ddd!important;border-radius:4px!important;font-size:14px!important}.rules-url-input small{color:#666!important;font-size:12px!important}@media (max-width: 768px){.settings-nav-item{padding:10px!important}} `);
 
 (function (vue) {
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "1.1.5";
+  const version = "1.1.6";
   const author = "ezyshu";
   const description = "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.";
   const type = "module";
@@ -2565,7 +2565,8 @@
             'img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]',
             '.authcode img[id="authImage"]',
             'img[class="verification-img"]',
-            'img[name="imgCaptcha"]'
+            'img[name="imgCaptcha"]',
+            ""
           ],
           // 相关输入框选择器 (通常在验证码图片附近的输入框)
           inputSelectors: [
@@ -2768,25 +2769,47 @@
         }
       },
       /**
-       * 将图片转换为 base64 格式
-       * @param {HTMLImageElement} imgElement - 图片元素
+       * 将图片或canvas转换为 base64 格式
+       * @param {HTMLImageElement|HTMLCanvasElement} element - 图片或canvas元素
        * @returns {Object} - 返回包含成功状态和数据的对象
        */
-      imageToBase64(imgElement) {
+      imageToBase64(element) {
         try {
-          const imgSrc = imgElement.src;
-          if (!imgElement.complete || !imgElement.naturalWidth) {
+          if (element.tagName === "CANVAS") {
+            try {
+              const base64Data2 = element.toDataURL("image/png").split(",")[1];
+              if (!base64Data2 || base64Data2.length < 100) {
+                console.error("生成的canvas base64数据无效或过短");
+                return {
+                  success: false,
+                  message: "Canvas数据转换失败或内容为空。请刷新验证码后重试。"
+                };
+              }
+              return {
+                success: true,
+                data: base64Data2
+              };
+            } catch (e) {
+              console.error("从Canvas获取数据失败:", e);
+              return {
+                success: false,
+                message: "无法从Canvas获取数据，可能是跨域限制。" + (e.message || "")
+              };
+            }
+          }
+          const imgSrc = element.src;
+          if (!element.complete || !element.naturalWidth) {
             return {
               success: false,
               message: "图片尚未加载完成，请稍后重试"
             };
           }
           if (!imgSrc.startsWith("data:image") && !this.isSameOrigin(imgSrc)) {
-            if (imgElement.crossOrigin !== "anonymous") {
-              imgElement.crossOrigin = "anonymous";
+            if (element.crossOrigin !== "anonymous") {
+              element.crossOrigin = "anonymous";
               const timestamp = (/* @__PURE__ */ new Date()).getTime();
               const separator = imgSrc.includes("?") ? "&" : "?";
-              imgElement.src = `${imgSrc}${separator}_t=${timestamp}`;
+              element.src = `${imgSrc}${separator}_t=${timestamp}`;
               return {
                 success: false,
                 message: "正在处理跨域图片，请稍后重试"
@@ -2794,11 +2817,11 @@
             }
           }
           const canvas = document.createElement("canvas");
-          canvas.width = imgElement.naturalWidth || imgElement.width;
-          canvas.height = imgElement.naturalHeight || imgElement.height;
+          canvas.width = element.naturalWidth || element.width;
+          canvas.height = element.naturalHeight || element.height;
           const ctx = canvas.getContext("2d");
           try {
-            ctx.drawImage(imgElement, 0, 0);
+            ctx.drawImage(element, 0, 0);
             ctx.getImageData(0, 0, 1, 1);
           } catch (e) {
             console.error("绘制图片到Canvas失败:", e);
@@ -3065,25 +3088,25 @@
               if (!selector || !selector.trim()) return;
               try {
                 const captchaImgs = document.querySelectorAll(selector);
-                captchaImgs.forEach((captchaImg) => {
-                  if (captchaImg.tagName !== "IMG") {
+                captchaImgs.forEach((captchaElement) => {
+                  if (captchaElement.tagName !== "IMG" && captchaElement.tagName !== "CANVAS") {
                     return;
                   }
-                  if (!captchaImg.src) {
+                  if (captchaElement.tagName === "IMG" && !captchaElement.src) {
                     return;
                   }
-                  if (captchaImg.nextElementSibling && captchaImg.nextElementSibling.classList.contains(
+                  if (captchaElement.nextElementSibling && captchaElement.nextElementSibling.classList.contains(
                     "captcha-recognition-icon"
                   )) {
                     return;
                   }
                   let inputField = this.findInputFieldForCaptcha(
-                    captchaImg,
+                    captchaElement,
                     inputSelectors
                   );
-                  this.addRecognitionIcon(captchaImg, inputField);
+                  this.addRecognitionIcon(captchaElement, inputField);
                   elements.push({
-                    captchaImg,
+                    captchaImg: captchaElement,
                     inputField
                   });
                 });
@@ -3175,9 +3198,16 @@
           if (checkedBase64) {
             base64Result = checkedBase64;
           } else {
-            base64Result = this.imageToBase64(captchaImg);
+            if (captchaImg.tagName === "CANVAS") {
+              base64Result = this.optimizeCanvasImage(captchaImg);
+              if (!base64Result.success) {
+                base64Result = this.imageToBase64(captchaImg);
+              }
+            } else {
+              base64Result = this.imageToBase64(captchaImg);
+            }
             if (!base64Result.success) {
-              console.error("图片转换失败:", base64Result.message);
+              console.error("验证码转换失败:", base64Result.message);
               this.showToast(base64Result.message, "error");
               icon.classList.remove("captcha-recognition-loading");
               icon.classList.add("captcha-recognition-error");
@@ -3774,25 +3804,25 @@
         return false;
       },
       /**
-       * 为验证码图片添加识别图标
-       * @param {HTMLImageElement} captchaImg - 验证码图片元素
+       * 为验证码元素(图片或canvas)添加识别图标
+       * @param {HTMLImageElement|HTMLCanvasElement} captchaElement - 验证码元素(图片或canvas)
        * @param {HTMLInputElement} inputField - 输入框元素
        */
-      addRecognitionIcon(captchaImg, inputField) {
-        const existingIcon = captchaImg.nextElementSibling;
+      addRecognitionIcon(captchaElement, inputField) {
+        const existingIcon = captchaElement.nextElementSibling;
         if (existingIcon && existingIcon.classList.contains("captcha-recognition-icon")) {
           return;
         }
         const icon = document.createElement("div");
         icon.classList.add("captcha-recognition-icon");
         icon.title = "点击识别验证码";
-        if (captchaImg.nextSibling) {
-          captchaImg.parentNode.insertBefore(icon, captchaImg.nextSibling);
+        if (captchaElement.nextSibling) {
+          captchaElement.parentNode.insertBefore(icon, captchaElement.nextSibling);
         } else {
-          captchaImg.parentNode.appendChild(icon);
+          captchaElement.parentNode.appendChild(icon);
         }
         icon.addEventListener("click", async () => {
-          this.processCaptcha(captchaImg, inputField, icon);
+          this.processCaptcha(captchaElement, inputField, icon);
         });
       },
       /**
@@ -3854,19 +3884,19 @@
           if (!selector || !selector.trim()) return;
           try {
             const captchaImgs = document.querySelectorAll(selector);
-            captchaImgs.forEach((captchaImg) => {
-              if (captchaImg.tagName !== "IMG") {
+            captchaImgs.forEach((captchaElement) => {
+              if (captchaElement.tagName !== "IMG" && captchaElement.tagName !== "CANVAS") {
                 return;
               }
-              if (!captchaImg.src) {
+              if (captchaElement.tagName === "IMG" && !captchaElement.src) {
                 return;
               }
-              let inputField = this.findInputFieldForCaptcha(captchaImg, inputSelectors);
+              let inputField = this.findInputFieldForCaptcha(captchaElement, inputSelectors);
               if (inputField) {
               } else {
               }
               elements.push({
-                captchaImg,
+                captchaImg: captchaElement,
                 inputField
               });
             });
@@ -4003,6 +4033,46 @@
           }
         }
         return inputField;
+      },
+      /**
+       * 优化Canvas验证码图像
+       * @param {HTMLCanvasElement} canvasElement - canvas元素
+       * @returns {Object} - 返回包含成功状态和数据的对象
+       */
+      optimizeCanvasImage(canvasElement) {
+        try {
+          const ctx = canvasElement.getContext("2d");
+          if (!ctx) {
+            return {
+              success: false,
+              message: "无法获取Canvas上下文"
+            };
+          }
+          const imageData = ctx.getImageData(0, 0, canvasElement.width, canvasElement.height);
+          const data = imageData.data;
+          const optimizedCanvas = document.createElement("canvas");
+          optimizedCanvas.width = canvasElement.width;
+          optimizedCanvas.height = canvasElement.height;
+          const optimizedCtx = optimizedCanvas.getContext("2d");
+          optimizedCtx.putImageData(imageData, 0, 0);
+          const base64Data = optimizedCanvas.toDataURL("image/png").split(",")[1];
+          if (!base64Data || base64Data.length < 100) {
+            return {
+              success: false,
+              message: "优化Canvas数据失败或内容为空"
+            };
+          }
+          return {
+            success: true,
+            data: base64Data
+          };
+        } catch (error) {
+          console.error("优化Canvas图像失败:", error);
+          return {
+            success: false,
+            message: "优化Canvas图像失败: " + (error.message || "未知错误")
+          };
+        }
       }
     },
     mounted() {
