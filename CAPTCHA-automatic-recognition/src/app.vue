@@ -538,7 +538,6 @@ export default {
           '.authcode img[id="authImage"]',
           'img[class="verification-img"]',
           'img[name="imgCaptcha"]',
-          '',
         ],
         // 相关输入框选择器 (通常在验证码图片附近的输入框)
         inputSelectors: [

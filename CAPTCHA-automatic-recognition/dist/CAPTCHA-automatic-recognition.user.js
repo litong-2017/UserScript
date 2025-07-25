@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      1.1.6
+// @version      1.1.7
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -21,7 +21,7 @@
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "1.1.6";
+  const version = "1.1.7";
   const author = "ezyshu";
   const description = "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.";
   const type = "module";
@@ -2565,8 +2565,7 @@
             'img[style="z-index: 2; position: absolute; bottom: -11px; left: 206px; width: 88px; height: 40px;"]',
             '.authcode img[id="authImage"]',
             'img[class="verification-img"]',
-            'img[name="imgCaptcha"]',
-            ""
+            'img[name="imgCaptcha"]'
           ],
           // 相关输入框选择器 (通常在验证码图片附近的输入框)
           inputSelectors: [
