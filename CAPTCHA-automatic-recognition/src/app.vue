@@ -1704,6 +1704,9 @@ export default {
       // console.log("初始化验证码识别插件");
       this.registerMenuCommands();
       this.loadSettings();
+      
+      // 检查是否需要自动获取云端配置（每天首次使用）
+      this.checkAndFetchCloudConfig();
 
       // 检查当前网站是否在禁用列表中
       if (this.isCurrentDomainDisabled()) {
@@ -2568,6 +2571,45 @@ export default {
       return inputField;
     },
 
+    /**
+     * 检查并自动获取云端配置（每天首次使用）
+     */
+    async checkAndFetchCloudConfig() {
+      try {
+        // 获取当前日期（格式：YYYY-MM-DD）
+        const today = new Date().toISOString().split('T')[0];
+        
+        // 从存储中获取上次更新配置的日期
+        let lastConfigUpdate;
+        if (typeof GM_getValue !== "undefined") {
+          lastConfigUpdate = GM_getValue("lastConfigUpdate");
+        } else {
+          lastConfigUpdate = localStorage.getItem("lastConfigUpdate");
+        }
+        
+        // 如果没有记录或者不是今天，则更新配置
+        if (!lastConfigUpdate || lastConfigUpdate !== today) {
+          // 显示提示
+          this.showToast("正在获取最新云端配置...", "info");
+          
+          // 加载最新规则
+          await this.loadRules();
+          
+          // 记录更新日期
+          if (typeof GM_setValue !== "undefined") {
+            GM_setValue("lastConfigUpdate", today);
+          } else {
+            localStorage.setItem("lastConfigUpdate", today);
+          }
+          
+          this.showToast("云端配置更新完成", "success");
+        }
+      } catch (error) {
+        console.error("自动获取云端配置失败:", error);
+        // 失败时不显示提示，避免影响用户体验
+      }
+    },
+    
     /**
      * 优化Canvas验证码图像
      * @param {HTMLCanvasElement} canvasElement - canvas元素

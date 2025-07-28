@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AI验证码自动识别填充
 // @namespace    https://github.com/ezyshu/UserScript
-// @version      1.1.7
+// @version      1.1.8
 // @author       ezyshu
 // @description  自动识别网页上的验证码并填充到输入框中，点击识别图标触发识别。
 // @license      Apache-2.0
@@ -21,7 +21,7 @@
   'use strict';
 
   const name = "CAPTCHA-automatic-recognition";
-  const version = "1.1.7";
+  const version = "1.1.8";
   const author = "ezyshu";
   const description = "Automatically recognize the CAPTCHA on the webpage and fill it into the input box, click the recognition icon to trigger recognition.";
   const type = "module";
@@ -3407,6 +3407,7 @@
       init() {
         this.registerMenuCommands();
         this.loadSettings();
+        this.checkAndFetchCloudConfig();
         if (this.isCurrentDomainDisabled()) {
           return;
         }
@@ -4032,6 +4033,32 @@
           }
         }
         return inputField;
+      },
+      /**
+       * 检查并自动获取云端配置（每天首次使用）
+       */
+      async checkAndFetchCloudConfig() {
+        try {
+          const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+          let lastConfigUpdate;
+          if (typeof GM_getValue !== "undefined") {
+            lastConfigUpdate = GM_getValue("lastConfigUpdate");
+          } else {
+            lastConfigUpdate = localStorage.getItem("lastConfigUpdate");
+          }
+          if (!lastConfigUpdate || lastConfigUpdate !== today) {
+            this.showToast("正在获取最新云端配置...", "info");
+            await this.loadRules();
+            if (typeof GM_setValue !== "undefined") {
+              GM_setValue("lastConfigUpdate", today);
+            } else {
+              localStorage.setItem("lastConfigUpdate", today);
+            }
+            this.showToast("云端配置更新完成", "success");
+          }
+        } catch (error) {
+          console.error("自动获取云端配置失败:", error);
+        }
       },
       /**
        * 优化Canvas验证码图像
