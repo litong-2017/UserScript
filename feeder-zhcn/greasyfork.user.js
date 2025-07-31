@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        feeder 汉化脚本
-// @namespace   https://github.com/ezyshu/UserScript
+// @namespace   https://github.com/anghunk/UserScript
 // @version     0.0.2
-// @author      ezyshu
+// @author      anghunk
 // @description feeder.com 汉化脚本
 // @include     *://feeder.co/*
 // @license     Apache-2.0 license

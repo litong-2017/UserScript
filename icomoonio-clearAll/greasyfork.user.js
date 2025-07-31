@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         icomoon.io 一键删除所有集合
-// @namespace    https://github.com/ezyshu/UserScript
+// @namespace    https://github.com/anghunk/UserScript
 // @version      0.1
 // @description  添加一个按钮，点击时触发所有ng-click="removeSet($index)"按钮
-// @author       ezyshu
+// @author       anghunk
 // @match        *://icomoon.io/*
 // @grant        none
 // @license      Apache-2.0

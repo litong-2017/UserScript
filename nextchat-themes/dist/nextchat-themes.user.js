@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         nextchat-themes
-// @namespace    https://github.com/ezyshu/UserScript
+// @namespace    https://github.com/anghunk/UserScript
 // @version      0.0.5
-// @author       ezyshu
+// @author       anghunk
 // @description  NextChat 插件，修改 UI 主题！
 // @license      Apache-2.0
 // @icon         https://framerusercontent.com/images/tCHbBovHGLAJDNKRG1lKfavenFs.png
@@ -19,7 +19,7 @@
 
   const name = "nextchat-themes";
   const version = "0.0.5";
-  const author = "ezyshu";
+  const author = "anghunk";
   const description = "NextChat plug-in, modify the UI theme!";
   const type = "module";
   const license = "Apache-2.0";

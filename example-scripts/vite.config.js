@@ -10,9 +10,9 @@ export default defineConfig({
     monkey({
       entry: 'src/main.js',
       userscript: {
-        icon: 'https://raw.githubusercontent.com/ezyshu/UserScript/refs/heads/main/assets/g.png',
+        icon: 'https://raw.githubusercontent.com/anghunk/UserScript/refs/heads/main/assets/g.png',
         name: "example-scripts",
-        namespace: 'https://github.com/ezyshu/UserScript',
+        namespace: 'https://github.com/anghunk/UserScript',
         description: "a sample script.",
         version: pkg.version,
         match: ['*://*/*'],

@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         v2ex AI 总结帖子
-// @namespace    https://github.com/ezyshu/UserScript
+// @namespace    https://github.com/anghunk/UserScript
 // @version      0.0.5
 // @description  自定义 api key 等信息，实现 AI 总结帖子，会保留缓存记录到本地避免大量消耗 token。
-// @author       ezyshu
+// @author       anghunk
 // @match        *://v2ex.com/*
 // @match        *://*.v2ex.com/*
 // @match        *://www.v2ex.com/*
@@ -50,7 +50,7 @@
     });
 
     menu_ID[menu_ID.length] = GM_registerMenuCommand('💬 建议与反馈！', function () {
-      window.GM_openInTab("https://github.com/ezyshu/UserScript", {
+      window.GM_openInTab("https://github.com/anghunk/UserScript", {
         active: true,
         insert: true,
         setParent: true

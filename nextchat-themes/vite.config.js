@@ -12,7 +12,7 @@ export default defineConfig({
       userscript: {
         icon: 'https://framerusercontent.com/images/tCHbBovHGLAJDNKRG1lKfavenFs.png',
         name: "nextchat-themes",
-        namespace: 'https://github.com/ezyshu/UserScript',
+        namespace: 'https://github.com/anghunk/UserScript',
         description: "NextChat 插件，修改 UI 主题！",
         version: pkg.version,
         match: [

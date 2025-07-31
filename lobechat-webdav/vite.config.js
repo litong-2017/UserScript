@@ -12,7 +12,7 @@ export default defineConfig({
       userscript: {
         icon: 'https://chat.oaipro.com/favicon-32x32.ico',
         name: "Lobechat Webdav 同步功能",
-        namespace: 'https://github.com/ezyshu/UserScript',
+        namespace: 'https://github.com/anghunk/UserScript',
         description: "给 lobechat 程序添加 webdav 同步的功能。",
         version: pkg.version,
         match: [

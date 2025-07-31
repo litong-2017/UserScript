@@ -1,370 +1,474 @@
 // ==UserScript==
-// @name        Netlify 汉化脚本
-// @namespace   https://github.com/ezyshu/UserScript
-// @version     0.0.2
-// @author      ezyshu
-// @description 由于官方不支持中文，汉化 Netlify 大部分的翻译
-// @include     *://*.netlify.com/*
-// @license     Apache-2.0 license
-// @icon        https://app.netlify.com/favicon-48x48.png
-// @grant       none
-// @run-at      document-start
-// @downloadURL https://update.greasyfork.org/scripts/484197/Netlify%20%E6%B1%89%E5%8C%96%E8%84%9A%E6%9C%AC.user.js
-// @updateURL https://update.greasyfork.org/scripts/484197/Netlify%20%E6%B1%89%E5%8C%96%E8%84%9A%E6%9C%AC.meta.js
+// @name         Lobechat Webdav 同步功能
+// @namespace    https://github.com/anghunk/UserScript
+// @version      0.0.9
+// @author       anghunk
+// @description  给 lobechat 程序添加 webdav 同步的功能。
+// @license      Apache-2.0
+// @icon         https://chat.oaipro.com/favicon-32x32.ico
+// @match        *://chat.oaipro.com/*
+// @match        *://chat-preview.lobehub.com/*
+// @match        *://lobechat.zishu.me/*
+// @require      https://unpkg.com/vue@3.4.38/dist/vue.global.prod.js
+// @grant        GM_addStyle
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-const zh_Hans = [
-	['Team overview', '团队概况'],
-	['Sites', '站点'],
-	['Builds', '构建'],
-	['Integrations', '集成'],
-	['Domains', '域名'],
-	['Members', '成员'],
-	['Audit log', '审核日志'],
-	['Security Scorecard', '安全评分'],
-	['Billing', '计费'],
-	['Team settings', '团队设置'],
-	['Upgrade', '升级'],
-	['Bandwidth', '带宽'],
-	['Build minutes', '构建时间'],
-	['Concurrent builds', '构建并发'],
-	['Team members', '团队成员'],
-	['Site overview', '概览'],
-	['Site configuration', '配置'],
-	['Deploys', '部署'],
-	['Logs', '日志'],
-	['Metrics', '指标'],
-	['Domain management', '域名管理'],
-	['Forms', '形式'],
-	['Favorite site', '收藏站点'],
-	['Unfavorite site', '取消收藏'],
-	['General', '常规'],
-	['Site details', '站点详情'],
-	['Status badges', '状态徽章'],
-	['Site members', '网站会员'],
-	['Danger zone', '危险操作'],
-	['Site information', '站点信息'],
-	['Site name', '站点名称'],
-	['Owner', '所有人'],
-	['Site ID', '站点 ID'],
-	['Created', '创建时间'],
-	['Last update', '最后更新'],
-	['Change site name', '更改名称'],
-	['Add-ons', '附加组件'],
-	['This site is not using any add-ons', '该网站未使用任何附加组件'],
-	['Take your static site further with rich add-ons built right into your dashboard. Automatically upgrade tiers as your usage grows, paying only for what you use.', '通过仪表板中内置的丰富附加组件进一步提升您的静态网站。随着使用量的增长自动升级等级，只需按使用量付费。'],
-	['Deploy status badge', '部署状态徽章'],
-	['Team: ', '团队：'],
-	['Build & deploy', '构建和部署'],
-	['Post processing', '后期处理'],
-	['Split Testing', '对比测试'],
-	['Deploy notifications', '部署通知'],
-	['Environment variables', '环境变量'],
-	['Notifications', '通知'],
-	['Identity', '身份'],
-	['Access & security', '访问和安全'],
-	['Continuous deployment', '持续部署'],
-	['Manage repository', '管理存储库'],
-	['Build settings', '构建设置'],
-	['Runtime', '运行'],
-	['Base directory', '基本目录'],
-	['Package directory', '包目录'],
-	['Build command', '构建命令'],
-	['Publish directory', '发布目录'],
-	['Functions directory', '函数目录'],
-	['Build status', '构建状态'],
-	['Configure', '修改'],
-	['Functions region', '功能区'],
-	['Configure how functions are deployed for your site.', '配置如何为您的站点部署功能。'],
-	['Region', '地区'],
-	['Dependency management', '依赖管理'],
-	['Manage the software and tool versions installed in the build environment for your site.', '管理站点构建环境中安装的软件和工具版本。'],
-	['Branches and deploy contexts', '分支和部署上下文'],
-	['Deploy contexts are branch-based environments that enable you to configure builds depending on the context. This includes production and preview environments.', '部署上下文是基于分支的环境，使您能够根据上下文配置构建。这包括生产和预览环境。'],
-	['Production branch', '生产分支'],
-	['Branch deploys', '分支部署'],
-	['Deploy Previews', '部署预览'],
-	['Collaboration tools', '协同工具'],
-	['Build hooks', '构建 hooks'],
-	['Deploy key', '部署密钥'],
-	['Build image selection ', '构建图像选择'],
-	['Automatic deploy deletion', '自动部署删除'],
-	['Add a variable', '新增变量'],
-	['New environment variable', '新环境变量'],
-	['Scopes', '范围'],
-	['All scopes', '全部范围'],
-	['Specific scopes', '具体范围'],
-	['Limit this environment variable to specific scopes, such as builds, functions, or post processing', '将此环境变量限制为特定范围，例如构建、函数或后处理'],
-	['Upgrade to unlock', '升级解锁'],
-	['Create variable', '新增变量'],
-	['Cancel', '取消'],
-	['Docs', '文档'],
-	['Pricing', '价格'],
-	['Support', '支持'],
-	['Blog', '博客'],
-	['Changelog', '变更日志'],
-	['Terms', '条款'],
-	['Add a single variable', '新增一个变量'],
-	['Import from a .env file', '导入 .env 文件'],
-	['Environment variables allow you to change site behavior across different deploy contexts and scopes. For example, use variables to set different configuration options for builds or to store secret API keys for use in your functions.', '环境变量允许您跨不同的部署上下文和范围更改站点行为。例如，使用变量为构建设置不同的配置选项或存储秘密 API 密钥以供在函数中使用。'],
-	['Deploy settings', '部署设置'],
-	['Lock to stop auto publishing', '锁定并停止发布'],
-	['Options', '选项'],
-	['Retry with latest branch commit', '重新部署'],
-	['Clear cache and retry with latest branch commit', '清除缓存并重新部署'],
-	['Repository', '存储库'],
-	['Your site is linked to a Git repository for continuous deployment.', '您的站点链接到 Git 存储库以进行持续部署。'],
-	['Current repository', '当前存储库'],
-	['Production domains', '生产环境'],
-	['Your site is always accessible at a netlify.app subdomain based on the site name. Custom domains allow visitors to access your site at your own domains.', '您的网站始终可以根据网站名称通过 netlify.app 子域进行访问。自定义域允许访问者通过您自己的域访问您的网站。'],
-	['Add domain alias', '新增自定义域名'],
-  ['Visual editor dashboard', '可视化编辑器仪表板'],
-	['Extensions', '扩展'],
-	['Projects', '项目'],
-	['Usage & billing', '使用与计费'],
-	['Add new project', '添加新项目'],
-	['Project overview', '项目概述'],
-	['Project configuration', '项目配置'],
-	['Preview Servers', '预览服务器'],
-	['Project details', '项目详情'],
-	['Visitor access', '访客通道'],
-	['Project members', '项目成员'],
-	['Build plugins', '构建插件'],
-	['General project settings', '通用项目设置'],
-	['General information about your project', '关于您项目的基本信息'],
-	['Project information', '项目信息'],
-	['Project name', '项目名称'],
-	['Project ID', '项目 ID'],
-	['Change project name', '更改项目名称'],
-	['Transfer project', '转移项目'],
-	['This project is not using any add-ons', '本项目不使用任何附加组件'],
-	['Take your project further with rich add-ons built right into your dashboard. Automatically upgrade tiers as your usage grows, paying only for what you use.', '通过仪表板中内置的丰富附加组件，将您的项目推向更远。随着使用量的增长自动升级级别，只需为您使用的内容付费。'],
-	['Learn more about ', '了解更多'],
-	['pricing and usage', '定价和使用'],
-	['in the docs', '在文档中'],
-	['Restrict access to your project', '限制对您的项目的访问'],
-	['Password Protection', '密码保护'],
-	['You can apply different protection settings for this project.', '您可以为该项目应用不同的保护设置。'],
-	['Netlify badges for your project', 'Netlify 项目徽章'],
-	['Collaborate with others on this project', '与他人在此项目上协作'],
-	['Critical actions that impact your project’s availability', '影响您项目可用性的关键操作'],
-	['Disable project', '停用项目'],
-	['Delete this project', '删除此项目'],
-	['Delete project', '删除项目'],
-	['Project availability', '项目可用性'],
-	['Your project is currently enabled.', '您的项目当前已启用。'],
-	['Disabling your project makes it temporarily inaccessible on the web and will stop it from consuming bandwidth, functions, and other resources. You can re-enable your project anytime.', '禁用您的项目会使其暂时无法在网上访问，并停止消耗带宽、函数和其他资源。您可以随时重新启用您的项目。'],
-	['Once you delete a project, there is no going back.', '一旦删除项目，将无法恢复。'],
-	['Team members have accounts on Netlify and can create new projects or change their settings, depending on their permissions.', '团队成员拥有 Netlify 账户，可以根据其权限创建新项目或更改其设置。'],
-	['Go to Team members panel', '前往团队成员面板'],
-	['Learn more about status badges in the docs', '在文档中了解更多关于状态徽章的信息'],
-	['This image automatically updates to reflect the current state of your latest production deploy. To create a status badge for a deployed branch, add the ', '此图片会自动更新以反映您最新生产部署的当前状态。要为已部署的分支创建状态徽章，请添加 '],
-	[' query parameter to the badge URL. You can use the markdown snippet below to add it to your project README.', ' 将查询参数添加到徽章 URL。您可以使用下面的 Markdown 代码片段将其添加到项目的 README 中'],
-	['JWT secret', 'JWT 密钥'],
-	['You can set up role-based access with JSON Web Tokens (JWT)', '您可以设置基于角色的访问控制，并使用 JSON Web Tokens (JWT)。'],
-	['role-based access control ', '基于角色的访问控制'],
-	[' in the docs', '在文档中'],
-	['Also known as Site ID', '也称站点 ID'],
-	['Build & deploy settings', '构建与部署设置'],
-	['Configuration for continuous deployment from a Git repository', '从 Git 存储库进行持续部署的配置'],
-	['Your project is linked to a Git repository for continuous deployment.', '您的项目已链接到 Git 存储库以进行持续部署。'],
-	['Learn more about continuous deployment in the docs', '在文档中了解更多关于持续部署的信息'],
-	['Link to a different repository', '链接到不同的存储库'],
-	['Learn more about configuring builds in the docs', '在文档中了解有关配置构建的更多信息'],
-	['Preview Server settings', '预览服务器设置'],
-	['Configure how Netlify CLI runs your project in the Preview Server. By default, it uses the same settings as when running locally on your machine.', '配置 Netlify CLI 在预览服务器中运行项目的方式。默认情况下，它使用与在本地计算机上运行时相同的设置。'],
-	['Learn more about configuring the Netlify CLI', '深入了解配置 Netlify CLI 的方法'],
-	['Configure how functions are deployed for your project.', '配置项目的函数部署方式'],
-	['functions region', '区域'],
-	['Upgrade to customize ', '升级以自定义'],
-	['Manage the software and tool versions installed in the build environment for your project.', '管理您项目中构建环境已安装的软件和工具版本。'],
-	['Node.js version ', 'Node.js 版本'],
-	[' has reached end-of-life. We recommend using Node.js ', '已到达生命周期末端。我们建议使用 Node.js'],
-	[', the current LTS version, instead.', '，当前为 LTS 版本。'],
-	['dependency management', '依赖管理'],
-	['Save', '保存'],
-	['Learn more about branches and deploys in the docs', '在文档中了解分支和部署'],
-	['The Netlify Drawer enables your team to collaborate on preview environments before changes go live to production. Discuss changes, file new issues, or annotate screenshots directly from a preview context.', 'Netlify Drawer 让您的团队能够在更改上线到生产环境之前，协作处理预览环境。直接在预览环境中讨论更改、提交新问题或注释屏幕截图。'],
-	['Learn more about collaboration tools in the docs', '在文档中了解更多关于协作工具的信息'],
-	['Build hooks give you a unique URL you can use to trigger a build.', '构建钩子提供了一个唯一的 URL，您可以使用它来触发构建。'],
-	['build hooks', '构建 hooks'],
-	['Add build hook', '添加构建 hooks'],
-	['Preview Server hooks', '预览服务器 hooks'],
-	['Preview Server hooks give you a unique URL you can use to trigger a Preview Server operation.', '预览服务器 hooks 提供了一个唯一的 URL，您可以使用该 URL 来触发预览服务器操作。'],
-	['Add Preview Server hook', '添加预览服务器 hooks'],
-	['A deploy key grants permissions to our build system to access your private submodule.', '部署密钥授予我们的构建系统访问私有子模块的权限。'],
-	['Learn more about deploy keys in the docs', '在文档中了解有关部署密钥的更多信息'],
-	['Generate public deploy key', '生成公共部署密钥'],
-	['Build image selection', '构建镜像选择'],
-	['Select a different build image to change the operating system and supported software versions in the environment where our buildbot builds your project.', '选择不同的构建映像以更改 buildbot 构建项目的环境中的操作系统和支持的软件版本。'],
-	['Support for the Focal build image will end on ', '对 Focal 构建镜像的支持将于'],
-	['. We recommend switching to the Ubuntu Noble 24.04 build image as soon as possible.', '，建议您尽快切换到 Ubuntu Noble 24.04 构建镜像。'],
-	['build image selection', '构建镜像选择'],
-	['Control when deploys are automatically deleted. Netlify will not automatically delete the deploy currently published on your project, nor the most recent successful deploy from a Git branch.', '控制部署的自动删除时间。Netlify 不会自动删除项目中当前已发布的部署，也不会删除 Git 分支上最近一次成功的部署。'],
-	['Upgrade to customize', '升级以自定义'],
-	['automatic deploy deletion', '自动部署删除'],
-	['deploy deletion', '部署删除'],
-	['Control the post processing and optimizations Netlify can do for you', '控制 Netlify 可为您提供的后期处理和优化'],
-	['Snippet injection', '代码片段注入'],
-	['Inject analytics or other scripts into the HTML of your project.', '将分析或其他脚本注入到您项目的 HTML 中。'],
-	['Add snippet', '添加代码片段'],
-	['Use your own domain for your Netlify project for free.', '免费为您的 Netlify 项目使用您自己的域名。'],
-	['Your project is always accessible at a ', '您的项目始终可在 '],
-	['subdomain based on the project name. Custom domains allow visitors to access your project at your own domains.', '基于项目名称的子域，自定义域名允许访问者通过您自己的域名访问您的项目。'],
-	['Edit project name', '修改项目名称'],
-	['Set as primary domain', '设为主域名'],
-	['Netlify subdomain', 'Netlify 子域名'],
-	['Primary domain', '主域名'],
-	['Redirects automatically to primary domain', '自动重定向到主域名'],
-	['Set up Netlify DNS', '设置 Netlify DNS'],
-	['Edit domain', '修改域名'],
-	['Remove domain', '删除域名'],
-	['Enable automatic TLS certificates with Let’s Encrypt, or use your own certificate', '启用 Let’s Encrypt 自动 TLS 证书，或使用您自己的证书'],
-	['SSL/TLS certificate', 'SSL/TLS 证书'],
-	['Your project has HTTPS enabled', '您的项目已启用 HTTPS'],
-	['Certificate', '证书'],
-	['Auto-renews before', '自动续订之前'],
-	['Updated', '更新时间'],
-	['Deploys from ', '部署自 '],
-	['Owned by', '所有者'],
-	['Created by', '创建者'],
-	['Access', '使用权'],
-	['Edit filters', '编辑过滤器'],
-	['Last published', '上次发布'],
-	['Sort by', '排序方式'],
-	['Date created', '创建日期'],
-	['Alphabetical', '按字母排序'],
-	['Order by', '排序依据'],
-	['Newest', '最新'],
-	['Oldest', '最旧'],
-	['Any team', '任何团队'],
-	['This team', '这个团队'],
-	['Anyone', '任何人'],
-	['Me', '我'],
-	['Any', '任何'],
-	['Public', '公共'],
-	['Private', '私有'],
-	['Protected with a password, team login, or SSO', '受密码保护，团队登录或 SSO'],
-	['Apply filters', '应用过滤器'],
-	['Search projects', '搜索项目'],
-	['Import an existing project', '导入现有项目'],
-	['Start from a template', '从模板开始'],
-	['Deploy manually', '手动部署'],
-	['News', '新闻'],
-	['Create new team', '创建新团队'],
-	[' team ', '团队'],
-	['member', '成员'],
-	['Free', '免费'],
-];
+(e=>{if(typeof GM_addStyle=="function"){GM_addStyle(e);return}const o=document.createElement("style");o.textContent=e,document.head.append(o)})(" .lobewebdav{position:fixed;left:10px;bottom:100px;z-index:100}.lobewebdav .lobewebdav-dialog{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:600px;height:400px;overflow-y:scroll;padding:30px;border-radius:20px;background:#fff;box-shadow:1px 5px 10px #0003;color:#333}.lobewebdav .lobewebdav-dialog .close{position:absolute;right:20px;top:30px;cursor:pointer;transition:all .2s linear}.lobewebdav .lobewebdav-dialog .close:hover{color:#666}.lobewebdav .lobewebdav-dialog h2{margin-bottom:20px}.lobewebdav .lobewebdav-dialog .item{display:flex;align-items:center;margin-top:1em}.lobewebdav .lobewebdav-dialog .item label{width:120px;text-align:right;white-space:nowrap}.lobewebdav .lobewebdav-dialog .item input{flex:1;border-radius:4px;height:28px;border:1px solid #999;transition:all .1s linear;padding:0 10px;background:#fff;color:#333}.lobewebdav .lobewebdav-dialog .item input:focus{border-color:#666}.lobewebdav .lobewebdav-dialog button{outline:none;border:none;border-radius:5px;background:#333;color:#fff;height:30px;padding:0 15px;transition:all .1s linear;cursor:pointer}.lobewebdav .lobewebdav-dialog button+button{margin-left:10px}.lobewebdav .lobewebdav-dialog button:hover{background:#666} ");
 
-class ReplaceText {
-	constructor(i18n, mode = 'equal') {
-		this.W = typeof unsafeWindow === 'undefined' ? window : unsafeWindow;
-		this.done = new Set();
-		this.alert = this.W.alert.bind(this.W);
-		this.confirm = this.W.confirm.bind(this.W);
-		this.prompt = this.W.prompt.bind(this.W);
-		const i18nMap = new Map(i18n);
-		const i18nArr = i18n.map(value => value[0]);
-		if (mode === 'regexp') {
-			this.textReplace = (text) => {
-				if (i18nMap.has(text))
-					text = i18nMap.get(text);
-				else {
-					const key = i18nArr.find(key => (key instanceof RegExp && text.match(key) !== null));
-					if (key !== undefined)
-						text = text.replace(key, i18nMap.get(key));
-				}
-				return text;
-			};
-		} else if (mode === 'match') {
-			this.textReplace = (text) => {
-				const key = i18nArr.find(key => (text.match(key) !== null));
-				if (key !== undefined)
-					text = text.replace(key, i18nMap.get(key));
-				return text;
-			};
-		} else {
-			this.textReplace = (text) => {
-				if (i18nMap.has(text))
-					text = i18nMap.get(text);
-				return text;
-			};
-		}
-		this.replaceAlert();
-		this.replaceObserver();
-	}
-	replaceAlert() {
-		this.W.alert = (message) => this.alert(this.textReplace(message));
-		this.W.confirm = (message) => this.confirm(this.textReplace(message));
-		this.W.prompt = (message, _default) => this.prompt(this.textReplace(message), _default);
-	}
-	replaceNode(node, self = false) {
-		const list = this.getReplaceList(node, self);
-		for (let index in list) {
-			list[index].forEach(node => {
-				if (this.done.has(node[index]))
-					return;
-				const newText = this.textReplace(node[index]);
-				if (node[index] !== newText) {
-					this.done.add(newText);
-					node[index] = newText;
-				}
-			});
-		}
-	}
-	replaceObserver() {
-		const bodyObserver = new MutationObserver(mutations => {
-			mutations.forEach(mutation => {
-				if (mutation.type === 'attributes' || mutation.type === 'characterData')
-					this.replaceNode(mutation.target, true);
-				else if (mutation.type === 'childList') {
-					mutation.addedNodes.forEach(addedNode => this.replaceNode(addedNode));
-				}
-			});
-		});
-		document.addEventListener('readystatechange', () => {
-			bodyObserver.observe(document.body, {
-				attributes: true,
-				characterData: true,
-				childList: true,
-				subtree: true
-			});
-			this.replaceNode(document.body);
-		}, {
-			capture: true,
-			once: true
-		});
-	}
-	getReplaceList(node, self = false) {
-		const list = {
-			data: new Set(),
-			placeholder: new Set(),
-			title: new Set(),
-			value: new Set(),
-		};
-		const nodeList = self ? [node] : this.nodeForEach(node);
-		nodeList.forEach(node => {
-			if (node.parentElement instanceof HTMLScriptElement || node.parentElement instanceof HTMLStyleElement)
-				return;
-			if (node instanceof HTMLElement && node.title !== '')
-				list.title.add(node);
-			if (node instanceof HTMLInputElement && ['button', 'reset', 'submit'].includes(node.type) && node.value !== '')
-				list.value.add(node);
-			else if (node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement && node.placeholder !== '')
-				list.placeholder.add(node);
-			else if (node instanceof Text)
-				list.data.add(node);
-		});
-		return list;
-	}
-	nodeForEach(node) {
-		const list = [];
-		list.push(node);
-		if (node.hasChildNodes())
-			node.childNodes.forEach(child => list.push(...this.nodeForEach(child)));
-		return list;
-	}
-}
+(function (vue) {
+  'use strict';
 
-new ReplaceText(zh_Hans, 'regexp');
+  const name = "lobechat-webdav";
+  const version = "0.0.9";
+  const author = "anghunk";
+  const description = "Add webdav synchronization function to lobechat program.";
+  const type = "module";
+  const license = "Apache-2.0";
+  const scripts = {
+    dev: "vite --mode development",
+    build: "vite build",
+    preview: "vite preview"
+  };
+  const dependencies = {
+    vue: "^3.4.27",
+    webdav: "^5.7.1"
+  };
+  const devDependencies = {
+    "@vitejs/plugin-vue": "^5.0.4",
+    less: "^4.1.0",
+    "less-loader": "^8.0.0",
+    "style-loader": "^2.0.0",
+    vite: "^5.2.12",
+    "vite-plugin-monkey": "^4.0.0"
+  };
+  const packageJson = {
+    name,
+    version,
+    author,
+    description,
+    type,
+    license,
+    scripts,
+    dependencies,
+    devDependencies
+  };
+  const _export_sfc = (sfc, props) => {
+    const target = sfc.__vccOpts || sfc;
+    for (const [key, val] of props) {
+      target[key] = val;
+    }
+    return target;
+  };
+  const _sfc_main = {
+    data() {
+      return {
+        open: false,
+        exportData: {},
+        importData: {},
+        webdav: {
+          baseurl: "",
+          username: "",
+          password: ""
+        },
+        msg: ""
+      };
+    },
+    methods: {
+      // 打开弹窗
+      opendialog() {
+        this.open = !this.open;
+      },
+      // 保存密码
+      savewebdav() {
+        localStorage.setItem("lobechat-webdav", JSON.stringify(this.webdav));
+        this.msg = "WebDav 密码已保存！";
+      },
+      // 获取 lobechat 数据生成 json
+      getIndexedDB() {
+        const dbName = "LOBE_CHAT_DB";
+        const storeNames = ["messages", "sessionGroups", "sessions", "topics", "users"];
+        let request = indexedDB.open(dbName);
+        request.onsuccess = (event) => {
+          const db = event.target.result;
+          let state = {
+            messages: [],
+            sessionGroups: [],
+            sessions: [],
+            topics: [],
+            users: []
+          };
+          let pendingStores = 0;
+          storeNames.forEach((storeName) => {
+            if (db.objectStoreNames.contains(storeName)) {
+              pendingStores++;
+              const transaction = db.transaction([storeName], "readonly");
+              const objectStore = transaction.objectStore(storeName);
+              const allRecords = objectStore.getAll();
+              allRecords.onsuccess = (event2) => {
+                const result = event2.target.result;
+                state[storeName] = result;
+                pendingStores--;
+                if (pendingStores === 0) {
+                  this.exportData = JSON.stringify({
+                    exportType: "all",
+                    state,
+                    version: 7
+                  });
+                }
+              };
+              allRecords.onerror = (event2) => {
+                console.error(`Error fetching data from ${storeName}:`, event2);
+              };
+            } else {
+              console.warn(`Object store ${storeName} not found in database ${dbName}`);
+            }
+          });
+          if (pendingStores === 0) {
+            console.log("No valid object stores found in the database.");
+          }
+        };
+        request.onerror = (event) => {
+          console.error("Error opening database:", event);
+        };
+      },
+      // 检查文件夹是否存在
+      checkFolderExists(folderUrl) {
+        return new Promise((resolve, reject) => {
+          GM_xmlhttpRequest({
+            method: "PROPFIND",
+            url: folderUrl,
+            headers: {
+              Authorization: "Basic " + btoa(`${this.webdav.username}:${this.webdav.password}`),
+              Depth: "1"
+              // 只检查一层
+            },
+            onload: function(response) {
+              if (response.status === 207) {
+                resolve(true);
+              } else if (response.status === 404) {
+                resolve(false);
+              } else {
+                reject(new Error(`Error checking folder: ${response.statusText}`));
+              }
+            },
+            onerror: function(error) {
+              reject(error);
+            }
+          });
+        });
+      },
+      // 创建文件夹
+      createFolder(folderUrl) {
+        return new Promise((resolve, reject) => {
+          GM_xmlhttpRequest({
+            method: "MKCOL",
+            url: folderUrl,
+            headers: {
+              Authorization: "Basic " + btoa(`${this.webdav.username}:${this.webdav.password}`)
+            },
+            onload: function(response) {
+              if (response.status === 201) {
+                resolve(true);
+              } else {
+                reject(new Error(`Error creating folder: ${response.statusText}`));
+              }
+            },
+            onerror: function(error) {
+              reject(error);
+            }
+          });
+        });
+      },
+      // 检查并创建文件夹
+      async checkAndCreateFolder() {
+        this.getIndexedDB();
+        const folderUrl = `${this.webdav.baseurl}lobechat-webdav-backup/`;
+        try {
+          const exists = await this.checkFolderExists(folderUrl);
+          if (!exists) {
+            await this.createFolder(folderUrl);
+            console.log("Folder 'lobechat-webdav-backup' created successfully.");
+          } else {
+            console.log("Folder 'lobechat-webdav-backup' already exists.");
+          }
+          const data = this.exportData;
+          if (!data) {
+            console.error("Export data is not initialized properly.");
+            return;
+          }
+          const uploadUrl = `${this.webdav.baseurl}lobechat-webdav-backup/data.json`;
+          try {
+            const uploadResponse = await this.uploadFile(uploadUrl, data);
+            this.msg = "同步到云端成功！3 秒后清空";
+            setTimeout(() => {
+              this.msg = "";
+            }, 3e3);
+          } catch (error) {
+            console.error("Upload failed:", error);
+            this.msg = "同步失败！";
+            setTimeout(() => {
+              this.msg = "";
+            }, 3e3);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      uploadFile(url, fileData) {
+        return new Promise((resolve, reject) => {
+          GM_xmlhttpRequest({
+            method: "PUT",
+            url,
+            data: fileData,
+            headers: {
+              "Content-Type": "text/plain",
+              Authorization: "Basic " + btoa(`${this.webdav.username}:${this.webdav.password}`)
+            },
+            onload: function(response) {
+              if (response.status >= 200 && response.status < 300) {
+                resolve(response);
+              } else {
+                reject(new Error(`Upload failed: ${response.statusText}`));
+              }
+            },
+            onerror: function(error) {
+              reject(error);
+            }
+          });
+        });
+      },
+      downloadFile(url) {
+        return new Promise((resolve, reject) => {
+          GM_xmlhttpRequest({
+            method: "GET",
+            url,
+            headers: {
+              Authorization: "Basic " + btoa(`${this.webdav.username}:${this.webdav.password}`)
+            },
+            onload: function(response) {
+              if (response.status >= 200 && response.status < 300) {
+                resolve(response.responseText);
+              } else {
+                reject(new Error(`Download failed: ${response.statusText}`));
+              }
+            },
+            onerror: function(error) {
+              reject(error);
+            }
+          });
+        });
+      },
+      // 上传
+      async uploadSampleFile() {
+        this.checkAndCreateFolder();
+      },
+      // 下载
+      async downloadSampleFile() {
+        const downloadUrl = `${this.webdav.baseurl}lobechat-webdav-backup/data.json`;
+        try {
+          const downloadResponse = await this.downloadFile(downloadUrl);
+          const importData = JSON.parse(downloadResponse);
+          console.log(importData);
+          this.msg = "下载成功，即将同步数据，请勿操作页面！";
+          const dbName = "LOBE_CHAT_DB";
+          const storeNames = ["messages", "sessionGroups", "sessions", "topics", "users"];
+          let request = indexedDB.open(dbName);
+          request.onsuccess = function(event) {
+            const db = event.target.result;
+            const state = importData.state;
+            console.log(importData);
+            storeNames.forEach((storeName) => {
+              if (db.objectStoreNames.contains(storeName)) {
+                const transaction = db.transaction([storeName], "readwrite");
+                const objectStore = transaction.objectStore(storeName);
+                const clearRequest = objectStore.clear();
+                clearRequest.onsuccess = function() {
+                  console.log(`${storeName} store cleared.`);
+                  const data = state[storeName];
+                  if (Array.isArray(data)) {
+                    data.forEach((item) => {
+                      const addRequest = objectStore.add(item);
+                      addRequest.onsuccess = function() {
+                        console.log(`Item added to ${storeName} store.`);
+                      };
+                      addRequest.onerror = function(event2) {
+                        console.error(`Error adding item to ${storeName}:`, event2);
+                      };
+                    });
+                  }
+                };
+                clearRequest.onerror = function(event2) {
+                  console.error(`Error clearing ${storeName} store:`, event2);
+                };
+              } else {
+                console.warn(`Object store ${storeName} not found in database ${dbName}`);
+              }
+            });
+          };
+          setTimeout(() => {
+            this.msg = "同步完成，请刷新页面！";
+            location.reload();
+          }, 2e3);
+          request.onerror = function(event) {
+            console.error("Error opening database:", event);
+          };
+        } catch (error) {
+          console.error(error);
+          this.msg = "下载失败，请检查是否存在备份！";
+        }
+      }
+    },
+    created() {
+      const lobechat_webdav = JSON.parse(localStorage.getItem("lobechat-webdav"));
+      if (lobechat_webdav) {
+        this.webdav = lobechat_webdav;
+      }
+      console.log(
+        `%c ${packageJson.name} %c 已开启 `,
+        "padding: 2px 1px; color: #fff; background: #606060;",
+        "padding: 2px 1px; color: #fff; background: #42c02e;"
+      );
+    }
+  };
+  const _hoisted_1 = { class: "lobewebdav" };
+  const _hoisted_2 = /* @__PURE__ */ vue.createElementVNode("div", {
+    style: { "border-radius": "8px", "height": "44px", "width": "44px" },
+    class: "layoutkit-flexbox css-5wokcq acss-1rzhzi1"
+  }, [
+    /* @__PURE__ */ vue.createElementVNode("span", {
+      class: "anticon acss-17q14cp",
+      role: "img"
+    }, [
+      /* @__PURE__ */ vue.createElementVNode("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: "24",
+        height: "24",
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-width": "2",
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+        class: "icon icon-tabler icons-tabler-outline icon-tabler-brand-webflow"
+      }, [
+        /* @__PURE__ */ vue.createElementVNode("path", {
+          stroke: "none",
+          d: "M0 0h24v24H0z",
+          fill: "none"
+        }),
+        /* @__PURE__ */ vue.createElementVNode("path", { d: "M17 10s-1.376 3.606 -1.5 4c-.046 -.4 -1.5 -8 -1.5 -8c-2.627 0 -3.766 1.562 -4.5 3.5c0 0 -1.843 4.593 -2 5c-.013 -.368 -.5 -4.5 -.5 -4.5c-.15 -2.371 -2.211 -3.98 -4 -3.98l2 12.98c2.745 -.013 4.72 -1.562 5.5 -3.5c0 0 1.44 -4.3 1.5 -4.5c.013 .18 1 8 1 8c2.758 0 4.694 -1.626 5.5 -3.5l3.5 -9.5c-2.732 0 -4.253 2.055 -5 4z" })
+      ])
+    ])
+  ], -1);
+  const _hoisted_3 = [
+    _hoisted_2
+  ];
+  const _hoisted_4 = { class: "lobewebdav-dialog" };
+  const _hoisted_5 = /* @__PURE__ */ vue.createElementVNode("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    width: "24",
+    height: "24",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": "2",
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+    class: "icon icon-tabler icons-tabler-outline icon-tabler-x"
+  }, [
+    /* @__PURE__ */ vue.createElementVNode("path", {
+      stroke: "none",
+      d: "M0 0h24v24H0z",
+      fill: "none"
+    }),
+    /* @__PURE__ */ vue.createElementVNode("path", { d: "M18 6l-12 12" }),
+    /* @__PURE__ */ vue.createElementVNode("path", { d: "M6 6l12 12" })
+  ], -1);
+  const _hoisted_6 = [
+    _hoisted_5
+  ];
+  const _hoisted_7 = /* @__PURE__ */ vue.createElementVNode("h2", null, "同步 Lobechat 数据到 WebDav", -1);
+  const _hoisted_8 = { class: "item" };
+  const _hoisted_9 = /* @__PURE__ */ vue.createElementVNode("label", null, "WebDav 地址：", -1);
+  const _hoisted_10 = { class: "item" };
+  const _hoisted_11 = /* @__PURE__ */ vue.createElementVNode("label", null, "WebDav 用户名：", -1);
+  const _hoisted_12 = { class: "item" };
+  const _hoisted_13 = /* @__PURE__ */ vue.createElementVNode("label", null, "WebDav 密码：", -1);
+  const _hoisted_14 = { class: "item" };
+  const _hoisted_15 = { class: "item" };
+  const _hoisted_16 = { class: "item" };
+  const _hoisted_17 = { class: "msg" };
+  function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("div", _hoisted_1, [
+      vue.createElementVNode("a", {
+        "aria-label": "webdav",
+        onClick: _cache[0] || (_cache[0] = (...args) => $options.opendialog && $options.opendialog(...args)),
+        href: "javascript:void(0)"
+      }, _hoisted_3),
+      vue.withDirectives(vue.createElementVNode("div", _hoisted_4, [
+        vue.createElementVNode("div", {
+          class: "close",
+          onClick: _cache[1] || (_cache[1] = ($event) => this.open = false)
+        }, _hoisted_6),
+        _hoisted_7,
+        vue.createElementVNode("div", _hoisted_8, [
+          _hoisted_9,
+          vue.withDirectives(vue.createElementVNode("input", {
+            type: "text",
+            "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $data.webdav.baseurl = $event),
+            placeholder: "https://xxx.com/dav/"
+          }, null, 512), [
+            [vue.vModelText, $data.webdav.baseurl]
+          ])
+        ]),
+        vue.createElementVNode("div", _hoisted_10, [
+          _hoisted_11,
+          vue.withDirectives(vue.createElementVNode("input", {
+            type: "text",
+            "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $data.webdav.username = $event)
+          }, null, 512), [
+            [vue.vModelText, $data.webdav.username]
+          ])
+        ]),
+        vue.createElementVNode("div", _hoisted_12, [
+          _hoisted_13,
+          vue.withDirectives(vue.createElementVNode("input", {
+            type: "password",
+            "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $data.webdav.password = $event)
+          }, null, 512), [
+            [vue.vModelText, $data.webdav.password]
+          ])
+        ]),
+        vue.createElementVNode("div", _hoisted_14, [
+          vue.createElementVNode("button", {
+            onClick: _cache[5] || (_cache[5] = (...args) => $options.savewebdav && $options.savewebdav(...args))
+          }, "保存密码")
+        ]),
+        vue.createElementVNode("div", _hoisted_15, [
+          vue.createElementVNode("button", {
+            onClick: _cache[6] || (_cache[6] = (...args) => $options.uploadSampleFile && $options.uploadSampleFile(...args))
+          }, "同步到云端"),
+          vue.createElementVNode("button", {
+            onClick: _cache[7] || (_cache[7] = (...args) => $options.downloadSampleFile && $options.downloadSampleFile(...args))
+          }, "下载到本地")
+        ]),
+        vue.createElementVNode("div", _hoisted_16, [
+          vue.createElementVNode("div", _hoisted_17, vue.toDisplayString($data.msg), 1)
+        ])
+      ], 512), [
+        [vue.vShow, $data.open]
+      ])
+    ]);
+  }
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render]]);
+  const app = vue.createApp(App);
+  app.mount(
+    (() => {
+      const appDiv = document.createElement("div");
+      document.body.append(appDiv);
+      return appDiv;
+    })()
+  );
+
+})(Vue);
