@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Boss 直聘拉黑公司列表
 // @namespace    https://github.com/anghunk/UserScript
-// @version      1.0.2
+// @version      1.0.3
 // @description  过滤职位列表中的黑名单公司，支持导入导出，一键拉黑功能。
 // @author       anghunk
 // @match        *://*.zhipin.com/*

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         导出微信公众号文章为 PDF
 // @namespace    https://github.com/anghunk/UserScript
-// @version      0.6
+// @version      1.0
 // @author       anghunk
 // @description  在微信公众号文章页面中添加按钮，点击后导出文章为 PDF 格式，并显示标题、作者和时间等元信息。
 // @match        https://mp.weixin.qq.com/s/*
